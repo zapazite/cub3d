@@ -19,7 +19,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <stddef.h>
-# include "../cub3d.h"
+# include "../gc/gc.h"
 
 typedef struct s_cube	t_cube;
 

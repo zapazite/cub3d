@@ -12,6 +12,7 @@
 
 #include "gc.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 void ft_free(t_gc *gc)
 {

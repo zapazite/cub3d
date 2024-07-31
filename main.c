@@ -3,27 +3,82 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mde-prin <mde-prin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: efaiz <efaiz@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 10:35:49 by mde-prin          #+#    #+#             */
-/*   Updated: 2024/07/31 13:05:17 by mde-prin         ###   ########.fr       */
+/*   Updated: 2024/07/31 13:57:22 by efaiz            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-int		check_
+int	ft_strncmp(const char *str1, const char *str2, size_t n)
+{
+	int	i;
+
+	i = -1;
+	if (n == 0)
+		return (0);
+	while (n-- > 0)
+	{
+		if (str1[++i] != *str2)
+			return ((unsigned char)str1[i] - *(unsigned char *)str2);
+		str2++;
+		if (str1[i] == '\0')
+			return (0);
+	}
+	return (0);
+}
+
+size_t	ft_strlen(const char *s)
+{
+	size_t	i;
+
+	i = 0;
+	while (s[i])
+		i++;
+	return (i);
+}
+
+int		check_param(char *line)
+{
+	int j;
+	const char *param_array[] = {"NO ", "SO ", "WE ", "EA "};
+	const char	*color_array[] = {"F ", "C "};
+
+	if(line[0] == '\n')
+		return (0);
+	j = -1;
+	while(param_array[++j])
+		if(ft_strncmp(line, param_array[j], ft_strlen(param_array[j])))
+			return (1);
+	j = -1;
+	while(color_array[++j])
+		if(ft_strncmp(line, color_array[j], ft_strlen(color_array[j])))
+			return (1);
+	if (j < 4)
+		check_path();
+	else
+		check_rgb();
+}
 
 void	parse_parameter(t_cube *cube,int fd)
 {
 	char	*line;
+	int		i;
+	int		param_counter;
+
 
 	line = NULL;
+	param_counter = 0;
+	i = 0;
 	line = get_next_line(cube, fd);
 	while(line)
 	{
-		if ()
-			return ;
+		if(line[0] == '\n')
+			;
+		else if (param_counter < 6)
+			param_counter += check_param(line + i);
 		line = get_next_line(cube, fd);
 	}
 }
@@ -48,7 +103,7 @@ void	parse(t_cube *cube, char *map_file)
 		clean_and_exit();
 	parse_parameter(cube, fd);
 	parse_map(cube, fd);
-	
+
 }
 
 void cube_init(t_cube *cube)

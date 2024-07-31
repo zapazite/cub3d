@@ -20,4 +20,7 @@ typedef struct s_gc
     struct s_gc	*next;
 } t_gc;
 
+void	ft_free(t_gc *gc);
+void    *ft_malloc(t_gc **gc, int size);
+
 #endif
