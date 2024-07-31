@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   gc.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: efaiz <efaiz@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mde-prin <mde-prin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 11:38:06 by efaiz             #+#    #+#             */
-/*   Updated: 2024/07/31 12:25:57 by efaiz            ###   ########.fr       */
+/*   Updated: 2024/07/31 13:05:22 by mde-prin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "gc.h"
 #include <stdio.h>
 
-void gc_free(t_gc *gc)
+void ft_free(t_gc *gc)
 {
     t_gc *tmp;
     while (gc)
@@ -25,7 +25,7 @@ void gc_free(t_gc *gc)
     }
 }
 
-void    *gc_malloc(t_gc **gc, int size)
+void    *ft_malloc(t_gc **gc, int size)
 {
     void *ptr_2_malloc;
     t_gc *gc_new_node;
