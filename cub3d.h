@@ -23,6 +23,11 @@
 typedef struct s_cube
 {
     t_gc	*gc;
+    char	*no_path;
+    char	*so_path;
+    char	*we_path;
+    char	*ea_path;
+
 } t_cube;
 
 #endif

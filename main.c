@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "cub3d.h"
+#include "gc/gc.h"
 
 int	ft_strncmp(const char *str1, const char *str2, size_t n)
 {
@@ -40,26 +41,56 @@ size_t	ft_strlen(const char *s)
 	return (i);
 }
 
+void	check_path(t_cube **tmp, char *line)
+{
+	int		i;
+	char	tmp_char;
+
+	i = 0;
+	while(*line == ' ')
+		line++;
+	while (line[i] != '\n' || line[i] != '\0')
+		i++;
+	tmp_char = line[i];
+	line[i] = 0;
+	if(open(line, O_RDONLY) == -1)
+	{
+		printf("Invalid path\n");
+		free(*tmp);
+		exit(1);
+	}
+	//add it to temp struct
+}
+
+void	check_rgb(t_cube **tmp, char *line)
+{
+	while(*line == ' ')
+		line++;
+
+}
+
 int		check_param(char *line)
 {
 	int j;
+
+	t_cube	*tmp;
+
+	tmp = (t_cube *)malloc(sizeof(t_cube));
 	const char *param_array[] = {"NO ", "SO ", "WE ", "EA "};
 	const char	*color_array[] = {"F ", "C "};
 
 	if(line[0] == '\n')
 		return (0);
 	j = -1;
+	//not currently checking for double "NO" "NO"
 	while(param_array[++j])
 		if(ft_strncmp(line, param_array[j], ft_strlen(param_array[j])))
-			return (1);
+			check_path(&tmp, line + 3);
 	j = -1;
 	while(color_array[++j])
 		if(ft_strncmp(line, color_array[j], ft_strlen(color_array[j])))
-			return (1);
-	if (j < 4)
-		check_path();
-	else
-		check_rgb();
+			check_rgb(&tmp, line + 2);
+	return (1);
 }
 
 void	parse_parameter(t_cube *cube,int fd)
