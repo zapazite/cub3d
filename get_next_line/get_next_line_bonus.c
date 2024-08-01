@@ -18,7 +18,7 @@ void	fill_lst(t_cube *cube, t_list **lst, t_list *last, int fd)
 	int		bytes_read;
 	int		i;
 
-	buffer = (char *)ft_malloc(&(cube->gc), sizeof(char) * BUFFER_SIZE);
+	buffer = (char *)ft_malloc(cube, sizeof(char) * BUFFER_SIZE);
 	while (!get_nl(*lst))
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
@@ -47,7 +47,7 @@ char	*lst_to_str(t_cube *cube, t_list **lst)
 	if (*lst == NULL)
 		return (NULL);
 	len = get_len(*lst, 0);
-	line = (char *)ft_malloc(&(cube->gc), sizeof(char) * (len + 1));
+	line = (char *)ft_malloc(cube, sizeof(char) * (len + 1));
 	i = 0;
 	while (i < len)
 	{

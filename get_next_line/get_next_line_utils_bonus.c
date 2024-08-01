@@ -16,7 +16,7 @@ t_list	*ft_lstnew(t_cube *cube, char letter)
 {
 	t_list	*lst;
 
-	lst = (t_list *)ft_malloc(&(cube->gc), sizeof(t_list));
+	lst = (t_list *)ft_malloc(cube, sizeof(t_list));
 	lst->letter = letter;
 	lst->next = NULL;
 	return (lst);

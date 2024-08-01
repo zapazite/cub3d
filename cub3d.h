@@ -48,8 +48,11 @@ typedef struct s_cube
 {
     t_gc	*gc;
 	int		**map;
-    char	paths[4][4096];
+	char	paths[4][4096];
 	int		colors[2];
+	int		next_line_counter;
 } t_cube;
+
+void	clean_exit(t_cube *cube, int error_type);
 
 #endif

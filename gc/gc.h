@@ -16,6 +16,8 @@
 # include <stdio.h>
 # include <stdlib.h>
 
+typedef struct s_cube t_cube ;
+
 typedef struct s_gc
 {
     void		*malloced_ptr;
@@ -23,6 +25,6 @@ typedef struct s_gc
 } t_gc;
 
 void	ft_free(t_gc *gc);
-void    *ft_malloc(t_gc **gc, int size);
+void    *ft_malloc(t_cube *cube, int size);
 
 #endif
