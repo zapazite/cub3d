@@ -6,7 +6,7 @@
 /*   By: mde-prin <mde-prin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 16:43:35 by mde-prin          #+#    #+#             */
-/*   Updated: 2024/07/31 12:24:26 by mde-prin         ###   ########.fr       */
+/*   Updated: 2024/08/01 08:42:09 by mde-prin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <stddef.h>
-# include "../gc/gc.h"
 
 typedef struct s_cube	t_cube;
 

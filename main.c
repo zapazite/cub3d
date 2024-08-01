@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: efaiz <efaiz@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mde-prin <mde-prin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 10:35:49 by mde-prin          #+#    #+#             */
-/*   Updated: 2024/07/31 13:57:22 by efaiz            ###   ########.fr       */
+/*   Updated: 2024/08/01 08:42:13 by mde-prin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
-#include "gc/gc.h"
 
 int	ft_strncmp(const char *str1, const char *str2, size_t n)
 {

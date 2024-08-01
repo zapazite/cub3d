@@ -6,11 +6,11 @@
 /*   By: mde-prin <mde-prin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 11:25:00 by mde-prin          #+#    #+#             */
-/*   Updated: 2024/07/31 12:36:10 by mde-prin         ###   ########.fr       */
+/*   Updated: 2024/08/01 08:40:23 by mde-prin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line_bonus.h"
+#include "../cub3d.h"
 
 void	fill_lst(t_cube *cube, t_list **lst, t_list *last, int fd)
 {

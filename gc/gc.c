@@ -6,13 +6,11 @@
 /*   By: mde-prin <mde-prin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 11:38:06 by efaiz             #+#    #+#             */
-/*   Updated: 2024/07/31 13:05:22 by mde-prin         ###   ########.fr       */
+/*   Updated: 2024/08/01 08:39:33 by mde-prin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "gc.h"
-#include <stdio.h>
-#include <stdlib.h>
+#include "../cub3d.h"
 
 void ft_free(t_gc *gc)
 {
