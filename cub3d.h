@@ -42,15 +42,20 @@ typedef struct s_parse
 	char identifier[4];
 	int (*id_parse)(t_cube *cube, char *line);
 	int already_seen;
+	int	n_lines;
+	int max_line_size;
+	int	next_line_counter;
+
 } t_parse;
 
 typedef struct s_cube
 {
+	t_parse *prs;
     t_gc	*gc;
+    char	*map_file;
 	int		**map;
 	char	paths[4][4096];
 	int		colors[2];
-	int		next_line_counter;
 } t_cube;
 
 void	clean_exit(t_cube *cube, int error_type);

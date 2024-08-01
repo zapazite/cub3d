@@ -11,6 +11,10 @@
 /* ************************************************************************** */
 
 #include "cub3d.h"
+#include "gc/gc.h"
+#include "get_next_line/get_next_line_bonus.h"
+#include <string.h>
+#include <fcntl.h>
 #include <stdio.h>
 
 int	ft_isdigit(int c)
@@ -158,7 +162,7 @@ void	parse_parameter(t_cube *cube, int fd)
 	line = NULL;
 	param_counter = 0;
 	line = get_next_line(cube, fd);
-	cube->next_line_counter++;
+	cube->prs->next_line_counter++;
 	while(line && param_counter < 6)
 	{
 		if(line[0] == '\n')
@@ -166,7 +170,7 @@ void	parse_parameter(t_cube *cube, int fd)
 		else
 			param_counter += check_param(cube, line);
 		line = get_next_line(cube, fd);
-		cube->next_line_counter++;
+		cube->prs->next_line_counter++;
 	}
 }
 
@@ -174,54 +178,79 @@ void	parse_map(t_cube *cube,int fd)
 {
 	char	*line;
 	int		i;
-	size_t	max_line_size;
-	int		n_lines = 0;
-	int		position_flag;
-	int		start_map_flag;
 
-	max_line_size = 0;
 	i = -1;
-	start_map_flag = 0;
-	position_flag = 0;
-	line = NULL;
 	line = get_next_line(cube, fd);
 
 	while(line[0] == '\n')
 	{
 		line = get_next_line(cube, fd);
-		cube->next_line_counter++;
+		cube->prs->next_line_counter++;
 	}
-
 	while(line)
 	{
 		i = -1;
-		while (line[++i] != '\n')
+		if(line[0] == '\n')
+			clean_exit(cube, ERR_PARSING);
+		while (line[++i] != '\n' && line[i] != '\0')
 		{
-			if(line[0] == '\n' && start_map_flag)
-				clean_exit(cube, ERR_PARSING);
-			if((line[i] == 'N'|| line[i] == 'S'|| line[i] == 'W'|| line[i] == 'E') && position_flag)
-				clean_exit(cube, ERR_PARSING);
-			if(line[i] == 'N' || line[i] == 'S' || line[i] == 'W' || line[i] == 'E')
-				position_flag = 1;
+			if(line[i] == 'N'|| line[i] == 'S'|| line[i] == 'W'|| line[i] == 'E')
+				if(cube->prs->already_seen++)
+					clean_exit(cube, ERR_PARSING);
 			if(line[i] != '0' && line[i] != '1' && line[i] != ' ' && line[i] != 'N' && line[i] != 'S' && line[i] != 'W' && line[i] != 'E')
 				clean_exit(cube, ERR_PARSING);
 		}
 		line[i] = '\0';
-		if(ft_strlen(line) > max_line_size)
-			max_line_size = ft_strlen(line);
-		line[i] = '\n';
-		n_lines++;
+		if(ft_strlen(line) > (size_t)cube->prs->max_line_size)
+			cube->prs->max_line_size = ft_strlen(line);
+		cube->prs->n_lines++;
 		line = get_next_line(cube, fd);
-		start_map_flag = 1;
 	}
-	printf("number of lines is %d\n", n_lines);
-	printf("max line size is %d\n", (int)max_line_size);
+	//Needs to be rewritten, its working correclty
+	close(fd);
+	fd = open(cube->map_file, O_RDONLY);
+	int **map = ft_malloc(cube, (cube->prs->n_lines + 3) * sizeof(int*));
+	for(int i = 0; i < cube->prs->n_lines + 2; i++)
+		map[i] = ft_malloc(cube, (cube->prs->max_line_size + 3) * sizeof(int));
+ 	for (int i = 0; i < cube->prs->n_lines + 2; i++)
+  		for (int j = 0; (size_t)j < (size_t)cube->prs->max_line_size + 2; j++)
+    		map[i][j] = -1;
+  	int k = -1;
+	while(++k <= cube->prs->next_line_counter)
+		line = get_next_line(cube, fd);
+	int o = 0;
+	while(line)
+	{
+		for (int j = 0; j < cube->prs->max_line_size; j++)
+		{
+			if(line[j] == ' ')
+			{
+				line[j] = -1;
+				continue;
+			}
+			if(line[j] == '\n' || line[j] == '\0')
+				break;
+			map[o + 1][j + 1] = (int)line[j];
+		}
+		o++;
+		line = get_next_line(cube, fd);
+		if(!line || line[0] == '\n')
+			break;
+	}
 }
-
-void	parse(t_cube *cube, char *map_file)
+//		JUST FOR PRINTING INT MAP
+	// for (int i = 0; i < cube->parse_struct->n_lines + 2; i++)
+  // 	{
+  // 		for (int j = 0; (size_t)j < (size_t)cube->parse_struct->max_line_size + 2; j++)
+  //   		printf(" %d ", map[i][j]);
+  //   	printf("\n");
+  //  }
+  // ************
+  //
+void	parse(t_cube *cube)
 {
 	int		fd;
-	fd = open(map_file, O_RDONLY);
+	fd = open(cube->map_file, O_RDONLY);
 	if (fd < 0)
 		clean_exit(cube, ERR_PARSING);
 	parse_parameter(cube, fd);
@@ -229,18 +258,23 @@ void	parse(t_cube *cube, char *map_file)
 	close (fd);
 }
 
-void cube_init(t_cube *cube)
+void cube_init(t_cube *cube, char *map_file)
 {
 	int i;
 
 	i = -1;
 	cube->gc = NULL;
-	cube->next_line_counter = 0;
+	cube->map_file = map_file;
+	cube->prs = ft_malloc(cube, sizeof(t_parse)); //can be freed after parsing
+	cube->prs->next_line_counter = 0;
 	while(++i < 2)
 		cube->colors[i] = -1;
 	i = -1;
 	while(++i < 4)
 		cube->paths[i][0] = '\0';
+	cube->prs->max_line_size = 0;
+	cube->prs->already_seen = 0;
+	cube->prs->n_lines = 0;
 }
 
 int	main(int argc, char *argv[])
@@ -249,8 +283,8 @@ int	main(int argc, char *argv[])
 
 	if (argc != 2)
 		return (write(1, "Error\n", 6), 1); //great success right?
-	cube_init(&cube);
-	parse(&cube, argv[1]);
+	cube_init(&cube, argv[1]);
+	parse(&cube);
 	ft_free(cube.gc);
 	return (0);
 }
