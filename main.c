@@ -31,7 +31,7 @@ void	clean_exit(t_cube *cube, int error_type)
 		printf("Parsing error!\n");
 	else if(error_type == ERR_MALLOC)
 		printf("Malloc error!\n");
-	ft_free(cube->gc);
+	ft_free(cube->gc, NULL);
 	//Destroy mlx stuff for later right?
 	exit(1);
 }
@@ -206,20 +206,20 @@ void	parse_map(t_cube *cube,int fd)
 		cube->prs->n_lines++;
 		line = get_next_line(cube, fd);
 	}
-	//Needs to be rewritten, its working correclty
+	//Needs to be rewritten, sorry Maxime dont get DISCOMBOBULATED :)!
 	close(fd);
 	fd = open(cube->map_file, O_RDONLY);
-	int **map = ft_malloc(cube, (cube->prs->n_lines + 3) * sizeof(int*));
+	int **map = ft_malloc(cube, (cube->prs->n_lines + 3) * sizeof(int*)); //malloc 2d array of ints plus line -1 incapsulating the map
 	for(int i = 0; i < cube->prs->n_lines + 2; i++)
-		map[i] = ft_malloc(cube, (cube->prs->max_line_size + 3) * sizeof(int));
+		map[i] = ft_malloc(cube, (cube->prs->max_line_size + 3) * sizeof(int)); //malloc for each slot of the array the maximum line len found
  	for (int i = 0; i < cube->prs->n_lines + 2; i++)
-  		for (int j = 0; (size_t)j < (size_t)cube->prs->max_line_size + 2; j++)
+  		for (int j = 0; (size_t)j < (size_t)cube->prs->max_line_size + 2; j++) //set all values at -1
     		map[i][j] = -1;
   	int k = -1;
-	while(++k <= cube->prs->next_line_counter)
+	while(++k <= cube->prs->next_line_counter) //closes, reopens file and jups al the way at the start of the map
 		line = get_next_line(cube, fd);
 	int o = 0;
-	while(line)
+	while(line) //fill the malloced array with an ofset of 1 so we can have -1 on the borders
 	{
 		for (int j = 0; j < cube->prs->max_line_size; j++)
 		{
@@ -234,19 +234,19 @@ void	parse_map(t_cube *cube,int fd)
 		}
 		o++;
 		line = get_next_line(cube, fd);
-		if(!line || line[0] == '\n')
+		if(!line || line[0] == '\n') //continue this loop as long as line is not null or line[0] = '\n'. im not sure if we consider new lines after the map as valid or not.
 			break;
 	}
+	//		loop to print the map
+	// for (int i = 0; i < cube->prs->n_lines + 2; i++)
+ //  	{
+ //  		for (int j = 0; (size_t)j < (size_t)cube->prs->max_line_size + 2; j++)
+ //    		printf("%d", map[i][j]);
+ //    	printf("\n");
+ //   }
 }
-//		JUST FOR PRINTING INT MAP
-	// for (int i = 0; i < cube->parse_struct->n_lines + 2; i++)
-  // 	{
-  // 		for (int j = 0; (size_t)j < (size_t)cube->parse_struct->max_line_size + 2; j++)
-  //   		printf(" %d ", map[i][j]);
-  //   	printf("\n");
-  //  }
-  // ************
-  //
+
+
 void	parse(t_cube *cube)
 {
 	int		fd;
@@ -256,6 +256,7 @@ void	parse(t_cube *cube)
 	parse_parameter(cube, fd);
 	parse_map(cube, fd);
 	close (fd);
+	ft_free(cube->gc, &cube->prs);
 }
 
 void cube_init(t_cube *cube, char *map_file)
@@ -265,7 +266,7 @@ void cube_init(t_cube *cube, char *map_file)
 	i = -1;
 	cube->gc = NULL;
 	cube->map_file = map_file;
-	cube->prs = ft_malloc(cube, sizeof(t_parse)); //can be freed after parsing
+	cube->prs = ft_malloc(cube, sizeof(t_parse)); //can be freed after parsing;
 	cube->prs->next_line_counter = 0;
 	while(++i < 2)
 		cube->colors[i] = -1;
@@ -285,6 +286,6 @@ int	main(int argc, char *argv[])
 		return (write(1, "Error\n", 6), 1); //great success right?
 	cube_init(&cube, argv[1]);
 	parse(&cube);
-	ft_free(cube.gc);
+	ft_free(cube.gc, NULL);
 	return (0);
 }

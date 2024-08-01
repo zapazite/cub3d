@@ -22,9 +22,10 @@ typedef struct s_gc
 {
     void		*malloced_ptr;
     struct s_gc	*next;
+    struct s_gc *prev;
 } t_gc;
 
-void	ft_free(t_gc *gc);
+void	ft_free(t_gc *gc, void *ptr_2_free);
 void    *ft_malloc(t_cube *cube, int size);
 
 #endif
