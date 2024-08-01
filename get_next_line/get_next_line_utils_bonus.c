@@ -6,7 +6,7 @@
 /*   By: mde-prin <mde-prin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 16:43:18 by mde-prin          #+#    #+#             */
-/*   Updated: 2024/08/01 08:39:55 by mde-prin         ###   ########.fr       */
+/*   Updated: 2024/08/01 11:38:35 by mde-prin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,6 @@ t_list	*ft_lstnew(t_cube *cube, char letter)
 	t_list	*lst;
 
 	lst = (t_list *)ft_malloc(&(cube->gc), sizeof(t_list));
-	if (!lst)
-		ft_error(cube);
 	lst->letter = letter;
 	lst->next = NULL;
 	return (lst);

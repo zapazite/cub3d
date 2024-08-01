@@ -6,7 +6,7 @@
 /*   By: mde-prin <mde-prin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 11:25:00 by mde-prin          #+#    #+#             */
-/*   Updated: 2024/08/01 08:40:23 by mde-prin         ###   ########.fr       */
+/*   Updated: 2024/08/01 11:28:56 by mde-prin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,6 @@ void	fill_lst(t_cube *cube, t_list **lst, t_list *last, int fd)
 	int		i;
 
 	buffer = (char *)ft_malloc(&(cube->gc), sizeof(char) * BUFFER_SIZE);
-	if (!buffer)
-		ft_error(cube);
 	while (!get_nl(*lst))
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
@@ -50,8 +48,6 @@ char	*lst_to_str(t_cube *cube, t_list **lst)
 		return (NULL);
 	len = get_len(*lst, 0);
 	line = (char *)ft_malloc(&(cube->gc), sizeof(char) * (len + 1));
-	if (!line)
-		ft_error(cube);
 	i = 0;
 	while (i < len)
 	{

@@ -6,7 +6,7 @@
 /*   By: mde-prin <mde-prin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 10:42:46 by mde-prin          #+#    #+#             */
-/*   Updated: 2024/08/01 08:43:14 by mde-prin         ###   ########.fr       */
+/*   Updated: 2024/08/01 12:03:20 by mde-prin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,36 @@
 
 # define BUFFERSIZE 8192
 
+typedef enum {
+	ERR_MALLOC,
+	ERR_PARSING,
+} Errors;
+
+typedef enum {
+    NO,
+    SO,
+    WE,
+    EA,
+} TextureIndex;
+
+typedef enum {
+    FLOOR,
+    CIELLING,
+} ColorIndex;
+
+typedef struct s_parse
+{
+	char identifier[4];
+	int (*id_parse)(t_cube *cube, char *line);
+	int already_seen;
+} t_parse;
+
 typedef struct s_cube
 {
     t_gc	*gc;
-    char	*no_path;
-    char	*so_path;
-    char	*we_path;
-    char	*ea_path;
-
+	int		**map;
+    char	paths[4][4096];
+	int		colors[2];
 } t_cube;
 
 #endif

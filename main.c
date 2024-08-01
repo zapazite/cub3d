@@ -6,7 +6,7 @@
 /*   By: mde-prin <mde-prin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 10:35:49 by mde-prin          #+#    #+#             */
-/*   Updated: 2024/08/01 08:42:13 by mde-prin         ###   ########.fr       */
+/*   Updated: 2024/08/01 12:21:42 by mde-prin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,55 +40,71 @@ size_t	ft_strlen(const char *s)
 	return (i);
 }
 
-void	check_path(t_cube **tmp, char *line)
+int	check_path(t_cube *cube, char *line, int index)
 {
-	int		i;
-	char	tmp_char;
+	int	i;
+	int fd;
 
 	i = 0;
 	while(*line == ' ')
 		line++;
 	while (line[i] != '\n' || line[i] != '\0')
 		i++;
-	tmp_char = line[i];
-	line[i] = 0;
-	if(open(line, O_RDONLY) == -1)
+	line[i] = '\0';
+	fd = open(line, O_RDONLY);
+	if(fd == -1)
+		clean_exit(cube, ERR_PARSING);
+	else
 	{
-		printf("Invalid path\n");
-		free(*tmp);
-		exit(1);
+		close(fd);
+		i = 0;
+		while(line[i])
+			cube->paths[index][i] = line[i];	
+		cube->paths[index][i] = '\0';
 	}
-	//add it to temp struct
+	return (1);
 }
 
-void	check_rgb(t_cube **tmp, char *line)
+int	check_rgb(t_cube *cube, char *line, int index)
 {
+	int	i;
+	int color_component;
+
+	i = 0;
 	while(*line == ' ')
 		line++;
-
+	while (line[i] != '\n' || line[i] != '\0')
+	{
+		color_component = rgb_atoi(line + i);
+		if (color_component < 0)
+			clean_exit(cube, ERR_PARSING);
+		cube->colors[index] = (cube->colors[index] << 8) + color_component;
+		while (line[i] != ',' && line[i] != '\n' && line[i] != '\0')
+			i++;
+		if (line[i] == ',')
+			i++;
+		
+	}
+	
 }
 
-int		check_param(char *line)
+int		check_param(t_cube *cube, char *line)
 {
 	int j;
-
-	t_cube	*tmp;
-
-	tmp = (t_cube *)malloc(sizeof(t_cube));
-	const char *param_array[] = {"NO ", "SO ", "WE ", "EA "};
+	int success;
+	const char	*param_array[] = {"NO ", "SO ", "WE ", "EA "};
 	const char	*color_array[] = {"F ", "C "};
 
-	if(line[0] == '\n')
-		return (0);
 	j = -1;
-	//not currently checking for double "NO" "NO"
 	while(param_array[++j])
-		if(ft_strncmp(line, param_array[j], ft_strlen(param_array[j])))
-			check_path(&tmp, line + 3);
+		if(ft_strncmp(line, param_array[j], ft_strlen(param_array[j])) && cube->paths[j][0] != '\0')
+			success = check_path(cube, line + 3, j);
 	j = -1;
 	while(color_array[++j])
-		if(ft_strncmp(line, color_array[j], ft_strlen(color_array[j])))
-			check_rgb(&tmp, line + 2);
+		if(ft_strncmp(line, color_array[j], ft_strlen(color_array[j])) && cube->colors[j] != -1)
+			success = check_rgb(cube, line + 2, j);
+	if (!success)
+		clean_exit(cube, ERR_PARSING);
 	return (1);
 }
 
@@ -108,7 +124,7 @@ void	parse_parameter(t_cube *cube,int fd)
 		if(line[0] == '\n')
 			;
 		else if (param_counter < 6)
-			param_counter += check_param(line + i);
+			param_counter += check_param(cube, line + i);
 		line = get_next_line(cube, fd);
 	}
 }
