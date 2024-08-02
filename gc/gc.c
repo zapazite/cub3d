@@ -11,67 +11,39 @@
 /* ************************************************************************** */
 
 #include "../cub3d.h"
+#include "gc.h"
 #include <stdlib.h>
 
 //GC CAN NOW FREE SPECIFIC POINTER. IF NULL IS PASSED AS PARAMETER
 //FT_FREE WILL FREE THE ENTIRE LIST
 
-void	cut_and_join(t_gc *gc_runner)
-{
-	t_gc *tmp;
-
-	if(!gc_runner->prev)
-	{
-		tmp = gc_runner->next;
-		free(gc_runner->malloced_ptr);
-	}
-	else if(!gc_runner->next)
-	{
-		tmp = gc_runner->prev;
-		free(gc_runner->malloced_ptr);
-	}
-	else
-	{
-		gc_runner->prev->next = gc_runner->next;
-		free(gc_runner->malloced_ptr);
-		gc_runner->next->prev = gc_runner->prev;
-		return ;
-	}
-	free(gc_runner);
-	gc_runner = tmp;
-}
-
 void	ft_free_ptr(t_gc *gc, void *ptr_2_free)
 {
-	t_gc *gc_runner;
+	t_gc	**current;
+	t_gc	**tmp;
 
-	gc_runner = gc;
-	while(gc_runner && gc_runner->malloced_ptr != ptr_2_free)
-		gc_runner = gc_runner->next;
-	if(!gc_runner)
-		printf("Cannot find pointer in gc");
-	else
-		cut_and_join(gc_runner);
+	current = &gc;
+	while(*current && (*current)->malloced_ptr != ptr_2_free)
+		current = &(*current)->next;
+	if(!*current)
+		return ;
+	tmp = current;
+	*current = (*current)->next;
+	free((*tmp)->malloced_ptr);
+	free(*tmp);
 }
 
-void	ft_free(t_gc *gc, void *ptr_2_free)
+void	ft_free_gc(t_gc *gc)
 {
     t_gc *tmp;
 
-    tmp = NULL;
-    if(!ptr_2_free)
+    while (gc)
     {
-	    while (gc)
-	    {
-	        free(gc->malloced_ptr);
-	        tmp = gc->next;
-	        free(gc);
-	        gc = tmp;
-		}
-		return ;
-    }
-    else
-    	ft_free_ptr(gc, ptr_2_free);
+	    free(gc->malloced_ptr);
+	    tmp = gc->next;
+	    free(gc);
+	    gc = tmp;
+	}
 }
 
 void    *ft_malloc(t_cube *cube, int size)
@@ -88,9 +60,5 @@ void    *ft_malloc(t_cube *cube, int size)
     gc_new_node->malloced_ptr = ptr_2_malloc;
     gc_new_node->next = cube->gc;
     cube->gc = gc_new_node;
-    if(!cube->gc)
-    	gc_new_node->prev = NULL;
-    else
-    	gc_new_node->prev = cube->gc;
     return (ptr_2_malloc);
 }

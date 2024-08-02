@@ -37,21 +37,17 @@ typedef enum {
     CIELLING,
 } ColorIndex;
 
-typedef struct s_parse
+typedef struct s_lines
 {
-	char identifier[4];
-	int (*id_parse)(t_cube *cube, char *line);
-	int already_seen;
-	int	n_lines;
-	int max_line_size;
-	int	next_line_counter;
+	char			*line;
+	struct s_lines	*next;
 
-} t_parse;
+} t_lines;
 
 typedef struct s_cube
 {
-	t_parse *prs;
     t_gc	*gc;
+    t_lines *lines;
     char	*map_file;
 	int		**map;
 	char	paths[4][4096];
