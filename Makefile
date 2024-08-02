@@ -2,7 +2,7 @@ NAME = cub3D
 
 CC = clang
 
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g
 
 SRCS = 	main.c\
 		gc/gc.c\

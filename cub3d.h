@@ -48,6 +48,10 @@ typedef struct s_cube
 {
     t_gc	*gc;
     t_lines *lines;
+    int		spwan_x;
+    int		spwan_y;
+    int		map_h;
+    int		map_w;
     char	*map_file;
 	int		**map;
 	char	paths[4][4096];

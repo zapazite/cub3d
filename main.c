@@ -28,7 +28,7 @@ void	clean_exit(t_cube *cube, int error_type)
 {
 	//might be more error types int he future right?
 	if(error_type == ERR_PARSING)
-		printf("Parsing error!\n");
+		printf("Error\n");
 	else if(error_type == ERR_MALLOC)
 		printf("Malloc error!\n");
 	ft_free_gc(cube->gc);
@@ -126,7 +126,7 @@ int	check_rgb(t_cube *cube, char *line, int index)
 		cube->colors[index] = (cube->colors[index] << 8) | color_component;
 		while (ft_isdigit(line[i]))
 			i++;
-		if (line[i] == ',')
+		if(line[i] == ',' && color_count < 3)
 			i++;
 	}
 	return (1);
@@ -174,38 +174,104 @@ void	parse_parameter(t_cube *cube, int fd)
 
 void	add_line(t_cube *cube, char *line)
 {
-	cube->lines->line = line;
-	cube->lines->
+	t_lines *new_node;
+	int		i;
+
+	i = 0;
+	new_node = ft_malloc(cube, sizeof(t_lines));
+	new_node->line = line;
+	new_node->next = cube->lines;
+	cube->lines = new_node;
+}
+
+void	check_line(t_cube *cube, int *i, char *line)
+{
+	static int	spwan_flag;
+
+	if(line[0] == '\n')
+		clean_exit(cube, ERR_PARSING);
+	while(line[++(*i)] != '\n' && line[(*i)] != '\0')
+	{
+		if(line[(*i)] == 'N'|| line[(*i)] == 'S'|| line[(*i)] == 'W'|| line[(*i)] == 'E')
+		{
+			if(spwan_flag++)
+				clean_exit(cube, ERR_PARSING);
+		}
+		else if(line[(*i)] != '0' && line[(*i)] != '1' && line[(*i)] != ' ')
+			clean_exit(cube, ERR_PARSING);
+	}
+}
+
+void	fill_map(t_cube *cube)
+{
+	int	i;
+	int	j;
+
+	i = cube->map_h;
+	cube->map = (int **)ft_malloc(cube, sizeof(int*) * cube->map_h);
+	while(i--)
+	{
+		j = -1;
+		cube->map[i] = (int*)ft_malloc(cube, sizeof(int) * cube->map_w);
+		while(++j < (int)ft_strlen(cube->lines->line))
+		{
+			cube->map[i][j] = cube->lines->line[j];
+			if(cube->map[i][j] == 'N'|| cube->map[i][j] == 'S'|| cube->map[i][j] == 'W'|| cube->map[i][j] == 'E')
+			{
+				cube->spwan_x = i;
+				cube->spwan_y = j;
+			}
+		}
+		while(j < cube->map_w)
+			cube->map[i][j++] = ' ';
+		cube->lines = cube->lines->next;
+	}
+	// for (int i = 0; i < cube->map_h; i++)
+ //  	{
+ //  		for (int j = 0; j < cube->map_w; j++)
+ //    		printf("%c", cube->map[i][j]);
+ //    printf("\n");
+ //   }
+}
+
+void 	valid_spawn(t_cube *cube, int x, int y)
+{
+	if(x >= cube->map_h || x < 0 || y < 0 || y >= cube->map_w || cube->map[x][y] == ' ')
+		clean_exit(cube, ERR_PARSING);
+	if(cube->map[x][y] == '1' || cube->map[x][y] == '!')
+		return ;
+	cube->map[x][y] = '!';
+	valid_spawn(cube, x - 1, y);
+	valid_spawn(cube, x + 1, y);
+	valid_spawn(cube, x, y - 1);
+	valid_spawn(cube, x, y + 1);
 }
 
 void	parse_map(t_cube *cube, int fd)
 {
 	char			*line;
 	int				i;
-	static int		ensw[4];
 
 	line = get_next_line(cube, fd);
-	i = -1;
+	if(!line)
+		clean_exit(cube, ERR_PARSING);
 	while(line[0] == '\n')
 		line = get_next_line(cube, fd);
 	while(line)
 	{
-		if(line[0] == '\n')
-			clean_exit(cube, ERR_PARSING);
-		while (line[++i] != '\n' && line[i] != '\0')
-		{
-			if(line[i] == 'N'|| line[i] == 'S'|| line[i] == 'W'|| line[i] == 'E')
-			{
-				if(ensw[(line[i] - 69) / 5]++)
-					clean_exit(cube, ERR_PARSING);
-			}
-			else if(line[i] != '0' && line[i] != '1' && line[i] != ' ')
-				clean_exit(cube, ERR_PARSING);
-		}
+		i = -1;
+		check_line(cube, &i, line);
 		line[i] = '\0';
+		if((int)ft_strlen(line) > cube->map_w)
+			cube->map_w = (int)ft_strlen(line);
 		add_line(cube, line);
+		cube->map_h++;
+		line = get_next_line(cube, fd);
 	}
+	fill_map(cube);
+	valid_spawn(cube, cube->spwan_x, cube->spwan_y);
 }
+
 
 void	parse(t_cube *cube)
 {
@@ -224,14 +290,15 @@ void cube_init(t_cube *cube, char *map_file)
 
 	i = -1;
 	cube->gc = NULL;
-	cube->lines = ft_malloc(cube, sizeof(t_lines));
+	cube->map_h = 0;
+	cube->map_w = 0;
+	cube->lines = NULL;
 	cube->map_file = map_file;
 	while(++i < 2)
 		cube->colors[i] = -1;
 	i = -1;
 	while(++i < 4)
 		cube->paths[i][0] = '\0';
-
 }
 
 int	main(int argc, char *argv[])
