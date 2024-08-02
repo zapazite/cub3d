@@ -175,9 +175,7 @@ void	parse_parameter(t_cube *cube, int fd)
 void	add_line(t_cube *cube, char *line)
 {
 	t_lines *new_node;
-	int		i;
 
-	i = 0;
 	new_node = ft_malloc(cube, sizeof(t_lines));
 	new_node->line = line;
 	new_node->next = cube->lines;
@@ -186,15 +184,16 @@ void	add_line(t_cube *cube, char *line)
 
 void	check_line(t_cube *cube, int *i, char *line)
 {
-	static int	spwan_flag;
+	int spawn_flag;
 
+	spawn_flag = 0;
 	if(line[0] == '\n')
 		clean_exit(cube, ERR_PARSING);
 	while(line[++(*i)] != '\n' && line[(*i)] != '\0')
 	{
 		if(line[(*i)] == 'N'|| line[(*i)] == 'S'|| line[(*i)] == 'W'|| line[(*i)] == 'E')
 		{
-			if(spwan_flag++)
+			if(spawn_flag++)
 				clean_exit(cube, ERR_PARSING);
 		}
 		else if(line[(*i)] != '0' && line[(*i)] != '1' && line[(*i)] != ' ')
@@ -218,20 +217,14 @@ void	fill_map(t_cube *cube)
 			cube->map[i][j] = cube->lines->line[j];
 			if(cube->map[i][j] == 'N'|| cube->map[i][j] == 'S'|| cube->map[i][j] == 'W'|| cube->map[i][j] == 'E')
 			{
-				cube->spwan_x = i;
-				cube->spwan_y = j;
+				cube->spawn_x = i;
+				cube->spawn_y = j;
 			}
 		}
 		while(j < cube->map_w)
 			cube->map[i][j++] = ' ';
 		cube->lines = cube->lines->next;
 	}
-	// for (int i = 0; i < cube->map_h; i++)
- //  	{
- //  		for (int j = 0; j < cube->map_w; j++)
- //    		printf("%c", cube->map[i][j]);
- //    printf("\n");
- //   }
 }
 
 void 	valid_spawn(t_cube *cube, int x, int y)
@@ -269,7 +262,9 @@ void	parse_map(t_cube *cube, int fd)
 		line = get_next_line(cube, fd);
 	}
 	fill_map(cube);
-	valid_spawn(cube, cube->spwan_x, cube->spwan_y);
+	if(cube->spawn_x == -1)
+		clean_exit(cube, ERR_PARSING);
+	valid_spawn(cube, cube->spawn_x, cube->spawn_y);
 }
 
 
@@ -282,6 +277,12 @@ void	parse(t_cube *cube)
 	parse_parameter(cube, fd);
 	parse_map(cube, fd);
 	close (fd);
+	// for (int i = 0; i < cube->map_h; i++)
+	// {
+ //  			for (int j = 0; j < cube->map_w; j++)
+ //    			printf("%c", cube->map[i][j]);
+ //    	printf("\n");
+ //   	}
 }
 
 void cube_init(t_cube *cube, char *map_file)
@@ -293,6 +294,8 @@ void cube_init(t_cube *cube, char *map_file)
 	cube->map_h = 0;
 	cube->map_w = 0;
 	cube->lines = NULL;
+	cube->spawn_x = -1;
+	cube->spawn_y = -1;
 	cube->map_file = map_file;
 	while(++i < 2)
 		cube->colors[i] = -1;
@@ -306,7 +309,7 @@ int	main(int argc, char *argv[])
 	t_cube cube;
 
 	if (argc != 2)
-		return (write(1, "Error\n", 6), 1); //great success right?
+		return (write(1, "Error\n", 6), 1);
 	cube_init(&cube, argv[1]);
 	parse(&cube);
 	ft_free_gc(cube.gc);
