@@ -34,13 +34,18 @@ void	parse_map(t_cube *cube, int fd)
 		line = get_next_line(cube, fd);
 	}
 	fill_map(cube);
+	cube->min_x = cube->map_h;
+	cube->min_y = cube->map_w;
 	check_spawn(cube, cube->spawn_x, cube->spawn_y);
+	cube->spawn_x -= cube->min_x;
+	cube->spawn_y -= cube->min_y;
 	// for (int i = 0; i < cube->map_h; i++)
 	//  	{
 	//  		for (int j = 0; j < cube->map_w; j++)
 	//    		printf("%c", cube->map[i][j]);
 	//    printf("\n");
 	//   }
+	// exit(0);
 }
 
 void	fill_map(t_cube *cube)

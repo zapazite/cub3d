@@ -108,11 +108,35 @@ void	check_line(t_cube *cube, int *i, char *line)
 
 void	check_spawn(t_cube *cube, int x, int y)
 {
+	// printf("min x %d\n", cube->min_x);
+	// printf("max x %d\n", cube->max_x);
+	// printf("min y %d\n", cube->min_y);
+	// printf("max y %d\n", cube->max_y);
 	if (x >= cube->map_h || x < 0 || y < 0 || y >= cube->map_w
 		|| cube->map[x][y] == ' ')
 		clean_exit(cube, ERR_PARSING);
-	if (cube->map[x][y] == '1' || cube->map[x][y] == '!')
+
+	if(cube->max_x < x)
+		cube->max_x = x;
+
+	if(cube->min_x > x)
+		cube->min_x = x;
+
+	if(cube->max_y < y)
+		cube->max_y = y;
+
+	if(cube->min_y > y)
+		cube->min_y = y;
+
+	if (cube->map[x][y] == '1')
+	{
+		cube->map[x][y] = '#';
+		return;
+	}
+	if(cube->map[x][y] == '!' || cube->map[x][y] == '#')
+	{
 		return ;
+	}
 	cube->map[x][y] = '!';
 	check_spawn(cube, x - 1, y);
 	check_spawn(cube, x + 1, y);

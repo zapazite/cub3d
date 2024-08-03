@@ -25,6 +25,7 @@ void draw_player(t_cube *cube, int i , int j, int pixel_size, int color)
 {
 	int x = pixel_size;
 	int y = pixel_size;
+
 	float radius = pixel_size / 2.0;
 	while(x--)
 	{
@@ -41,6 +42,7 @@ void draw_square(t_cube *cube, int i , int j, int pixel_size, int color)
 {
 	int x = pixel_size;
 	int y = pixel_size;
+
 	while(x--)
 	{
 		y = pixel_size;
@@ -51,17 +53,19 @@ void draw_square(t_cube *cube, int i , int j, int pixel_size, int color)
 
 void draw_minimap(t_cube *cube)
 {
-	int i = cube->map_h;
+	int i;
 	int j;
-	while(i--)
+
+	i = cube->max_x + 1;
+	while(i-- > cube->min_x)
 	{
-		j = cube->map_w;
-		while(j--)
+		j = cube->max_y + 1;
+		while(j-- > cube->min_y)
 		{
-			if(cube->map[i][j] == '0')
-				draw_square(cube, i*MINIMAP_SCALE, j*MINIMAP_SCALE, MINIMAP_SCALE, 0x0066b2);
-			else if(cube->map[i][j] == '1' || cube->map[i][j] == '!')
-				draw_square(cube, i*MINIMAP_SCALE, j*MINIMAP_SCALE, MINIMAP_SCALE, 0x990000);
+			if(cube->map[i][j] == '!')
+				draw_square(cube, (i - cube->min_x)*MINIMAP_SCALE, (j - cube->min_y)*MINIMAP_SCALE, MINIMAP_SCALE, 0x0066b2);
+			else if(cube->map[i][j] == '#')
+				draw_square(cube, (i - cube->min_x)*MINIMAP_SCALE, (j - cube->min_y)*MINIMAP_SCALE, MINIMAP_SCALE, 0x990000);
 		}
 	}
 }
@@ -70,6 +74,9 @@ int put_image(t_cube *cube)
 {
 	draw_minimap(cube);
 	draw_player(cube, cube->spawn_x*MINIMAP_SCALE, cube->spawn_y*MINIMAP_SCALE, cube->pixel_bits, 0x46eb34);
+	printf("pos x %f\n", cube->spawn_x);
+	printf("pos y %f\n", cube->spawn_y);
+
 	mlx_put_image_to_window(cube->mlx_ptr, cube->win_ptr, cube->image, 0, 0);
 	return 0;
 }
@@ -78,7 +85,7 @@ void display_mini_map(t_cube *cube)
 {
 	cube->mlx_ptr = mlx_init();
 	cube->win_ptr = mlx_new_window(cube->mlx_ptr, 1920, 1080, "diplsay mini_map");
-	cube->image = mlx_new_image(cube->mlx_ptr, cube->map_w*MINIMAP_SCALE, cube->map_h*MINIMAP_SCALE);
+	cube->image = mlx_new_image(cube->mlx_ptr, (cube->max_y - cube->min_y + 1)*MINIMAP_SCALE, (cube->max_x - cube->min_x + 1)*MINIMAP_SCALE);
 	cube->img_data = mlx_get_data_addr(cube->image, &cube->pixel_bits, &cube->size_line, &cube->endian);
 	mlx_hook(cube->win_ptr, KeyPress,KeyPressMask, move_player, cube);
 	mlx_loop_hook(cube->mlx_ptr, put_image, cube);

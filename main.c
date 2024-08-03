@@ -33,6 +33,8 @@ void	cube_init(t_cube *cube, char *map_file)
 
 	i = -1;
 	cube->gc = NULL;
+	cube->max_x = 0;
+	cube->max_y = 0;
 	cube->map_h = 0;
 	cube->map_w = 0;
 	cube->spawn_x = -1;
