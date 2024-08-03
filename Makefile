@@ -2,7 +2,9 @@ NAME = cub3D
 
 CC = clang
 
-CFLAGS = -Wall -Wextra -Werror
+LIBS = -L./minilibx-linux -lXext -lX11 -lm -lmlx_Linux
+
+CFLAGS = -Wall -Wextra -Werror -g
 
 SRCS = main.c\
        gc/gc.c\
@@ -10,7 +12,8 @@ SRCS = main.c\
        get_next_line/get_next_line_utils_bonus.c\
        map_parsing/checks.c\
        map_parsing/parse.c\
-       map_parsing/utils.c
+       map_parsing/utils.c\
+       display_mini_map.c
 
 OBJDIR = objs
 OBJS = $(patsubst %.c, $(OBJDIR)/%.o, $(notdir $(SRCS)))
@@ -21,7 +24,7 @@ $(OBJDIR):
 	mkdir -p $(OBJDIR)
 
 $(NAME): $(OBJDIR) $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $(NAME)
 
 $(OBJDIR)/%.o: %.c | $(OBJDIR)
 	$(CC) $(CFLAGS) -c $< -o $@

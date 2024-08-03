@@ -14,6 +14,8 @@
 # define CUB3D_H
 
 # include "gc/gc.h"
+# include <math.h>
+# include "minilibx-linux/mlx.h"
 # include "get_next_line/get_next_line_bonus.h"
 # include <fcntl.h>
 # include <unistd.h>
@@ -51,8 +53,10 @@ typedef struct s_cube
 {
 	t_gc			*gc;
 	t_lines			*lines;
-	int				spawn_x;
-	int				spawn_y;
+	void			*mlx_ptr;
+	void			*win_ptr;
+	float				spawn_x; //this will be position of player in map
+	float				spawn_y; //this will be position of player in map
 	int				map_h;
 	int				map_w;
 	char			*map_file;
@@ -77,4 +81,5 @@ size_t				ft_strlen(const char *s);
 int					ft_strncmp(const char *str1, const char *str2, size_t n);
 void				clean_exit(t_cube *cube, int error_type);
 int					ft_isdigit(int c);
+void				display_mini_map(t_cube *cube);
 #endif

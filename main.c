@@ -54,6 +54,7 @@ int	main(int argc, char *argv[])
 		return (write(1, "Error\n", 6), 1);
 	cube_init(&cube, argv[1]);
 	parse(&cube);
+	display_mini_map(&cube);
 	ft_free_gc(cube.gc);
 	return (0);
 }
