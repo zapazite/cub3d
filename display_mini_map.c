@@ -1,40 +1,8 @@
 #include "cub3d.h"
-#include "minilibx-linux/mlx.h"
-#include <X11/X.h>
-#include <X11/Xutil.h>
-#include <math.h>
-
-void display_square(void *mlx, void *winptr, int i , int j, int pixel_size, int color)
-{
-	int x = pixel_size;
-	int y = pixel_size;
-	while(x--)
-	{
-		y = pixel_size;
-		while(y--)
-			mlx_pixel_put(mlx, winptr, x + i, y + j, color);
-	}
-}
-
-void display_player(void *mlx, void *winptr, int i , int j, int pixel_size, int color)
-{
-	int x = pixel_size;
-	int y = pixel_size;
-	float radius = pixel_size / 2.0;
-	while(x--)
-	{
-		y = pixel_size;
-		while(y--)
-		{
-			if(pow(radius - x, 2) + pow(radius - y, 2) <= pow(radius, 2))
-				mlx_pixel_put(mlx, winptr, x + i, y + j, color);
-		}
-	}
-}
+#include "minilibx/mlx.h"
 
 int move_player(int keycode, t_cube *cube)
 {
-
 	if(keycode == XK_Left) //left arrow
 		cube->spawn_y -= 0.2;
 	else if(keycode == XK_Right) //right arrow
@@ -46,30 +14,74 @@ int move_player(int keycode, t_cube *cube)
 	return (0);
 }
 
-int render(t_cube *cube)
+void draw_pixel(t_cube *cube, int x, int y, int color)
 {
-	int i = cube->map_h;
-	int scale = 50;
-	while(i--)
+	int pixel_index = (x * cube->size_line) + (y * (cube->pixel_bits / 8));
+	cube->img_data[pixel_index] = color & 0xFF;
+    cube->img_data[pixel_index + 1] = (color >> 8) & 0xFF;
+    cube->img_data[pixel_index + 2] = (color >> 16) & 0xFF;
+}
+
+void draw_player(t_cube *cube, int i , int j, int pixel_size, int color)
+{
+	int x = pixel_size;
+	int y = pixel_size;
+	float radius = pixel_size / 2.0;
+	while(x--)
 	{
-		int j = cube->map_w;
-		while (j--)
+		y = pixel_size;
+		while(y--)
 		{
-			if(cube->map[i][j] == '1')
-				display_square(cube->mlx_ptr, cube->win_ptr, j*scale, i*scale, scale, 0x0066b2);
-			else if(cube->map[i][j] == '0' || cube->map[i][j] == '!')
-				display_square(cube->mlx_ptr, cube->win_ptr, j*scale, i*scale, scale, 0x00d43c);
+			if(pow(radius - x, 2) + pow(radius - y, 2) <= pow(radius, 2))
+				draw_pixel(cube, x + i, y + j, color);
 		}
 	}
-	display_player(cube->mlx_ptr, cube->win_ptr, cube->spawn_y*scale, cube->spawn_x*scale, scale, 0x990000);
-	return (0);
+}
+
+void draw_square(t_cube *cube, int i , int j, int pixel_size, int color)
+{
+	int x = pixel_size;
+	int y = pixel_size;
+	while(x--)
+	{
+		y = pixel_size;
+		while(y--)
+			draw_pixel(cube, x + i, y + j, color);
+	}
+}
+
+void draw_minimap(t_cube *cube)
+{
+	int i = cube->map_h;
+	int j;
+	while(i--)
+	{
+		j = cube->map_w;
+		while(j--)
+		{
+			if(cube->map[i][j] == '0')
+				draw_square(cube, i*MINIMAP_SCALE, j*MINIMAP_SCALE, MINIMAP_SCALE, 0x0066b2);
+			else if(cube->map[i][j] == '1' || cube->map[i][j] == '!')
+				draw_square(cube, i*MINIMAP_SCALE, j*MINIMAP_SCALE, MINIMAP_SCALE, 0x990000);
+		}
+	}
+}
+
+int put_image(t_cube *cube)
+{
+	draw_minimap(cube);
+	draw_player(cube, cube->spawn_x*MINIMAP_SCALE, cube->spawn_y*MINIMAP_SCALE, cube->pixel_bits, 0x46eb34);
+	mlx_put_image_to_window(cube->mlx_ptr, cube->win_ptr, cube->image, 0, 0);
+	return 0;
 }
 
 void display_mini_map(t_cube *cube)
 {
 	cube->mlx_ptr = mlx_init();
 	cube->win_ptr = mlx_new_window(cube->mlx_ptr, 1920, 1080, "diplsay mini_map");
+	cube->image = mlx_new_image(cube->mlx_ptr, cube->map_w*MINIMAP_SCALE, cube->map_h*MINIMAP_SCALE);
+	cube->img_data = mlx_get_data_addr(cube->image, &cube->pixel_bits, &cube->size_line, &cube->endian);
 	mlx_hook(cube->win_ptr, KeyPress,KeyPressMask, move_player, cube);
-	mlx_loop_hook(cube->mlx_ptr, render, cube);
+	mlx_loop_hook(cube->mlx_ptr, put_image, cube);
 	mlx_loop(cube->mlx_ptr);
 }

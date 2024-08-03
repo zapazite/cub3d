@@ -15,12 +15,19 @@
 
 # include "gc/gc.h"
 # include <math.h>
-# include "minilibx-linux/mlx.h"
+# include "minilibx/mlx.h"
 # include "get_next_line/get_next_line_bonus.h"
 # include <fcntl.h>
 # include <unistd.h>
+# include <math.h>
+# include "minilibx/mlx.h"
+# include <X11/X.h>
+# include <X11/Xutil.h>
+# include <math.h>
 
 # define BUFFERSIZE 8192
+
+#define MINIMAP_SCALE 20
 
 typedef enum
 {
@@ -55,8 +62,14 @@ typedef struct s_cube
 	t_lines			*lines;
 	void			*mlx_ptr;
 	void			*win_ptr;
-	float				spawn_x; //this will be position of player in map
-	float				spawn_y; //this will be position of player in map
+	void			*image;
+	int				pixel_bits;
+	int				pixel_index;
+	int				size_line;
+	char			*img_data;
+	int				endian;
+	float			spawn_x; //this will be position of player in map
+	float			spawn_y; //this will be position of player in map
 	int				map_h;
 	int				map_w;
 	char			*map_file;
