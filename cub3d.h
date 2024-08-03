@@ -15,12 +15,12 @@
 
 # include "gc/gc.h"
 # include <math.h>
-# include "minilibx/mlx.h"
+# include "minilibx-linux/mlx.h"
 # include "get_next_line/get_next_line_bonus.h"
 # include <fcntl.h>
 # include <unistd.h>
 # include <math.h>
-# include "minilibx/mlx.h"
+# include "minilibx-linux/mlx.h"
 # include <X11/X.h>
 # include <X11/Xutil.h>
 # include <math.h>

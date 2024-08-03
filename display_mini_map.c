@@ -1,5 +1,4 @@
 #include "cub3d.h"
-#include "minilibx/mlx.h"
 
 int move_player(int keycode, t_cube *cube)
 {

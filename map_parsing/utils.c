@@ -66,9 +66,7 @@ int	rgb_atoi(const char *nptr)
 void	add_line(t_cube *cube, char *line)
 {
 	t_lines	*new_node;
-	int		i;
 
-	i = 0;
 	new_node = ft_malloc(cube, sizeof(t_lines));
 	new_node->line = line;
 	new_node->next = cube->lines;
