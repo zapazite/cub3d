@@ -41,7 +41,7 @@ int move_player(int keycode, t_cube *cube)
 		cube->spawn_y += 0.2;
 	else if(keycode == XK_Up) //up arrow
 		cube->spawn_x -= 0.2;
-	else if(keycode == XK_Down) //down arrow
+	else if(keycode == XK_Down) //down arro
 		cube->spawn_x += 0.2;
 	return (0);
 }
