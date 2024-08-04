@@ -1,7 +1,20 @@
 #include "cub3d.h"
 
+// int check_player_position(t_cube *cube)
+// {
+// 	//what are coordinates of the walls?
+// 	//check that the position of the centre of the player is not bigger than those coordinate
+// 	if(cube->spawn_x < cube->min_x)
+// 		return (1);
+// 	// if(cube->spawn_y <= cube->min_y || cube->spawn_y >= cube->max_y)
+// 	// 	return (1);
+// 	return (0);
+// }
+
 int move_player(int keycode, t_cube *cube)
 {
+	// if(check_player_position(cube))
+	// 	return 0;
 	if(keycode == XK_Left) //left arrow
 		cube->spawn_y -= 0.2;
 	else if(keycode == XK_Right) //right arrow
@@ -21,51 +34,53 @@ void draw_pixel(t_cube *cube, int x, int y, int color)
     cube->img_data[pixel_index + 2] = (color >> 16) & 0xFF;
 }
 
-void draw_player(t_cube *cube, int i , int j, int pixel_size, int color)
+void draw_player(t_cube *cube, int color)
 {
-	int x = pixel_size;
-	int y = pixel_size;
+	int		x;
+	int		y;
 
-	float radius = pixel_size / 2.0;
+	x = cube->pixel_bits;
+	y = cube->pixel_bits;
+	cube->radius = cube->pixel_bits / 2.0;
 	while(x--)
 	{
-		y = pixel_size;
+		y = cube->pixel_bits;
 		while(y--)
-		{
-			if(pow(radius - x, 2) + pow(radius - y, 2) <= pow(radius, 2))
-				draw_pixel(cube, x + i, y + j, color);
-		}
+			if(pow(cube->radius - x, 2) + pow(cube->radius - y, 2) <= pow(cube->radius, 2))
+				draw_pixel(cube, x + cube->spawn_x*MINIMAP_SCALE, y + cube->spawn_y*MINIMAP_SCALE, color);
 	}
 }
 
-void draw_square(t_cube *cube, int i , int j, int pixel_size, int color)
+void draw_square(t_cube *cube, int x_scaled , int y_scaled, int color)
 {
-	int x = pixel_size;
-	int y = pixel_size;
+	int pixel_size_x;
+	int pixel_size_y;
 
-	while(x--)
+	pixel_size_x = MINIMAP_SCALE;
+	pixel_size_y = MINIMAP_SCALE;
+	while(pixel_size_x--)
 	{
-		y = pixel_size;
-		while(y--)
-			draw_pixel(cube, x + i, y + j, color);
+		pixel_size_y = MINIMAP_SCALE;
+		while(pixel_size_y--)
+			draw_pixel(cube, pixel_size_x + x_scaled, pixel_size_y + y_scaled, color);
 	}
 }
 
 void draw_minimap(t_cube *cube)
 {
-	int i;
-	int j;
+	int x;
+	int y;
 
-	i = cube->max_x + 1;
-	while(i-- > cube->min_x)
+	x = cube->max_x + 1;
+	while(x-- > cube->min_x)
 	{
-		j = cube->max_y + 1;
-		while(j-- > cube->min_y)
+		y = cube->max_y + 1;
+		while(y-- > cube->min_y)
 		{
-			if(cube->map[i][j] == '!')
-				draw_square(cube, (i - cube->min_x)*MINIMAP_SCALE, (j - cube->min_y)*MINIMAP_SCALE, MINIMAP_SCALE, 0x0066b2);
-			else if(cube->map[i][j] == '#')
-				draw_square(cube, (i - cube->min_x)*MINIMAP_SCALE, (j - cube->min_y)*MINIMAP_SCALE, MINIMAP_SCALE, 0x990000);
+			if(cube->map[x][y] == '!')
+				draw_square(cube, (x - cube->min_x)*MINIMAP_SCALE, (y - cube->min_y)*MINIMAP_SCALE, 0x0066b2);
+			else if(cube->map[x][y] == '#')
+				draw_square(cube, (x - cube->min_x)*MINIMAP_SCALE, (y - cube->min_y)*MINIMAP_SCALE, 0x990000);
 		}
 	}
 }
@@ -73,10 +88,8 @@ void draw_minimap(t_cube *cube)
 int put_image(t_cube *cube)
 {
 	draw_minimap(cube);
-	draw_player(cube, cube->spawn_x*MINIMAP_SCALE, cube->spawn_y*MINIMAP_SCALE, cube->pixel_bits, 0x46eb34);
-	printf("pos x %f\n", cube->spawn_x);
-	printf("pos y %f\n", cube->spawn_y);
-
+	// if(check_player_position(cube) == 0)
+		draw_player(cube, 0x46eb34);
 	mlx_put_image_to_window(cube->mlx_ptr, cube->win_ptr, cube->image, 0, 0);
 	return 0;
 }
@@ -84,7 +97,7 @@ int put_image(t_cube *cube)
 void display_mini_map(t_cube *cube)
 {
 	cube->mlx_ptr = mlx_init();
-	cube->win_ptr = mlx_new_window(cube->mlx_ptr, 1920, 1080, "diplsay mini_map");
+	cube->win_ptr = mlx_new_window(cube->mlx_ptr, WINDOW_W, WINDOW_H, "diplsay mini_map");
 	cube->image = mlx_new_image(cube->mlx_ptr, (cube->max_y - cube->min_y + 1)*MINIMAP_SCALE, (cube->max_x - cube->min_x + 1)*MINIMAP_SCALE);
 	cube->img_data = mlx_get_data_addr(cube->image, &cube->pixel_bits, &cube->size_line, &cube->endian);
 	mlx_hook(cube->win_ptr, KeyPress,KeyPressMask, move_player, cube);

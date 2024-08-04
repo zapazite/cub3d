@@ -26,8 +26,10 @@
 # include <math.h>
 
 # define BUFFERSIZE 8192
+# define MINIMAP_SCALE 20
+# define WINDOW_H  500
+# define WINDOW_W  500
 
-#define MINIMAP_SCALE 20
 
 typedef enum
 {
@@ -60,10 +62,11 @@ typedef struct s_cube
 {
 	t_gc			*gc;
 	t_lines			*lines;
-	int				min_x;
-	int				max_x;
-	int				min_y;
-	int				max_y;
+	float			radius;
+	float			min_x;
+	float			max_x;
+	float			min_y;
+	float			max_y;
 	void			*mlx_ptr;
 	void			*win_ptr;
 	void			*image;
