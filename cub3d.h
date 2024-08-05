@@ -60,13 +60,15 @@ typedef struct s_lines
 
 typedef struct s_cube
 {
+	int				n_map_size_x;
+	int				n_map_size_y;
 	t_gc			*gc;
 	t_lines			*lines;
 	float			radius;
-	float			min_x;
-	float			max_x;
-	float			min_y;
-	float			max_y;
+	int				min_x;
+	int				max_x;
+	int				min_y;
+	int				max_y;
 	void			*mlx_ptr;
 	void			*win_ptr;
 	void			*image;
@@ -81,6 +83,7 @@ typedef struct s_cube
 	int				map_w;
 	char			*map_file;
 	int				**map;
+	int				**new_map;
 	char			paths[4][4096];
 	int				colors[2];
 }					t_cube;

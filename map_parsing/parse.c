@@ -39,13 +39,6 @@ void	parse_map(t_cube *cube, int fd)
 	check_spawn(cube, cube->spawn_x, cube->spawn_y);
 	cube->spawn_x -= cube->min_x;
 	cube->spawn_y -= cube->min_y;
-	// for (int i = 0; i < cube->map_h; i++)
-	//  	{
-	//  		for (int j = 0; j < cube->map_w; j++)
-	//    		printf("%c", cube->map[i][j]);
-	//    printf("\n");
-	//   }
-	// exit(0);
 }
 
 void	fill_map(t_cube *cube)

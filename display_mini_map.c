@@ -1,28 +1,36 @@
 #include "cub3d.h"
 
-// int check_player_position(t_cube *cube)
-// {
-// 	//what are coordinates of the walls?
-// 	//check that the position of the centre of the player is not bigger than those coordinate
-// 	if(cube->spawn_x < cube->min_x)
-// 		return (1);
-// 	// if(cube->spawn_y <= cube->min_y || cube->spawn_y >= cube->max_y)
-// 	// 	return (1);
-// 	return (0);
-// }
+int check_player_position(float player_x, float player_y, t_cube *cube)
+{
+	printf("position char %c\n", cube->new_map[(int)(player_x)][(int)(player_y)]);
+	printf("player x %d\n", (int)(player_x));
+	printf("player y %d\n", (int)(player_y));
+	if(cube->new_map[(int)(player_x)][(int)(player_y)] == '#')
+		return (0);
+	return (1);
+}
 
 int move_player(int keycode, t_cube *cube)
 {
-	// if(check_player_position(cube))
-	// 	return 0;
+	float move_x;
+	float move_y;
+
+	move_x = cube->spawn_x;
+	move_y = cube->spawn_y;
+
 	if(keycode == XK_Left) //left arrow
-		cube->spawn_y -= 0.2;
+		move_y -= 0.2;
 	else if(keycode == XK_Right) //right arrow
-		cube->spawn_y += 0.2;
+		move_y += 0.2;
 	else if(keycode == XK_Up) //up arrow
-		cube->spawn_x -= 0.2;
+		move_x -= 0.2;
 	else if(keycode == XK_Down) //down arrow
-		cube->spawn_x += 0.2;
+		move_x += 0.2;
+	if(check_player_position(move_x, move_y, cube))
+	{
+		cube->spawn_x = move_x;
+		cube->spawn_y = move_y;
+	}
 	return (0);
 }
 
@@ -39,15 +47,14 @@ void draw_player(t_cube *cube, int color)
 	int		x;
 	int		y;
 
-	x = cube->pixel_bits;
-	y = cube->pixel_bits;
-	cube->radius = cube->pixel_bits / 2.0;
+	x = MINIMAP_SCALE;
+	cube->radius = MINIMAP_SCALE / 2.0;
 	while(x--)
 	{
-		y = cube->pixel_bits;
+		y = MINIMAP_SCALE;
 		while(y--)
 			if(pow(cube->radius - x, 2) + pow(cube->radius - y, 2) <= pow(cube->radius, 2))
-				draw_pixel(cube, x + cube->spawn_x*MINIMAP_SCALE, y + cube->spawn_y*MINIMAP_SCALE, color);
+				draw_pixel(cube, x + (cube->spawn_x - 0.5)*MINIMAP_SCALE, y + (cube->spawn_y - 0.5)*MINIMAP_SCALE, color);
 	}
 }
 
@@ -68,19 +75,19 @@ void draw_square(t_cube *cube, int x_scaled , int y_scaled, int color)
 
 void draw_minimap(t_cube *cube)
 {
-	int x;
-	int y;
+	int x = 0;
+	int y = 0;
 
-	x = cube->max_x + 1;
-	while(x-- > cube->min_x)
+	x = cube->n_map_size_x;
+	while(x-- > 0)
 	{
-		y = cube->max_y + 1;
-		while(y-- > cube->min_y)
+		y = cube->n_map_size_y;
+		while(y-- > 0)
 		{
-			if(cube->map[x][y] == '!')
-				draw_square(cube, (x - cube->min_x)*MINIMAP_SCALE, (y - cube->min_y)*MINIMAP_SCALE, 0x0066b2);
-			else if(cube->map[x][y] == '#')
-				draw_square(cube, (x - cube->min_x)*MINIMAP_SCALE, (y - cube->min_y)*MINIMAP_SCALE, 0x990000);
+			if(cube->new_map[x][y] == '!')
+				draw_square(cube, x*MINIMAP_SCALE, y*MINIMAP_SCALE, 0x0066b2);
+			else if(cube->new_map[x][y] == '#')
+				draw_square(cube, x*MINIMAP_SCALE, y*MINIMAP_SCALE, 0x990000);
 		}
 	}
 }
@@ -88,17 +95,50 @@ void draw_minimap(t_cube *cube)
 int put_image(t_cube *cube)
 {
 	draw_minimap(cube);
-	// if(check_player_position(cube) == 0)
-		draw_player(cube, 0x46eb34);
+	draw_player(cube, 0x46eb34);
 	mlx_put_image_to_window(cube->mlx_ptr, cube->win_ptr, cube->image, 0, 0);
 	return 0;
 }
 
+void copy_player_map(t_cube *cube)
+{
+	int	j;
+	int new_x;
+	int new_y;
+
+	new_x = 0;
+	new_y = 0;
+	cube->n_map_size_x = (cube->max_x - cube->min_x) + 1;
+	cube->n_map_size_y = (cube->max_y - cube->min_y) + 1;
+	cube->new_map = (int **)ft_malloc(cube, sizeof(int *) * cube->n_map_size_x);
+	while(cube->min_x <= cube->max_x)
+	{
+		cube->new_map[new_x] = (int *)ft_malloc(cube, sizeof(int) * cube->n_map_size_y);
+		j = cube->min_y;
+		new_y = 0;
+		while(j <= cube->max_y)
+		{
+			cube->new_map[new_x][new_y] = cube->map[cube->min_x][j];
+			j++;
+			new_y++;
+		}
+		new_x++;
+		cube->min_x++;
+	}
+}
+
 void display_mini_map(t_cube *cube)
 {
+	copy_player_map(cube); //copy old map into new small one;
+	for (int i = 0; i < cube->n_map_size_x; i++)
+	{
+	 	for (int j = 0; j < cube->n_map_size_y; j++)
+			printf("%c", cube->new_map[i][j]);
+		printf("\n");
+	}
 	cube->mlx_ptr = mlx_init();
 	cube->win_ptr = mlx_new_window(cube->mlx_ptr, WINDOW_W, WINDOW_H, "diplsay mini_map");
-	cube->image = mlx_new_image(cube->mlx_ptr, (cube->max_y - cube->min_y + 1)*MINIMAP_SCALE, (cube->max_x - cube->min_x + 1)*MINIMAP_SCALE);
+	cube->image = mlx_new_image(cube->mlx_ptr, cube->n_map_size_y*MINIMAP_SCALE, cube->n_map_size_x*MINIMAP_SCALE);
 	cube->img_data = mlx_get_data_addr(cube->image, &cube->pixel_bits, &cube->size_line, &cube->endian);
 	mlx_hook(cube->win_ptr, KeyPress,KeyPressMask, move_player, cube);
 	mlx_loop_hook(cube->mlx_ptr, put_image, cube);
