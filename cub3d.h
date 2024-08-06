@@ -29,6 +29,7 @@
 # define MINIMAP_SCALE 20
 # define WINDOW_H  500
 # define WINDOW_W  500
+# define PI 3.1415926535
 
 typedef union {
     int32_t i;     // 32-bit integer representing the fixed-point number
@@ -96,6 +97,13 @@ typedef struct s_cube
 	float			radius;
 	float			player_x;
 	float			player_y;
+	float			player_dx;
+	float			player_dy;
+	float			player_angle;
+	int				rotated_x;
+	int				rotated_y;
+	int				dx_rot;
+	int				dy_rot;
 	int				map_h;
 	int				map_w;
 	int				**map;
