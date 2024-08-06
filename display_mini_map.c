@@ -1,15 +1,16 @@
 #include "cub3d.h"
+#include <unistd.h>
 
 int check_player_position(float player_x, float player_y, t_cube *cube)
 {
 	//this code needs to be rewritten
-	if(cube->new_map[(int)((player_x + (cube->radius / (MINIMAP_SCALE))))][(int)((player_y + (cube->radius / (MINIMAP_SCALE))))] == '#')
+	if(cube->map[(int)((player_x + (cube->radius / (MINIMAP_SCALE))))][(int)((player_y + (cube->radius / (MINIMAP_SCALE))))] == '#')
 		return (0);
-	if(cube->new_map[(int)((player_x - (cube->radius / (MINIMAP_SCALE))))][(int)((player_y + (cube->radius / (MINIMAP_SCALE))))] == '#')
+	if(cube->map[(int)((player_x - (cube->radius / (MINIMAP_SCALE))))][(int)((player_y + (cube->radius / (MINIMAP_SCALE))))] == '#')
 		return (0);
-	if(cube->new_map[(int)((player_x + (cube->radius / (MINIMAP_SCALE))))][(int)((player_y - (cube->radius / (MINIMAP_SCALE))))] == '#')
+	if(cube->map[(int)((player_x + (cube->radius / (MINIMAP_SCALE))))][(int)((player_y - (cube->radius / (MINIMAP_SCALE))))] == '#')
 		return (0);
-	if(cube->new_map[(int)((player_x - (cube->radius / (MINIMAP_SCALE))))][(int)((player_y - (cube->radius / (MINIMAP_SCALE))))] == '#')
+	if(cube->map[(int)((player_x - (cube->radius / (MINIMAP_SCALE))))][(int)((player_y - (cube->radius / (MINIMAP_SCALE))))] == '#')
 		return (0);
 	return (1);
 }
@@ -25,13 +26,13 @@ int move_player(int keycode, t_cube *cube)
 	printf("x %f\n", cube->spawn_x);
 	printf("y %f\n", cube->spawn_y);
 	if(keycode == XK_Left) //left arrow
-		move_y -= 0.1;
+		move_y -= 0.3;
 	else if(keycode == XK_Right) //right arrow
-		move_y += 0.1;
+		move_y += 0.3;
 	else if(keycode == XK_Up) //up arrow
-		move_x -= 0.1;
+		move_x -= 0.3;
 	else if(keycode == XK_Down) //down arrow
-		move_x += 0.1;
+		move_x += 0.3;
 	if(check_player_position(move_x, move_y, cube))
 	{
 		cube->spawn_x = move_x;
@@ -85,15 +86,15 @@ void draw_minimap(t_cube *cube)
 	int x = 0;
 	int y = 0;
 
-	x = cube->n_map_size_x;
+	x = cube->map_h;
 	while(x-- > 0)
 	{
-		y = cube->n_map_size_y;
+		y = cube->map_w;
 		while(y-- > 0)
 		{
-			if(cube->new_map[x][y] == '!')
+			if(cube->map[x][y] == '!')
 				draw_square(cube, x*MINIMAP_SCALE, y*MINIMAP_SCALE, 0x0066b2);
-			else if(cube->new_map[x][y] == '#')
+			else if(cube->map[x][y] == '#')
 				draw_square(cube, x*MINIMAP_SCALE, y*MINIMAP_SCALE, 0x990000);
 		}
 	}
@@ -109,28 +110,22 @@ int put_image(t_cube *cube)
 
 void copy_player_map(t_cube *cube)
 {
-	int	j;
-	int new_x;
-	int new_y;
+	int x;
+	int	y;
 
-	new_x = 0;
-	new_y = 0;
-	cube->n_map_size_x = (cube->max_x - cube->min_x) + 1;
-	cube->n_map_size_y = (cube->max_y - cube->min_y) + 1;
-	cube->new_map = (int **)ft_malloc(cube, sizeof(int *) * cube->n_map_size_x);
-	while(cube->min_x <= cube->max_x)
+	printf("min x %d\n", cube->prs->min_x);fflush(stdout);
+	printf("min y %d\n", cube->prs->min_y);fflush(stdout);
+	cube->map_w = (cube->prs->max_x - cube->prs->min_x) + 1;
+	cube->map_h = (cube->prs->max_y - cube->prs->min_y) + 1;
+
+	cube->map = (int **)ft_malloc(cube, sizeof(int *) *cube->map_h);
+	x = -1;
+	while(++x < cube->map_h)
 	{
-		cube->new_map[new_x] = (int *)ft_malloc(cube, sizeof(int) * cube->n_map_size_y);
-		j = cube->min_y;
-		new_y = 0;
-		while(j <= cube->max_y)
-		{
-			cube->new_map[new_x][new_y] = cube->map[cube->min_x][j];
-			j++;
-			new_y++;
-		}
-		new_x++;
-		cube->min_x++;
+		cube->map[x] = (int *)ft_malloc(cube, sizeof(int) * cube->map_w);
+		y = -1;
+		while(++y < cube->map_w)
+			cube->map[x][y] = cube->prs->prs_map[cube->prs->min_x + x][cube->prs->min_y + y];
 	}
 }
 
@@ -140,14 +135,14 @@ void display_mini_map(t_cube *cube)
 	// for (int i = 0; i < cube->n_map_size_x; i++)
 	// {
 	//  	for (int j = 0; j < cube->n_map_size_y; j++)
-	// 		printf("%c", cube->new_map[i][j]);
+	// 		printf("%c", cube->map[i][j]);
 	// 	printf("\n");
 	// }
 	cube->spawn_x += 0.5;
 	cube->spawn_y += 0.5;
 	cube->mlx_ptr = mlx_init();
 	cube->win_ptr = mlx_new_window(cube->mlx_ptr, WINDOW_W, WINDOW_H, "diplsay mini_map");
-	cube->image = mlx_new_image(cube->mlx_ptr, cube->n_map_size_y*MINIMAP_SCALE, cube->n_map_size_x*MINIMAP_SCALE);
+	cube->image = mlx_new_image(cube->mlx_ptr, cube->map_w*MINIMAP_SCALE, cube->map_h*MINIMAP_SCALE);
 	cube->img_data = mlx_get_data_addr(cube->image, &cube->pixel_bits, &cube->size_line, &cube->endian);
 	cube->radius = MINIMAP_SCALE / 2.0; //player size
 	mlx_hook(cube->win_ptr, KeyPress,KeyPressMask, move_player, cube);

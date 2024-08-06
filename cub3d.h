@@ -58,17 +58,23 @@ typedef struct s_lines
 
 }					t_lines;
 
-typedef struct s_cube
+typedef struct s_parse
 {
-	int				n_map_size_x;
-	int				n_map_size_y;
-	t_gc			*gc;
-	t_lines			*lines;
-	float			radius;
 	int				min_x;
 	int				max_x;
 	int				min_y;
 	int				max_y;
+	int				**prs_map;
+	char			*map_file;
+} t_parse;
+
+typedef struct s_cube
+{
+	t_gc			*gc;
+	t_lines			*lines;
+	float			radius;
+	t_parse			*prs;
+
 	void			*mlx_ptr;
 	void			*win_ptr;
 	void			*image;
@@ -77,13 +83,14 @@ typedef struct s_cube
 	int				size_line;
 	char			*img_data;
 	int				endian;
+
 	float			spawn_x; //this will be position of player in map
-	float			spawn_y; //this will be position of player in map
+	float			spawn_y;
+ //this will be position of player in map
 	int				map_h;
 	int				map_w;
-	char			*map_file;
+
 	int				**map;
-	int				**new_map;
 	char			paths[4][4096];
 	int				colors[2];
 }					t_cube;

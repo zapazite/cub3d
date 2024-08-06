@@ -109,24 +109,24 @@ void	check_line(t_cube *cube, int *i, char *line)
 void	check_spawn(t_cube *cube, int x, int y)
 {
 	if (x >= cube->map_h || x < 0 || y < 0 || y >= cube->map_w
-		|| cube->map[x][y] == ' ')
+		|| cube->prs->prs_map[x][y] == ' ')
 		clean_exit(cube, ERR_PARSING);
-	if(cube->max_x < x)
-		cube->max_x = x;
-	if(cube->min_x > x)
-		cube->min_x = x;
-	if(cube->max_y < y)
-		cube->max_y = y;
-	if(cube->min_y > y)
-		cube->min_y = y;
-	if (cube->map[x][y] == '1')
+	if(cube->prs->max_x < x)
+		cube->prs->max_x = x;
+	if(cube->prs->min_x > x)
+		cube->prs->min_x = x;
+	if(cube->prs->max_y < y)
+		cube->prs->max_y = y;
+	if(cube->prs->min_y > y)
+		cube->prs->min_y = y;
+	if (cube->prs->prs_map[x][y] == '1')
 	{
-		cube->map[x][y] = '#';
+		cube->prs->prs_map[x][y] = '#';
 		return;
 	}
-	if(cube->map[x][y] == '!' || cube->map[x][y] == '#')
+	if(cube->prs->prs_map[x][y] == '!' || cube->prs->prs_map[x][y] == '#')
 		return ;
-	cube->map[x][y] = '!';
+	cube->prs->prs_map[x][y] = '!';
 	check_spawn(cube, x - 1, y);
 	check_spawn(cube, x + 1, y);
 	check_spawn(cube, x, y - 1);
