@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: efaiz <efaiz@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mde-prin <mde-prin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 11:55:21 by efaiz             #+#    #+#             */
-/*   Updated: 2024/08/03 11:55:22 by efaiz            ###   ########.fr       */
+/*   Updated: 2024/08/06 11:53:22 by mde-prin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ void	parse_map(t_cube *cube, int fd)
 	cube->prs->min_x = cube->map_h;
 	cube->prs->min_y = cube->map_w;
 	check_spawn(cube, cube->spawn_x, cube->spawn_y);
+	printf(" min_y is %d \n" , cube->prs->min_y);
 	cube->spawn_x -= cube->prs->min_x;
 	cube->spawn_y -= cube->prs->min_y;
 }

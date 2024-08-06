@@ -113,11 +113,8 @@ void copy_player_map(t_cube *cube)
 	int x;
 	int	y;
 
-	printf("min x %d\n", cube->prs->min_x);fflush(stdout);
-	printf("min y %d\n", cube->prs->min_y);fflush(stdout);
-	cube->map_w = (cube->prs->max_x - cube->prs->min_x) + 1;
-	cube->map_h = (cube->prs->max_y - cube->prs->min_y) + 1;
-
+	cube->map_h = (cube->prs->max_x - cube->prs->min_x) + 1;
+	cube->map_w = (cube->prs->max_y - cube->prs->min_y) + 1;
 	cube->map = (int **)ft_malloc(cube, sizeof(int *) *cube->map_h);
 	x = -1;
 	while(++x < cube->map_h)
