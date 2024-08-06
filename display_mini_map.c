@@ -118,23 +118,21 @@ void draw_player(t_cube *cube, int color)
 	int		x;
 	int		y;
 
-	x = MINIMAP_SCALE;
-	while(x--)
+	x = -1;
+	while(++x < MINIMAP_SCALE)
 	{
-		y = MINIMAP_SCALE;
-		while(y--)
+		y = -1;
+		while(++y < MINIMAP_SCALE)
 		{
+			player_movement_calc(cube, x, y);
 			if(pow(cube->radius*MINIMAP_SCALE - x, 2) + pow(cube->radius*MINIMAP_SCALE - y, 2) <= pow(cube->radius*MINIMAP_SCALE, 2))
 			{
-				player_movement_calc(cube, x, y);
-                if (x < MINIMAP_SCALE / 2)
-                    draw_pixel(cube, cube->rotated_x + cube->player_x * MINIMAP_SCALE, cube->rotated_y + cube->player_y * MINIMAP_SCALE, 0xFFFFFF);
-                else
-                    draw_pixel(cube, cube->rotated_x + cube->player_x * MINIMAP_SCALE, cube->rotated_y + cube->player_y * MINIMAP_SCALE, color);
+				if(x >= MINIMAP_SCALE / 2)
+					color = 0xFFFFFF;
+				draw_pixel(cube, cube->rotated_x + cube->player_x * MINIMAP_SCALE, cube->rotated_y + cube->player_y * MINIMAP_SCALE, color);
 			}
 		}
 	}
-	draw_pixel(cube, (cube->player_x)*MINIMAP_SCALE, (cube->player_y)*MINIMAP_SCALE, 0xFF0000);
 }
 
 void draw_square(t_cube *cube, int x_scaled , int y_scaled, int color)
