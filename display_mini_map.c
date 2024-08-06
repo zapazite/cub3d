@@ -1,52 +1,83 @@
 #include "cub3d.h"
+#include "gc/gc.h"
+#include "minilibx-linux/mlx.h"
+#include <X11/Xutil.h>
+#include <math.h>
+#include <stdint.h>
 #include <unistd.h>
+
+// void bresenham_fixed_point(t_cube *cube,  int32_t slope)
+// {
+//     fixed_point f;
+//     fixed_point g;
+//     int			x;
+//     int			y;
+
+//     f.i = (int32_t)cube->player_y*MINIMAP_SCALE << 16;
+//     // Iterate through x coordinates from x1 to x2
+//     x = cube->player_x*MINIMAP_SCALE;
+//     y = cube->player_y*MINIMAP_SCALE;
+//     while(cube->map[(x / MINIMAP_SCALE)][(y / MINIMAP_SCALE)] != '#')
+//     {
+//     	draw_pixel(cube, x, y, 0xFFFFFF);
+//     }
+//     // for (x = x1; x <= x2; x++, f.i += m) {
+//     //     fixed_point g = f;
+//     //     g.i += 32767; // Add rounding adjustment
+
+//     //     // Check if the grid at (x, g.hi >> 16) is blocking
+//     //     if (grid[g.hi][x] == "#")
+//     //     {
+//     //         return;
+//     //     }
+//     // }
+// }
 
 int check_player_position(float player_x, float player_y, t_cube *cube)
 {
-	//this code needs to be rewritten
-	if(cube->map[(int)((player_x + (cube->radius / (MINIMAP_SCALE))))][(int)((player_y + (cube->radius / (MINIMAP_SCALE))))] == '#')
+	if(cube->map[(int)((player_x + cube->radius))][(int)((player_y + cube->radius))] == '#')
 		return (0);
-	if(cube->map[(int)((player_x - (cube->radius / (MINIMAP_SCALE))))][(int)((player_y + (cube->radius / (MINIMAP_SCALE))))] == '#')
+	if(cube->map[(int)((player_x + cube->radius))][(int)((player_y - cube->radius))] == '#')
 		return (0);
-	if(cube->map[(int)((player_x + (cube->radius / (MINIMAP_SCALE))))][(int)((player_y - (cube->radius / (MINIMAP_SCALE))))] == '#')
+	if(cube->map[(int)((player_x - cube->radius))][(int)((player_y + cube->radius))] == '#')
 		return (0);
-	if(cube->map[(int)((player_x - (cube->radius / (MINIMAP_SCALE))))][(int)((player_y - (cube->radius / (MINIMAP_SCALE))))] == '#')
+	if(cube->map[(int)((player_x - cube->radius))][(int)((player_y - cube->radius))] == '#')
 		return (0);
 	return (1);
 }
 
-int move_player(int keycode, t_cube *cube)
+void move_player(int keycode, t_cube *cube)
 {
 	float move_x;
 	float move_y;
 
-	move_x = cube->spawn_x;
-	move_y = cube->spawn_y;
-	//if it goes over the wall just move player to against the wall instead of resetting
-	printf("x %f\n", cube->spawn_x);
-	printf("y %f\n", cube->spawn_y);
+	//need to move player closer to the wall
+	move_x = cube->player_x;
+	move_y = cube->player_y;
 	if(keycode == XK_Left) //left arrow
-		move_y -= 0.3;
+		move_y -= 0.1;
 	else if(keycode == XK_Right) //right arrow
-		move_y += 0.3;
+		move_y += 0.1;
 	else if(keycode == XK_Up) //up arrow
-		move_x -= 0.3;
+		move_x -= 0.1;
 	else if(keycode == XK_Down) //down arrow
-		move_x += 0.3;
+		move_x += 0.1;
 	if(check_player_position(move_x, move_y, cube))
 	{
-		cube->spawn_x = move_x;
-		cube->spawn_y = move_y;
+		cube->player_x = move_x;
+		cube->player_y = move_y;
 	}
-	return (0);
 }
+
 
 void draw_pixel(t_cube *cube, int x, int y, int color)
 {
-	int pixel_index = (x * cube->size_line) + (y * (cube->pixel_bits / 8));
-	cube->img_data[pixel_index] = color & 0xFF;
-    cube->img_data[pixel_index + 1] = (color >> 8) & 0xFF;
-    cube->img_data[pixel_index + 2] = (color >> 16) & 0xFF;
+	int pixel_index;
+
+	pixel_index = (x * cube->mlx->size_line) + (y * (cube->mlx->pixel_bits / 8));
+	cube->mlx->img_data[pixel_index] = color & 0xFF;
+    cube->mlx->img_data[pixel_index + 1] = (color >> 8) & 0xFF;
+    cube->mlx->img_data[pixel_index + 2] = (color >> 16) & 0xFF;
 }
 
 void draw_player(t_cube *cube, int color)
@@ -59,10 +90,10 @@ void draw_player(t_cube *cube, int color)
 	{
 		y = MINIMAP_SCALE;
 		while(y--)
-			if(pow(cube->radius - x, 2) + pow(cube->radius - y, 2) <= pow(cube->radius, 2))
-				draw_pixel(cube, x + (cube->spawn_x - 0.5)*MINIMAP_SCALE, y + (cube->spawn_y - 0.5)*MINIMAP_SCALE, color);
+			if(pow(cube->radius*MINIMAP_SCALE - x, 2) + pow(cube->radius*MINIMAP_SCALE - y, 2) <= pow(cube->radius*MINIMAP_SCALE, 2))
+				draw_pixel(cube, x + (cube->player_x - cube->radius)*MINIMAP_SCALE, y + (cube->player_y - cube->radius)*MINIMAP_SCALE, color);
 	}
-	draw_pixel(cube, (cube->spawn_x)*MINIMAP_SCALE, (cube->spawn_y)*MINIMAP_SCALE, 0xFF0000);
+	draw_pixel(cube, (cube->player_x)*MINIMAP_SCALE, (cube->player_y)*MINIMAP_SCALE, 0xFF0000);
 }
 
 void draw_square(t_cube *cube, int x_scaled , int y_scaled, int color)
@@ -104,7 +135,8 @@ int put_image(t_cube *cube)
 {
 	draw_minimap(cube);
 	draw_player(cube, 0x46eb34);
-	mlx_put_image_to_window(cube->mlx_ptr, cube->win_ptr, cube->image, 0, 0);
+	line_algo(cube, 1, -21);
+	mlx_put_image_to_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr, cube->mlx->image, 0, 0);
 	return 0;
 }
 
@@ -122,27 +154,78 @@ void copy_player_map(t_cube *cube)
 		cube->map[x] = (int *)ft_malloc(cube, sizeof(int) * cube->map_w);
 		y = -1;
 		while(++y < cube->map_w)
+		{
 			cube->map[x][y] = cube->prs->prs_map[cube->prs->min_x + x][cube->prs->min_y + y];
+			if(cube->map[x][y] == '1')
+				cube->map[x][y] = '#';
+		}
 	}
 }
 
-void display_mini_map(t_cube *cube)
+int close_window(t_cube *cube)
 {
-	copy_player_map(cube); //copy old map into new small one;
-	// for (int i = 0; i < cube->n_map_size_x; i++)
-	// {
-	//  	for (int j = 0; j < cube->n_map_size_y; j++)
-	// 		printf("%c", cube->map[i][j]);
-	// 	printf("\n");
-	// }
-	cube->spawn_x += 0.5;
-	cube->spawn_y += 0.5;
-	cube->mlx_ptr = mlx_init();
-	cube->win_ptr = mlx_new_window(cube->mlx_ptr, WINDOW_W, WINDOW_H, "diplsay mini_map");
-	cube->image = mlx_new_image(cube->mlx_ptr, cube->map_w*MINIMAP_SCALE, cube->map_h*MINIMAP_SCALE);
-	cube->img_data = mlx_get_data_addr(cube->image, &cube->pixel_bits, &cube->size_line, &cube->endian);
-	cube->radius = MINIMAP_SCALE / 2.0; //player size
-	mlx_hook(cube->win_ptr, KeyPress,KeyPressMask, move_player, cube);
-	mlx_loop_hook(cube->mlx_ptr, put_image, cube);
-	mlx_loop(cube->mlx_ptr);
+	ft_free_gc(cube->gc);
+	mlx_destroy_image(cube->mlx->mlx_ptr, cube->mlx->image);
+	mlx_destroy_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr);
+	mlx_destroy_display(cube->mlx->mlx_ptr);
+	free(cube->mlx->mlx_ptr);
+	exit(0);
+}
+
+int key_handler(int keycode, t_cube *cube)
+{
+	move_player(keycode, cube);
+	if(keycode == XK_Escape)
+		close_window(cube);
+	return (0);
+}
+
+// void line_algo(t_cube * cube, int dir_x, int dir_y)
+// {
+// 	float    slope;
+//     float    start_x;
+//     float    start_y;
+
+//     slope = (float)dir_y / dir_x;
+
+//     if ((((int)(cube->player_y + (dir_y > 0)) - cube->player_y) / ((int)(cube->player_x + (dir_x > 0)) - cube->player_x)) > slope)
+//     {
+//         start_x = (int)(cube->player_x + (dir_x > 0));
+//         start_y = cube->player_y + ((int)(cube->player_x + (dir_x > 0)) - cube->player_x) * slope;
+//     }
+//     else
+//     	return;
+//     printf("start x: %f\n", start_x);
+//     printf("start y: %f\n", start_y);
+//     printf("player x: %f\n", cube->player_x);
+//     printf("player y: %f\n", cube->player_y);
+//     draw_pixel(cube, start_x*MINIMAP_SCALE, start_y*MINIMAP_SCALE, 0xFFFFFF);
+// }
+
+void find_wall(t_cube *cube, int dir_x, int dir_y)
+{
+	int pd = sqrt(pow(cube->player_x - dir_x, 2) + pow(cube->player_y - dir_y, 2))
+}
+
+void render(t_cube *cube)
+{
+	copy_player_map(cube);
+	for (int i = 0; i < cube->map_h; i++)
+	{
+	 	for (int j = 0; j < cube->map_w; j++)
+			printf("%c", cube->map[i][j]);
+		printf("\n");
+	}
+	cube->mlx->mlx_ptr = mlx_init();
+	cube->mlx->win_ptr = mlx_new_window(cube->mlx->mlx_ptr, WINDOW_W, WINDOW_H, "diplsay mini_map");
+	cube->mlx->image = mlx_new_image(cube->mlx->mlx_ptr, cube->map_w*MINIMAP_SCALE, cube->map_h*MINIMAP_SCALE);
+	cube->mlx->img_data = mlx_get_data_addr(cube->mlx->image, &cube->mlx->pixel_bits, &cube->mlx->size_line, &cube->mlx->endian);
+	cube->player_x += 0.5;
+	cube->player_y += 0.5;
+	cube->radius = 0.2;
+
+	mlx_hook(cube->mlx->win_ptr, 17, 0, close_window, cube);
+	mlx_hook(cube->mlx->win_ptr, KeyPress,KeyPressMask, key_handler, cube);
+	mlx_loop_hook(cube->mlx->mlx_ptr, put_image, cube);
+	mlx_loop(cube->mlx->mlx_ptr);
 }

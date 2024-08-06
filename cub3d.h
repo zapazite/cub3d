@@ -30,6 +30,13 @@
 # define WINDOW_H  500
 # define WINDOW_W  500
 
+typedef union {
+    int32_t i;     // 32-bit integer representing the fixed-point number
+    struct {
+        int16_t lo; // 16-bit fractional part (lower bits)
+        int16_t hi; // 16-bit integer part (higher bits)
+    };
+} fixed_point;
 
 typedef enum
 {
@@ -68,13 +75,8 @@ typedef struct s_parse
 	char			*map_file;
 } t_parse;
 
-typedef struct s_cube
+typedef struct s_mlx
 {
-	t_gc			*gc;
-	t_lines			*lines;
-	float			radius;
-	t_parse			*prs;
-
 	void			*mlx_ptr;
 	void			*win_ptr;
 	void			*image;
@@ -83,13 +85,19 @@ typedef struct s_cube
 	int				size_line;
 	char			*img_data;
 	int				endian;
+} t_mlx;
 
-	float			spawn_x; //this will be position of player in map
-	float			spawn_y;
- //this will be position of player in map
+typedef struct s_cube
+{
+	t_gc			*gc;
+	t_parse			*prs;
+	t_lines			*lines;
+	t_mlx			*mlx;
+	float			radius;
+	float			player_x;
+	float			player_y;
 	int				map_h;
 	int				map_w;
-
 	int				**map;
 	char			paths[4][4096];
 	int				colors[2];
@@ -111,5 +119,7 @@ size_t				ft_strlen(const char *s);
 int					ft_strncmp(const char *str1, const char *str2, size_t n);
 void				clean_exit(t_cube *cube, int error_type);
 int					ft_isdigit(int c);
-void				display_mini_map(t_cube *cube);
+void				render(t_cube *cube);
+void				draw_pixel(t_cube *cube, int x, int y, int color);
+void 				line_algo(t_cube * cube, int dir_x, int dir_y);
 #endif
