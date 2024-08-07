@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: efaiz <efaiz@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mde-prin <mde-prin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 10:42:46 by mde-prin          #+#    #+#             */
-/*   Updated: 2024/08/03 11:50:57 by efaiz            ###   ########.fr       */
+/*   Updated: 2024/08/07 09:00:39 by mde-prin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,5 +129,5 @@ void				clean_exit(t_cube *cube, int error_type);
 int					ft_isdigit(int c);
 void				render(t_cube *cube);
 void				draw_pixel(t_cube *cube, int x, int y, int color);
-void 				line_algo(t_cube * cube, int dir_x, int dir_y);
+void 				line_algo(t_cube * cube);
 #endif
