@@ -6,7 +6,7 @@
 /*   By: mde-prin <mde-prin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 10:42:46 by mde-prin          #+#    #+#             */
-/*   Updated: 2024/08/07 09:00:39 by mde-prin         ###   ########.fr       */
+/*   Updated: 2024/08/07 11:55:26 by mde-prin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,8 @@ typedef struct s_cube
 	float			radius;
 	float			player_x;
 	float			player_y;
+	float			rayx;
+	float			rayy;
 	float			player_dx;
 	float			player_dy;
 	float			player_angle;

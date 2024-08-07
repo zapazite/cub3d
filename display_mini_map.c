@@ -94,6 +94,8 @@ void draw_pixel(t_cube *cube, int x, int y, int color)
 {
 	int pixel_index;
 
+	if(x < 0 || x >= cube->map_h * MINIMAP_SCALE || y < 0 || y >= cube->map_w * MINIMAP_SCALE)
+		return;
 	pixel_index = (x * cube->mlx->size_line) + (y * (cube->mlx->pixel_bits / 8));
 	cube->mlx->img_data[pixel_index] = color & 0xFF;
     cube->mlx->img_data[pixel_index + 1] = (color >> 8) & 0xFF;
@@ -225,47 +227,52 @@ void line_algo(t_cube * cube)
 	float    slope;
     float    start_x;
     float    start_y;
+	int		x;
 
-	if (cube->player_dx == 0)
+	cube->rayx = cube->player_x;
+	cube->rayy = cube->player_y;
+
+	while (cube->rayx < cube->map_h && cube->rayy < cube->map_w && cube->map[(int)cube->rayx][(int)cube->rayy] != '#')
 	{
-		start_x = cube->player_x;
-		start_y = (int)(cube->player_y + (cube->player_dy > 0));
-	}
-	else if (cube->player_dy == 0)
-	{
-		start_x = (int)(cube->player_x + (cube->player_dx > 0));
-		start_y = cube->player_y;
-	}
-	else
-	{
-    	slope = cube->player_dy / cube->player_dx;
-    	if (fabs(((int)(cube->player_y + (cube->player_dy > 0)) - cube->player_y) / ((int)(cube->player_x + (cube->player_dx > 0)) - cube->player_x)) > fabs(slope))
-    	{
-        start_x = (int)(cube->player_x + (cube->player_dx > 0));
-        start_y = cube->player_y + (start_x - cube->player_x) * slope;
-		printf("player y: %f\n", cube->player_y);
-		printf("dif in x: %f\n", ((int)(cube->player_x + (cube->player_dx > 0)) - cube->player_x));
-		printf("slope : %f\n", slope);
-    	}
-    	else if (fabs(((int)(cube->player_y + (cube->player_dy > 0)) - cube->player_y) / ((int)(cube->player_x + (cube->player_dx > 0)) - cube->player_x)) < fabs(slope))
+		if (cube->player_dx == 0)
 		{
-		start_y = (int)(cube->player_y + (cube->player_dy > 0));
-		start_x = cube->player_x + (start_y - cube->player_y) / slope;
+			start_x = cube->rayx;
+			start_y = (int)(cube->rayy + (cube->player_dy > 0));
+		}
+		else if (cube->player_dy == 0)
+		{
+			start_x = (int)(cube->rayx + (cube->player_dx > 0));
+			start_y = cube->rayy;
 		}
 		else
 		{
-			start_x = cube->player_x + (cube->player_dx > 0);
-			start_y = cube->player_y + (cube->player_dy > 0);
+			slope = cube->player_dy / cube->player_dx;
+			if (fabs(((int)(cube->rayy + (cube->player_dy > 0)) - cube->rayy) / ((int)(cube->rayx + (cube->player_dx > 0)) - cube->rayx)) > fabs(slope))
+			{
+				start_x = (int)(cube->rayx + (cube->player_dx > 0));
+				start_y = cube->rayy + (start_x - cube->rayx) * slope;
+				printf("(int)(cube->rayx + (cube->player_dx > 0)) = %f\n", cube->rayx + (cube->player_dx > 0));
+				printf("start_x = %f, start_y = %f\n", start_x, start_y);
+			}
+			else if (fabs(((int)(cube->rayy + (cube->player_dy > 0)) - cube->rayy) / ((int)(cube->rayx + (cube->player_dx > 0)) - cube->rayx)) < fabs(slope))
+			{
+				start_y = (int)(cube->rayy + (cube->player_dy > 0));
+				start_x = cube->rayx + (start_y - cube->rayy) / slope;
+				printf("second if x = %d\n", x++);
+				printf("start_x = %f, start_y = %f\n", start_x, start_y);
+			}
+			else
+			{
+				start_x = cube->rayx + (cube->player_dx > 0);
+				start_y = cube->rayy + (cube->player_dy > 0);
+				printf("third if x = %d\n", x++);
+				printf("start_x = %f, start_y = %f\n", start_x, start_y);
+			}
 		}
+    	draw_pixel(cube, start_x*MINIMAP_SCALE, start_y*MINIMAP_SCALE, 0xFFFFFF);
+		cube->rayx = start_x;
+		cube->rayy = start_y;
 	}
-	printf("start x: %f\n", start_x);
-    printf("start y: %f\n", start_y);
-    printf("player x: %f\n", cube->player_x);
-    printf("player y: %f\n", cube->player_y);
-    printf("player dx: %f\n", cube->player_dx);
-    printf("player dy: %f\n", cube->player_dy);
-    printf("=====================\n");
-    draw_pixel(cube, start_x*MINIMAP_SCALE, start_y*MINIMAP_SCALE, 0xFFFFFF);
 }
 
 // void find_wall(t_cube *cube, int cube->player_dx, int dir_y)
