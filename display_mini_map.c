@@ -94,8 +94,6 @@ void draw_pixel(t_cube *cube, int x, int y, int color)
 {
 	int pixel_index;
 
-	if(x < 0 || x >= cube->map_h * MINIMAP_SCALE || y < 0 || y >= cube->map_w * MINIMAP_SCALE)
-		return;
 	pixel_index = (x * cube->mlx->size_line) + (y * (cube->mlx->pixel_bits / 8));
 	cube->mlx->img_data[pixel_index] = color & 0xFF;
     cube->mlx->img_data[pixel_index + 1] = (color >> 8) & 0xFF;
@@ -222,57 +220,85 @@ int key_handler(int keycode, t_cube *cube)
 	return (0);
 }
 
+// void find_first_h(t_cube *cube)
+// {
+// 	if (cube->player_dx == 0)
+// 		return;
+// 	else if (cube->player_dx > 0)
+// 	{
+// 		cube->rayx = ceil(cube->player_x) - cube->player_x;
+// 		cube->rayy = cube->rayx * (cube->player_dy / fabs(cube->player_dx));
+// 	}
+// 	else
+// 	{
+// 		cube->rayx = cube->player_x - floor(cube->player_x);
+// 		cube->rayy = cube->rayx * (cube->player_dy / fabs(cube->player_dx));
+// 	}
+// }
+
+// void bresenham_fixed_point(t_cube *cube)
+// {
+//     fixed_point f;
+//     int x;
+// 	int32_t m;
+	
+// 	m = (cube->player_dx != 0) ? cube->player_dy / cube->player_dx : 0; // Ensure dx is not zero before division
+
+//     // Initialize f.i with y1 in fixed-point format
+//     f.i = (int32_t)cube->rayx << 16;
+
+//     // Iterate through x coordinates from x1 to x2
+//     for (x = x1; x <= x2; x++, f.i += m) {
+//         fixed_point g = f;
+//         g.i += 32767; // Add rounding adjustment
+
+//         // Check if the grid at (x, g.hi >> 16) is blocking
+//         if (grid[g.hi][x] == BLOCKING) {
+//             return;
+//         }
+//     }
+// }
+
+
 void line_algo(t_cube * cube)
 {
 	float    slope;
     float    start_x;
     float    start_y;
-	int		x;
 
-	cube->rayx = cube->player_x;
-	cube->rayy = cube->player_y;
-
-	while (cube->rayx < cube->map_h && cube->rayy < cube->map_w && cube->map[(int)cube->rayx][(int)cube->rayy] != '#')
+	if (cube->player_dx == 0)
 	{
-		if (cube->player_dx == 0)
+		start_x = cube->player_x;
+		start_y = (int)(cube->player_y + (cube->player_dy > 0));
+	}
+	else if (cube->player_dy == 0)
+	{
+		start_x = (int)(cube->player_x + (cube->player_dx > 0));
+		start_y = cube->player_y;
+	}
+	else
+	{
+    	slope = cube->player_dy / cube->player_dx;
+    	if (fabs(((int)(cube->player_y + (cube->player_dy > 0)) - cube->player_y) / ((int)(cube->player_x + (cube->player_dx > 0)) - cube->player_x)) > fabs(slope))
+    	{
+        start_x = (int)(cube->player_x + (cube->player_dx > 0));
+        start_y = cube->player_y + (start_x - cube->player_x) * slope;
+		printf("player y: %f\n", cube->player_y);
+		printf("dif in x: %f\n", ((int)(cube->player_x + (cube->player_dx > 0)) - cube->player_x));
+		printf("slope : %f\n", slope);
+    	}
+    	else if (fabs(((int)(cube->player_y + (cube->player_dy > 0)) - cube->player_y) / ((int)(cube->player_x + (cube->player_dx > 0)) - cube->player_x)) < fabs(slope))
 		{
-			start_x = cube->rayx;
-			start_y = (int)(cube->rayy + (cube->player_dy > 0));
-		}
-		else if (cube->player_dy == 0)
-		{
-			start_x = (int)(cube->rayx + (cube->player_dx > 0));
-			start_y = cube->rayy;
+		start_y = (int)(cube->player_y + (cube->player_dy > 0));
+		start_x = cube->player_x + (start_y - cube->player_y) / slope;
 		}
 		else
 		{
-			slope = cube->player_dy / cube->player_dx;
-			if (fabs(((int)(cube->rayy + (cube->player_dy > 0)) - cube->rayy) / ((int)(cube->rayx + (cube->player_dx > 0)) - cube->rayx)) > fabs(slope))
-			{
-				start_x = (int)(cube->rayx + (cube->player_dx > 0));
-				start_y = cube->rayy + (start_x - cube->rayx) * slope;
-				printf("(int)(cube->rayx + (cube->player_dx > 0)) = %f\n", cube->rayx + (cube->player_dx > 0));
-				printf("start_x = %f, start_y = %f\n", start_x, start_y);
-			}
-			else if (fabs(((int)(cube->rayy + (cube->player_dy > 0)) - cube->rayy) / ((int)(cube->rayx + (cube->player_dx > 0)) - cube->rayx)) < fabs(slope))
-			{
-				start_y = (int)(cube->rayy + (cube->player_dy > 0));
-				start_x = cube->rayx + (start_y - cube->rayy) / slope;
-				printf("second if x = %d\n", x++);
-				printf("start_x = %f, start_y = %f\n", start_x, start_y);
-			}
-			else
-			{
-				start_x = cube->rayx + (cube->player_dx > 0);
-				start_y = cube->rayy + (cube->player_dy > 0);
-				printf("third if x = %d\n", x++);
-				printf("start_x = %f, start_y = %f\n", start_x, start_y);
-			}
+			start_x = cube->player_x + (cube->player_dx > 0);
+			start_y = cube->player_y + (cube->player_dy > 0);
 		}
-    	draw_pixel(cube, start_x*MINIMAP_SCALE, start_y*MINIMAP_SCALE, 0xFFFFFF);
-		cube->rayx = start_x;
-		cube->rayy = start_y;
-	}
+	} 	
+    draw_pixel(cube, start_x*MINIMAP_SCALE, start_y*MINIMAP_SCALE, 0xFFFFFF);
 }
 
 // void find_wall(t_cube *cube, int cube->player_dx, int dir_y)
