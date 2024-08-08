@@ -50,20 +50,21 @@ void rotate_player(int keycode, t_cube *cube)
 {
 	if(keycode == XK_Right)
 	{
-		cube->player_angle -= 0.1;
-		// if(cube->player_angle < 0)
-		// 	cube->player_angle += 2*PI;
-		cube->player_dx.i = (int32_t)(cos(cube->player_angle) * (1 << 16));
-		cube->player_dy.i = (int32_t)(sin(cube->player_angle) * (1 << 16));
+		cube->player_angle -= 0.01;
+		if(cube->player_angle < 0)
+			cube->player_angle += 2 * PI;
+		cube->player_dx = (cos(cube->player_angle)) * 10;
+		cube->player_dy = (sin(cube->player_angle)) * 10;
 	}
 	else if(keycode == XK_Left)
 	{
-		cube->player_angle += 0.1;
-		// if(cube->player_angle > 2*PI)
-		// 	cube->player_angle -= 2*PI;
-		cube->player_dx.i = (int32_t)(cos(cube->player_angle) * (1 << 16));
-		cube->player_dy.i = (int32_t)(sin(cube->player_angle) * (1 << 16));
+		cube->player_angle += 0.01;
+		if(cube->player_angle > 2 * PI)
+			cube->player_angle -= 2 * PI;
+		cube->player_dx = (cos(cube->player_angle)) * 10;
+		cube->player_dy = (sin(cube->player_angle)) * 10;
 	}
+	draw_square(cube, (cube->rayx.i / (float)(1 << 16))*MINIMAP_SCALE, (cube->rayy.i / (float)(1 << 16))*MINIMAP_SCALE, 0xffffff);
 }
 
 void move_player(int keycode, t_cube *cube)
@@ -75,13 +76,13 @@ void move_player(int keycode, t_cube *cube)
 	move_y = cube->player_y.i;
 	if(keycode == XK_Up)
 	{
-		move_x += cube->player_dx.i/MINIMAP_SCALE;
-		move_y += cube->player_dy.i/MINIMAP_SCALE;
+		move_x += cube->player_dx/MINIMAP_SCALE;
+		move_y += cube->player_dy/MINIMAP_SCALE;
 	}
 	else if(keycode == XK_Down)
 	{
-		move_x -= cube->player_dx.i/MINIMAP_SCALE;
-		move_y -= cube->player_dy.i/MINIMAP_SCALE;
+		move_x -= cube->player_dx/MINIMAP_SCALE;
+		move_y -= cube->player_dy/MINIMAP_SCALE;
 	}
 	if(check_player_position(move_x / (1 << 16), move_y / (1 << 16), cube))
 	{
@@ -93,7 +94,9 @@ void move_player(int keycode, t_cube *cube)
 void draw_pixel(t_cube *cube, int x, int y, int color)
 {
 	int pixel_index;
-
+	//if it's -3 it's gonna crash everything right?
+	if(x < 0 || y < 0 || x > cube->map_h*MINIMAP_SCALE || y > cube->map_w*MINIMAP_SCALE)
+		return ;
 	pixel_index = (x * cube->mlx->size_line) + (y * (cube->mlx->pixel_bits / 8));
 	cube->mlx->img_data[pixel_index] = color & 0xFF;
     cube->mlx->img_data[pixel_index + 1] = (color >> 8) & 0xFF;
@@ -104,8 +107,8 @@ void player_movement_calc(t_cube *cube, int x, int y)
 {
     cube->dx_rot = x - cube->radius * MINIMAP_SCALE;
     cube->dy_rot = y - cube->radius * MINIMAP_SCALE;
-	cube->rotated_x.i = cube->player_dx.i * cube->dx_rot - cube->player_dy.i * cube->dy_rot;
-    cube->rotated_y.i = cube->player_dy.i * cube->dx_rot + cube->player_dx.i  * cube->dy_rot;
+	cube->rotated_x.i = cube->player_dx * cube->dx_rot - cube->player_dy * cube->dy_rot;
+    cube->rotated_y.i = cube->player_dy * cube->dx_rot + cube->player_dx  * cube->dy_rot;
 }
 
 void draw_player(t_cube *cube, int color)
@@ -167,10 +170,37 @@ void draw_minimap(t_cube *cube)
 	}
 }
 
+void	find_start_h(t_cube *cube)
+{
+	if(cube->player_dx == 0)
+		return ;
+	if(cube->player_dx > 0)
+	{
+		cube->rayx.hi = cube->player_x.hi + 1;
+		cube->rayy.i = (cube->rayx.i - cube->player_x.i) * (cube->player_dy / cube->player_dx) + cube->player_y.i;
+	}
+	else
+	{
+		cube->rayx.hi = cube->player_x.hi;
+		cube->rayy.i = (cube->rayx.i - cube->player_x.i) * (cube->player_dy / cube->player_dx) + cube->player_y.i;
+	}
+
+	printf("slope %f\n", (cube->player_dy / cube->player_dx));
+	// printf("first player x line %f\n", cube->player_x.i / (float)(1 << 16));
+	// printf("first player y line %f\n", cube->player_y.i / (float)(1 << 16));
+
+	// printf("first hx line %d\n", cube->rayx.hi);
+	// printf("first hy line %f\n", cube->rayy.i / (float)(1 << 16));
+}
+
 int put_image(t_cube *cube)
 {
+	find_start_h(cube);
 	draw_minimap(cube);
 	draw_player(cube, 0x46eb34);
+	draw_square(cube, (cube->rayx.i / (float)(1 << 16))*MINIMAP_SCALE, (cube->rayy.i / (float)(1 << 16))*MINIMAP_SCALE, 0xffffff);
+
+
 	//line_algo(cube);
 	mlx_put_image_to_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr, cube->mlx->image, 0, 0);
 	return 0;
@@ -243,7 +273,7 @@ int key_handler(int keycode, t_cube *cube)
 //     fixed_point f;
 //     int x;
 // 	int32_t m;
-	
+
 // 	m = (cube->player_dx != 0) ? cube->player_dy / cube->player_dx : 0; // Ensure dx is not zero before division
 
 //     // Initialize f.i with y1 in fixed-point format
@@ -299,7 +329,7 @@ int key_handler(int keycode, t_cube *cube)
 // 			start_x = cube->player_x + (cube->player_dx > 0);
 // 			start_y = cube->player_y + (cube->player_dy > 0);
 // 		}
-// 	} 	
+// 	}
 //     draw_pixel(cube, start_x*MINIMAP_SCALE, start_y*MINIMAP_SCALE, 0xFFFFFF);
 // }
 
@@ -323,10 +353,14 @@ void render(t_cube *cube)
 	cube->mlx->img_data = mlx_get_data_addr(cube->mlx->image, &cube->mlx->pixel_bits, &cube->mlx->size_line, &cube->mlx->endian);
 	cube->player_x.i += (int32_t)(0.5 * (1 << 16));
 	cube->player_y.i += (int32_t)(0.5 * (1 << 16));
-	cube->radius = 0.5;
+	cube->rayx.i = 0;
+	cube->rayy.i = 0;
+	cube->radius = 0.2;
 	cube->player_angle = 0;
-	cube->player_dx.i = (int32_t)(cos(cube->player_angle) * (1 << 16));
-	cube->player_dy.i = (int32_t)(sin(cube->player_angle) * (1 << 16));
+	cube->player_dx = (cos(cube->player_angle)) * 10;
+	cube->player_dy = (sin(cube->player_angle)) * 10;
+
+
 	mlx_hook(cube->mlx->win_ptr, 17, 0, close_window, cube);
 	mlx_hook(cube->mlx->win_ptr, KeyPress,KeyPressMask, key_handler, cube);
 	mlx_loop_hook(cube->mlx->mlx_ptr, put_image, cube);

@@ -99,8 +99,8 @@ typedef struct s_cube
 	fixed_point		player_y;
 	fixed_point		rayx;
 	fixed_point		rayy;
-	fixed_point		player_dx;
-	fixed_point		player_dy;
+	float		player_dx;
+	float		player_dy;
 	fixed_point		rotated_x;
 	fixed_point		rotated_y;
 	float			player_angle;
@@ -132,4 +132,5 @@ int					ft_isdigit(int c);
 void				render(t_cube *cube);
 void				draw_pixel(t_cube *cube, int x, int y, int color);
 void 				line_algo(t_cube * cube);
+void				draw_square(t_cube *cube, int x_scaled , int y_scaled, int color);
 #endif

@@ -58,8 +58,8 @@ void	fill_map(t_cube *cube)
 			if (cube->prs->prs_map[i][j] == 'N' || cube->prs->prs_map[i][j] == 'S'
 				|| cube->prs->prs_map[i][j] == 'W' || cube->prs->prs_map[i][j] == 'E')
 			{
-				cube->player_x.i = (int32_t)(i * (1 << 16));
-				cube->player_y.i = (int32_t)(j * (1 << 16));
+				cube->player_x.hi = i;
+				cube->player_y.hi = j;
 			}
 		}
 		while (j < cube->map_w)
