@@ -6,7 +6,7 @@
 /*   By: mde-prin <mde-prin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 10:42:46 by mde-prin          #+#    #+#             */
-/*   Updated: 2024/08/07 11:55:26 by mde-prin         ###   ########.fr       */
+/*   Updated: 2024/08/08 10:26:48 by mde-prin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,17 +95,17 @@ typedef struct s_cube
 	t_lines			*lines;
 	t_mlx			*mlx;
 	float			radius;
-	float			player_x;
-	float			player_y;
-	float			rayx;
-	float			rayy;
-	float			player_dx;
-	float			player_dy;
+	fixed_point		player_x;
+	fixed_point		player_y;
+	fixed_point		rayx;
+	fixed_point		rayy;
+	fixed_point		player_dx;
+	fixed_point		player_dy;
+	fixed_point		rotated_x;
+	fixed_point		rotated_y;
 	float			player_angle;
-	int				rotated_x;
-	int				rotated_y;
-	int				dx_rot;
-	int				dy_rot;
+	int32_t			dx_rot;
+	int32_t			dy_rot;
 	int				map_h;
 	int				map_w;
 	int				**map;

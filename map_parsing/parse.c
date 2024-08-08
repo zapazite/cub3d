@@ -6,7 +6,7 @@
 /*   By: mde-prin <mde-prin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 11:55:21 by efaiz             #+#    #+#             */
-/*   Updated: 2024/08/06 11:53:22 by mde-prin         ###   ########.fr       */
+/*   Updated: 2024/08/08 10:35:23 by mde-prin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,9 @@ void	parse_map(t_cube *cube, int fd)
 	fill_map(cube);
 	cube->prs->min_x = cube->map_h;
 	cube->prs->min_y = cube->map_w;
-	check_spawn(cube, cube->player_x, cube->player_y);
-	cube->player_x -= cube->prs->min_x;
-	cube->player_y -= cube->prs->min_y;
+	check_spawn(cube, cube->player_x.hi, cube->player_y.hi);
+	cube->player_x.hi -= cube->prs->min_x;
+	cube->player_y.hi -= cube->prs->min_y;
 }
 
 void	fill_map(t_cube *cube)
@@ -58,15 +58,15 @@ void	fill_map(t_cube *cube)
 			if (cube->prs->prs_map[i][j] == 'N' || cube->prs->prs_map[i][j] == 'S'
 				|| cube->prs->prs_map[i][j] == 'W' || cube->prs->prs_map[i][j] == 'E')
 			{
-				cube->player_x = i;
-				cube->player_y = j;
+				cube->player_x.i = (int32_t)(i * (1 << 16));
+				cube->player_y.i = (int32_t)(j * (1 << 16));
 			}
 		}
 		while (j < cube->map_w)
 			cube->prs->prs_map[i][j++] = ' ';
 		cube->lines = cube->lines->next;
 	}
-	if (cube->player_x == -1)
+	if (cube->player_x.i == -1)
 		clean_exit(cube, ERR_PARSING);
 }
 

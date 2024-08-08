@@ -53,16 +53,16 @@ void rotate_player(int keycode, t_cube *cube)
 		cube->player_angle -= 0.1;
 		// if(cube->player_angle < 0)
 		// 	cube->player_angle += 2*PI;
-		cube->player_dx = cos(cube->player_angle);
-		cube->player_dy = sin(cube->player_angle);
+		cube->player_dx.i = (int32_t)(cos(cube->player_angle) * (1 << 16));
+		cube->player_dy.i = (int32_t)(sin(cube->player_angle) * (1 << 16));
 	}
 	else if(keycode == XK_Left)
 	{
 		cube->player_angle += 0.1;
 		// if(cube->player_angle > 2*PI)
 		// 	cube->player_angle -= 2*PI;
-		cube->player_dx = cos(cube->player_angle);
-		cube->player_dy = sin(cube->player_angle);
+		cube->player_dx.i = (int32_t)(cos(cube->player_angle) * (1 << 16));
+		cube->player_dy.i = (int32_t)(sin(cube->player_angle) * (1 << 16));
 	}
 }
 
@@ -71,22 +71,22 @@ void move_player(int keycode, t_cube *cube)
 	float move_x;
 	float move_y;
 
-	move_x = cube->player_x;
-	move_y = cube->player_y;
+	move_x = cube->player_x.i;
+	move_y = cube->player_y.i;
 	if(keycode == XK_Up)
 	{
-		move_x += cube->player_dx/MINIMAP_SCALE;
-		move_y += cube->player_dy/MINIMAP_SCALE;
+		move_x += cube->player_dx.i/MINIMAP_SCALE;
+		move_y += cube->player_dy.i/MINIMAP_SCALE;
 	}
 	else if(keycode == XK_Down)
 	{
-		move_x -= cube->player_dx/MINIMAP_SCALE;
-		move_y -= cube->player_dy/MINIMAP_SCALE;
+		move_x -= cube->player_dx.i/MINIMAP_SCALE;
+		move_y -= cube->player_dy.i/MINIMAP_SCALE;
 	}
-	if(check_player_position(move_x, move_y, cube))
+	if(check_player_position(move_x / (1 << 16), move_y / (1 << 16), cube))
 	{
-		cube->player_x = move_x;
-		cube->player_y = move_y;
+		cube->player_x.i = move_x;
+		cube->player_y.i = move_y;
 	}
 }
 
@@ -104,8 +104,8 @@ void player_movement_calc(t_cube *cube, int x, int y)
 {
     cube->dx_rot = x - cube->radius * MINIMAP_SCALE;
     cube->dy_rot = y - cube->radius * MINIMAP_SCALE;
-	cube->rotated_x = cube->player_dx * cube->dx_rot - cube->player_dy * cube->dy_rot;
-    cube->rotated_y = cube->player_dy * cube->dx_rot + cube->player_dx  * cube->dy_rot;
+	cube->rotated_x.i = cube->player_dx.i * cube->dx_rot - cube->player_dy.i * cube->dy_rot;
+    cube->rotated_y.i = cube->player_dy.i * cube->dx_rot + cube->player_dx.i  * cube->dy_rot;
 }
 
 void draw_player(t_cube *cube, int color)
@@ -124,7 +124,7 @@ void draw_player(t_cube *cube, int color)
 			{
 				if(x >= MINIMAP_SCALE / 2)
 					color = 0xFFFFFF;
-				draw_pixel(cube, cube->rotated_x + cube->player_x * MINIMAP_SCALE, cube->rotated_y + cube->player_y * MINIMAP_SCALE, color);
+				draw_pixel(cube, (cube->rotated_x.i + cube->player_x.i * MINIMAP_SCALE) / (1 << 16) , (cube->rotated_y.i + cube->player_y.i * MINIMAP_SCALE) / (1 << 16), color);
 			}
 		}
 	}
@@ -171,7 +171,7 @@ int put_image(t_cube *cube)
 {
 	draw_minimap(cube);
 	draw_player(cube, 0x46eb34);
-	line_algo(cube);
+	//line_algo(cube);
 	mlx_put_image_to_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr, cube->mlx->image, 0, 0);
 	return 0;
 }
@@ -220,6 +220,8 @@ int key_handler(int keycode, t_cube *cube)
 	return (0);
 }
 
+
+
 // void find_first_h(t_cube *cube)
 // {
 // 	if (cube->player_dx == 0)
@@ -260,46 +262,46 @@ int key_handler(int keycode, t_cube *cube)
 // }
 
 
-void line_algo(t_cube * cube)
-{
-	float    slope;
-    float    start_x;
-    float    start_y;
+// void line_algo(t_cube * cube)
+// {
+// 	float    slope;
+//     float    start_x;
+//     float    start_y;
 
-	if (cube->player_dx == 0)
-	{
-		start_x = cube->player_x;
-		start_y = (int)(cube->player_y + (cube->player_dy > 0));
-	}
-	else if (cube->player_dy == 0)
-	{
-		start_x = (int)(cube->player_x + (cube->player_dx > 0));
-		start_y = cube->player_y;
-	}
-	else
-	{
-    	slope = cube->player_dy / cube->player_dx;
-    	if (fabs(((int)(cube->player_y + (cube->player_dy > 0)) - cube->player_y) / ((int)(cube->player_x + (cube->player_dx > 0)) - cube->player_x)) > fabs(slope))
-    	{
-        start_x = (int)(cube->player_x + (cube->player_dx > 0));
-        start_y = cube->player_y + (start_x - cube->player_x) * slope;
-		printf("player y: %f\n", cube->player_y);
-		printf("dif in x: %f\n", ((int)(cube->player_x + (cube->player_dx > 0)) - cube->player_x));
-		printf("slope : %f\n", slope);
-    	}
-    	else if (fabs(((int)(cube->player_y + (cube->player_dy > 0)) - cube->player_y) / ((int)(cube->player_x + (cube->player_dx > 0)) - cube->player_x)) < fabs(slope))
-		{
-		start_y = (int)(cube->player_y + (cube->player_dy > 0));
-		start_x = cube->player_x + (start_y - cube->player_y) / slope;
-		}
-		else
-		{
-			start_x = cube->player_x + (cube->player_dx > 0);
-			start_y = cube->player_y + (cube->player_dy > 0);
-		}
-	} 	
-    draw_pixel(cube, start_x*MINIMAP_SCALE, start_y*MINIMAP_SCALE, 0xFFFFFF);
-}
+// 	if (cube->player_dx == 0)
+// 	{
+// 		start_x = cube->player_x;
+// 		start_y = (int)(cube->player_y + (cube->player_dy > 0));
+// 	}
+// 	else if (cube->player_dy == 0)
+// 	{
+// 		start_x = (int)(cube->player_x + (cube->player_dx > 0));
+// 		start_y = cube->player_y;
+// 	}
+// 	else
+// 	{
+//     	slope = cube->player_dy / cube->player_dx;
+//     	if (fabs(((int)(cube->player_y + (cube->player_dy > 0)) - cube->player_y) / ((int)(cube->player_x + (cube->player_dx > 0)) - cube->player_x)) > fabs(slope))
+//     	{
+//         start_x = (int)(cube->player_x + (cube->player_dx > 0));
+//         start_y = cube->player_y + (start_x - cube->player_x) * slope;
+// 		printf("player y: %f\n", cube->player_y);
+// 		printf("dif in x: %f\n", ((int)(cube->player_x + (cube->player_dx > 0)) - cube->player_x));
+// 		printf("slope : %f\n", slope);
+//     	}
+//     	else if (fabs(((int)(cube->player_y + (cube->player_dy > 0)) - cube->player_y) / ((int)(cube->player_x + (cube->player_dx > 0)) - cube->player_x)) < fabs(slope))
+// 		{
+// 		start_y = (int)(cube->player_y + (cube->player_dy > 0));
+// 		start_x = cube->player_x + (start_y - cube->player_y) / slope;
+// 		}
+// 		else
+// 		{
+// 			start_x = cube->player_x + (cube->player_dx > 0);
+// 			start_y = cube->player_y + (cube->player_dy > 0);
+// 		}
+// 	} 	
+//     draw_pixel(cube, start_x*MINIMAP_SCALE, start_y*MINIMAP_SCALE, 0xFFFFFF);
+// }
 
 // void find_wall(t_cube *cube, int cube->player_dx, int dir_y)
 // {
@@ -319,13 +321,12 @@ void render(t_cube *cube)
 	cube->mlx->win_ptr = mlx_new_window(cube->mlx->mlx_ptr, WINDOW_W, WINDOW_H, "diplsay mini_map");
 	cube->mlx->image = mlx_new_image(cube->mlx->mlx_ptr, cube->map_w*MINIMAP_SCALE, cube->map_h*MINIMAP_SCALE);
 	cube->mlx->img_data = mlx_get_data_addr(cube->mlx->image, &cube->mlx->pixel_bits, &cube->mlx->size_line, &cube->mlx->endian);
-	cube->player_x += 0.5;
-	cube->player_y += 0.5;
-	cube->radius = 0.2;
+	cube->player_x.i += (int32_t)(0.5 * (1 << 16));
+	cube->player_y.i += (int32_t)(0.5 * (1 << 16));
+	cube->radius = 0.5;
 	cube->player_angle = 0;
-	cube->player_dx = cos(cube->player_angle);
-	cube->player_dy = sin(cube->player_angle);
-
+	cube->player_dx.i = (int32_t)(cos(cube->player_angle) * (1 << 16));
+	cube->player_dy.i = (int32_t)(sin(cube->player_angle) * (1 << 16));
 	mlx_hook(cube->mlx->win_ptr, 17, 0, close_window, cube);
 	mlx_hook(cube->mlx->win_ptr, KeyPress,KeyPressMask, key_handler, cube);
 	mlx_loop_hook(cube->mlx->mlx_ptr, put_image, cube);

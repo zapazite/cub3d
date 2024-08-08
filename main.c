@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: efaiz <efaiz@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mde-prin <mde-prin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 10:35:49 by mde-prin          #+#    #+#             */
-/*   Updated: 2024/08/03 11:50:36 by efaiz            ###   ########.fr       */
+/*   Updated: 2024/08/08 09:57:25 by mde-prin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ void	cube_init(t_cube *cube, t_parse *prs, t_mlx *mlx, char *map_file)
 	cube->prs->max_y = 0;
 	cube->map_h = 0;
 	cube->map_w = 0;
-	cube->player_x = -1;
-	cube->player_y = -1;
+	cube->player_x.i = -1;
+	cube->player_y.i = -1;
 	cube->lines = NULL;
 	cube->prs->map_file = map_file;
 	while (++i < 2)
