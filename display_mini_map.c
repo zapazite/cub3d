@@ -64,25 +64,25 @@ void rotate_player(int keycode, t_cube *cube)
 
 void move_player(int keycode, t_cube *cube)
 {
-	int32_t move_x;
-	int32_t move_y;
+	fixed_point move_x;
+	fixed_point move_y;
 
-	move_x = cube->player_x.i;
-	move_y = cube->player_y.i;
+	move_x.i = cube->player_x.i;
+	move_y.i = cube->player_y.i;
 	if(keycode == XK_Up)
 	{
-		move_x += cube->player_dx.i;
-		move_y += cube->player_dy.i;
+		move_x.i += cube->player_dx.i;
+		move_y.i += cube->player_dy.i;
 	}
 	else if(keycode == XK_Down)
 	{
-		move_x -= cube->player_dx.i;
-		move_y -= cube->player_dy.i;
+		move_x.i -= cube->player_dx.i;
+		move_y.i -= cube->player_dy.i;
 	}
-	if(check_player_position(move_x, move_y, cube))
+	if(check_player_position(move_x.i, move_y.i, cube))
 	{
-		cube->player_x.i = move_x;
-		cube->player_y.i = move_y;
+		cube->player_x.i = move_x.i;
+		cube->player_y.i = move_y.i;
 	}
 }
 
@@ -110,7 +110,6 @@ void draw_player(t_cube *cube, int color)
 {
 	int		x;
 	int		y;
-	const int radius = (cube->radius.i * MINIMAP_SCALE) >> 16;
 
 	x = -1;
 	while(++x < MINIMAP_SCALE)
@@ -118,12 +117,15 @@ void draw_player(t_cube *cube, int color)
 		y = -1;
 		while(++y < MINIMAP_SCALE)
 		{
-			player_movement_calc(cube, x, y);
-			if(pow(radius - x, 2) + pow(radius - y, 2) <= pow(radius, 2))
+			//player_movement_calc(cube, x, y);
+			// if(x<MINIMAP_SCALE / 2)
+			if(pow(((cube->radius.i*MINIMAP_SCALE) >> 16) - x, 2) + pow(((cube->radius.i*MINIMAP_SCALE) >> 16) - y, 2) <= pow((cube->radius.i*MINIMAP_SCALE) >> 16, 2))
 			{
-				if(x >= MINIMAP_SCALE / 2)
-					color = 0xFFFFFF;
-				draw_pixel(cube, (cube->rotated_x.i + cube->player_x.i * MINIMAP_SCALE) >> 16 , (cube->rotated_y.i + cube->player_y.i * MINIMAP_SCALE) / (1 << 16), color);
+			 printf("x = %d, y = %d\n", x, y);
+			 // write(1, "x", 1);
+				// if(x >= MINIMAP_SCALE / 2)
+				// 	color = 0xFFFFFF;
+				draw_pixel(cube, (((cube->player_x.i - cube->radius.i) * MINIMAP_SCALE) >> 16) + x + 1  , (((cube->player_y.i - cube->radius.i) * MINIMAP_SCALE) >> 16) + y + 1 , color);
 			}
 		}
 	}
@@ -191,10 +193,10 @@ void	find_start_h(t_cube *cube)
 
 int put_image(t_cube *cube)
 {
-	find_start_h(cube);
+	// find_start_h(cube);
 	draw_minimap(cube);
 	draw_player(cube, 0x46eb34);
-	draw_pixel(cube, ((cube->rayx.i * MINIMAP_SCALE) >> 16), ((cube->rayy.i * MINIMAP_SCALE) >> 16), 0xffffff);
+	// draw_pixel(cube, ((cube->rayx.i * MINIMAP_SCALE) >> 16), ((cube->rayy.i * MINIMAP_SCALE) >> 16), 0xffffff);
 
 
 	//line_algo(cube);

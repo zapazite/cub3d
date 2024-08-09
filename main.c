@@ -11,11 +11,6 @@
 /* ************************************************************************** */
 
 #include "cub3d.h"
-#include "gc/gc.h"
-#include "get_next_line/get_next_line_bonus.h"
-#include <fcntl.h>
-#include <stdio.h>
-#include <string.h>
 
 void	clean_exit(t_cube *cube, int error_type)
 {
