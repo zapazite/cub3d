@@ -19,11 +19,8 @@
 # include "get_next_line/get_next_line_bonus.h"
 # include <fcntl.h>
 # include <unistd.h>
-# include <math.h>
-# include "minilibx-linux/mlx.h"
 # include <X11/X.h>
 # include <X11/Xutil.h>
-# include <math.h>
 
 # define BUFFERSIZE 8192
 # define MINIMAP_SCALE 20
@@ -94,13 +91,13 @@ typedef struct s_cube
 	t_parse			*prs;
 	t_lines			*lines;
 	t_mlx			*mlx;
-	float			radius;
+	fixed_point		radius;
 	fixed_point		player_x;
 	fixed_point		player_y;
 	fixed_point		rayx;
 	fixed_point		rayy;
-	float		player_dx;
-	float		player_dy;
+	fixed_point		player_dx;
+	fixed_point		player_dy;
 	fixed_point		rotated_x;
 	fixed_point		rotated_y;
 	float			player_angle;
