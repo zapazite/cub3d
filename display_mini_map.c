@@ -119,9 +119,9 @@ void draw_player(t_cube *cube, int color)
 		{
 			//player_movement_calc(cube, x, y);
 			// if(x<MINIMAP_SCALE / 2)
-			if(pow(((cube->radius.i*MINIMAP_SCALE) >> 16) - x, 2) + pow(((cube->radius.i*MINIMAP_SCALE) >> 16) - y, 2) <= pow((cube->radius.i*MINIMAP_SCALE) >> 16, 2))
+			if(pow(((cube->radius.i * MINIMAP_SCALE) >> 16) - x, 2) + pow(((cube->radius.i * MINIMAP_SCALE) >> 16) - y, 2) <= pow((cube->radius.i * MINIMAP_SCALE) >> 16, 2))
 			{
-			 printf("x = %d, y = %d\n", x, y);
+			 // printf("x = %d, y = %d\n", x, y);
 			 // write(1, "x", 1);
 				// if(x >= MINIMAP_SCALE / 2)
 				// 	color = 0xFFFFFF;
@@ -173,17 +173,16 @@ void	find_start_h(t_cube *cube)
 	if(cube->player_dx.i == 0)
 		return ;
 	if(cube->player_dx.i > 0)
-	{
 		cube->rayx.hi = cube->player_x.hi + 1;
-		cube->rayy.i = ((cube->rayx.i - cube->player_x.i) * cube->player_dy.i) / (cube->player_dx.i) + cube->player_y.i;
-	}
 	else
-	{
 		cube->rayx.hi = cube->player_x.hi;
-		cube->rayy.i = ((cube->rayx.i - cube->player_x.i) * cube->player_dy.i) / (cube->player_dx.i) + cube->player_y.i;
-	}
+	cube->rayy.i = (cube->rayx.i - cube->player_x.i) * ((float)cube->player_dy.i / cube->player_dx.i) + cube->player_y.i;
+	// cube->rayy.i = (cube->rayx.i - cube->player_x.i) * ((cube->player_dy.i * 1000) / cube->player_dx.i) / 1000 + cube->player_y.i;
+	printf("slope float = %f dy div %f\n", (cube->rayx.i - cube->player_x.i) * ((float)cube->player_dy.i / cube->player_dx.i), (cube->player_dy.i * 1024.));
+	printf("slope divis = %f dy div %d\n", (float)(((cube->rayx.i - cube->player_x.i) * (cube->player_dy.i * 1024 / cube->player_dx.i)) / 1024 ) / (1 << 16), (cube->player_dy.i * 1024));
+	printf("slope shift = %f dy div %d\n", (float)(((cube->rayx.i - cube->player_x.i) * (cube->player_dy.i << 10 / cube->player_dx.i)) >> 10 ) / (1 << 16), (cube->player_dy.i << 10));
 
-	printf("slope %f\n", ((float)cube->player_dy.i / cube->player_dx.i));
+	//printf("slope %f\n", ((float)cube->player_dy.i / cube->player_dx.i));
 	// printf("first player x line %f\n", cube->player_x.i / (float)(1 << 16));
 	// printf("first player y line %f\n", cube->player_y.i / (float)(1 << 16));
 
@@ -193,10 +192,10 @@ void	find_start_h(t_cube *cube)
 
 int put_image(t_cube *cube)
 {
-	// find_start_h(cube);
+	find_start_h(cube);
 	draw_minimap(cube);
 	draw_player(cube, 0x46eb34);
-	// draw_pixel(cube, ((cube->rayx.i * MINIMAP_SCALE) >> 16), ((cube->rayy.i * MINIMAP_SCALE) >> 16), 0xffffff);
+	draw_pixel(cube, ((cube->rayx.i * MINIMAP_SCALE) >> 16), ((cube->rayy.i * MINIMAP_SCALE) >> 16), 0xffffff);
 
 
 	//line_algo(cube);
@@ -238,10 +237,9 @@ int close_window(t_cube *cube)
 
 int key_handler(int keycode, t_cube *cube)
 {
-	move_player(keycode, cube);
 	if(keycode == XK_Escape)
 		close_window(cube);
-	if(keycode == XK_Up || keycode == XK_Up)
+	if(keycode == XK_Up || keycode == XK_Down)
 		move_player(keycode, cube);
 	if(keycode == XK_Left || keycode == XK_Right)
 		rotate_player(keycode, cube);
