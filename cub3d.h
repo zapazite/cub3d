@@ -100,6 +100,11 @@ typedef struct s_cube
 	float			player_dx;
 	float			player_dy;
 	float			player_angle;
+	float			slope;
+	float			ray_h_x;
+	float			ray_h_y;
+	float			ray_w_x;
+	float			ray_w_y;
 	int				rotated_x;
 	int				rotated_y;
 	int				dx_rot;
