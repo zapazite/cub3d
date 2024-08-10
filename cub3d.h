@@ -26,9 +26,9 @@
 # include <math.h>
 
 # define BUFFERSIZE 8192
-# define MINIMAP_SCALE 20
-# define WINDOW_H  500
-# define WINDOW_W  500
+# define MINIMAP_SCALE 15
+# define WINDOW_H  1080
+# define WINDOW_W  1920
 # define PI 3.1415926535
 # define GREEN 0x00ff00
 
