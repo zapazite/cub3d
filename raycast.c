@@ -76,6 +76,8 @@ void	find_start_w(t_cube *cube)
 
 void	ray_cast(t_cube *cube)
 {
+	const float	delta_angle = 1.0472 / WINDOW_W;
+
 	cube->ray_angle = cube->player_angle;
 	cube->ray_angle += 0.523599;
 	cube->ray_dx = cos(cube->ray_angle);
@@ -85,7 +87,7 @@ void	ray_cast(t_cube *cube)
 		find_start_h(cube);
 		find_start_w(cube);
 		draw_nearest_ray(cube);
-		cube->ray_angle -= 0.01;
+		cube->ray_angle -= delta_angle;
 		cube->ray_dx = cos(cube->ray_angle);
 		cube->ray_dy = sin(cube->ray_angle);
 	}
