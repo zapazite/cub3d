@@ -42,10 +42,6 @@ void	cube_init(t_cube *cube, t_parse *prs, t_mlx *mlx, char *map_file)
 	cube->player_x = -1;
 	cube->player_y = -1;
 	cube->lines = NULL;
-	cube->ray_h_x = 0;
-	cube->ray_h_x = 0;
-	cube->ray_w_x = 0;
-	cube->ray_w_y = 0;
 	cube->prs->map_file = map_file;
 	while (++i < 2)
 		cube->colors[i] = -1;

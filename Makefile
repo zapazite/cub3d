@@ -13,7 +13,11 @@ SRCS = main.c\
        map_parsing/checks.c\
        map_parsing/parse.c\
        map_parsing/utils.c\
-       display_mini_map.c
+       render.c\
+       player_move.c\
+       draw.c\
+       raycast.c\
+       render_utils.c
 
 OBJDIR = objs
 OBJS = $(patsubst %.c, $(OBJDIR)/%.o, $(notdir $(SRCS)))
