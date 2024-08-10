@@ -119,7 +119,7 @@ void	draw_line(float rayx, float rayy, t_cube *cube)
 
 	deltax = (rayx - cube->player_x) / 1000;
 	deltay = (rayy - cube->player_y) / 1000;
-	cube->slope = (rayy - cube->player_y) / (rayx - cube->player_x);
+	// cube->slope = (rayy - cube->player_y) / (rayx - cube->player_x);
 	xi = cube->player_x;
 	yi = cube->player_y;
 	while(++i < 1000)
@@ -169,17 +169,17 @@ void draw_minimap(t_cube *cube)
 
 void	raycast_h(int rayx, float rayy, t_cube *cube)
 {
-	while(rayx < cube->map_h && (int)rayy < cube->map_w && rayx > 0 && rayy > 0 &&cube->map[rayx - (cube->player_dx < 0)][(int)rayy] != '#')
+	while(rayx < cube->map_h && (int)rayy < cube->map_w && rayx > 0 && rayy > 0 &&cube->map[rayx - (cube->ray_dx < 0)][(int)rayy] != '#')
 	{
-		if(cube->player_dx > 0)
+		if(cube->ray_dx > 0)
 		{
 			rayx++;
-			rayy += cube->slope;
+			rayy += cube->ray_slope;
 		}
 		else
 		{
 			rayx--;
-			rayy -= cube->slope;
+			rayy -= cube->ray_slope;
 		}
 	}
 	cube->ray_h_x = rayx;
@@ -188,17 +188,17 @@ void	raycast_h(int rayx, float rayy, t_cube *cube)
 
 void	raycast_w(float rayx, int rayy, t_cube *cube)
 {
-	while((int)rayx < cube->map_h && rayy < cube->map_w && rayx > 0 && rayy > 0 &&cube->map[(int)rayx][rayy - (cube->player_dy < 0)] != '#')
+	while((int)rayx < cube->map_h && rayy < cube->map_w && rayx > 0 && rayy > 0 &&cube->map[(int)rayx][rayy - (cube->ray_dy < 0)] != '#')
 	{
-		if(cube->player_dy > 0)
+		if(cube->ray_dy > 0)
 		{
 			rayy++;
-			rayx += cube->slope;
+			rayx += cube->ray_slope;
 		}
 		else
 		{
 			rayy--;
-			rayx -= cube->slope;
+			rayx -= cube->ray_slope;
 		}
 	}
 	cube->ray_w_x = rayx;
@@ -212,14 +212,14 @@ void	find_start_h(t_cube *cube)
 
 	rayx = 0;
 	rayy = 0;
-	cube->slope = cube->player_dy / cube->player_dx;
-	if(cube->player_dx == 0)
+	cube->ray_slope = cube->ray_dy / cube->ray_dx;
+	if(cube->ray_dx == 0)
 		return ;
-	if(cube->player_dx > 0)
+	if(cube->ray_dx > 0)
 		rayx = (int)(cube->player_x + 1);
 	else
 		rayx = (int)cube->player_x;
-	rayy = (rayx - cube->player_x) * cube->slope + cube->player_y;
+	rayy = (rayx - cube->player_x) * cube->ray_slope + cube->player_y;
 	raycast_h(rayx, rayy, cube);
 }
 
@@ -230,14 +230,14 @@ void	find_start_w(t_cube *cube)
 
 	rayx = 0;
 	rayy = 0;
-	cube->slope = cube->player_dx / cube->player_dy;
-	if(cube->player_dy == 0)
+	cube->ray_slope = cube->ray_dx / cube->ray_dy;
+	if(cube->ray_dy == 0)
 		return ;
-	if(cube->player_dy > 0)
+	if(cube->ray_dy > 0)
 		rayy = (int)(cube->player_y + 1);
 	else
 		rayy = (int)cube->player_y;
-	rayx = (rayy - cube->player_y) * cube->slope + cube->player_x;
+	rayx = (rayy - cube->player_y) * cube->ray_slope + cube->player_x;
 	raycast_w(rayx, rayy, cube);
 }
 
@@ -251,13 +251,28 @@ void	draw_nearest_ray(t_cube *cube)
 		draw_line(cube->ray_w_x, cube->ray_w_y, cube);
 }
 
+void	ray_cast(t_cube *cube)
+{
+	cube->ray_angle = cube->player_angle;
+	cube->ray_angle += 0.523599;
+	cube->ray_dx = cos(cube->ray_angle);
+	cube->ray_dy = sin(cube->ray_angle);
+	while(cube->ray_angle > cube->player_angle - 0.523599)
+	{
+		find_start_h(cube);
+		find_start_w(cube);
+		draw_nearest_ray(cube);
+		cube->ray_angle -= 0.01;
+		cube->ray_dx = cos(cube->ray_angle);
+		cube->ray_dy = sin(cube->ray_angle);
+	}
+}
+
 int put_image(t_cube *cube)
 {
 	draw_minimap(cube);
 	draw_player(cube, 0x46eb34);
-	find_start_h(cube);
-	find_start_w(cube);
-	draw_nearest_ray(cube);
+	ray_cast(cube);
 	mlx_put_image_to_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr, cube->mlx->image, 0, 0);
 	return 0;
 }
@@ -296,6 +311,7 @@ int close_window(t_cube *cube)
 
 int key_handler(int keycode, t_cube *cube)
 {
+	//make it more modular
 	move_player(keycode, cube);
 	if(keycode == XK_Escape)
 		close_window(cube);

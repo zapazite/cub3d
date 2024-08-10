@@ -30,6 +30,7 @@
 # define WINDOW_H  500
 # define WINDOW_W  500
 # define PI 3.1415926535
+# define GREEN 0x00ff00
 
 typedef union {
     int32_t i;     // 32-bit integer representing the fixed-point number
@@ -105,6 +106,10 @@ typedef struct s_cube
 	float			ray_h_y;
 	float			ray_w_x;
 	float			ray_w_y;
+	float			ray_angle;
+	float			ray_slope;
+	float			ray_dx;
+	float			ray_dy;
 	int				rotated_x;
 	int				rotated_y;
 	int				dx_rot;
