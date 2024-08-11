@@ -27,13 +27,14 @@ void	clean_exit(t_cube *cube, int error_type)
 	exit(1);
 }
 
-void	cube_init(t_cube *cube, t_parse *prs, t_mlx *mlx, char *map_file)
+void	cube_init(t_cube *cube, t_parse *prs, t_mlx *mlx,t_ray *ray, char *map_file)
 {
 	int	i;
 
 	i = -1;
 	cube->prs = prs;
 	cube->mlx = mlx;
+	cube->ray = ray;
 	cube->gc = NULL;
 	cube->prs->max_x = 0;
 	cube->prs->max_y = 0;
@@ -55,10 +56,11 @@ int	main(int argc, char *argv[])
 	t_cube	cube;
 	t_parse prs;
 	t_mlx	mlx;
+	t_ray	ray;
 
 	if (argc != 2)
 		return (write(1, "Error\n", 6), 1);
-	cube_init(&cube, &prs, &mlx, argv[1]);
+	cube_init(&cube, &prs, &mlx, &ray, argv[1]);
 	parse(&cube);
 	render(&cube);
 	ft_free_gc(cube.gc);

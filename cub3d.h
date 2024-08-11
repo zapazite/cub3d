@@ -31,6 +31,7 @@
 # define WINDOW_W  1920
 # define PI 3.1415926535
 # define GREEN 0x00ff00
+# define FOV 1.0472
 
 typedef union {
     int32_t i;     // 32-bit integer representing the fixed-point number
@@ -79,15 +80,35 @@ typedef struct s_parse
 
 typedef struct s_mlx
 {
+	int				map_p_bits;
+	int				map_p_index;
+	int				map_size_line;
+	int				map_endian;
+	int				main_p_bits;
+	int				main_p_index;
+	int				main_size_line;
+	int				main_endian;
+	char			*main_data;
+	char			*map_data;
 	void			*mlx_ptr;
 	void			*win_ptr;
-	void			*image;
-	int				pixel_bits;
-	int				pixel_index;
-	int				size_line;
-	char			*img_data;
-	int				endian;
+	void			*map_img;
+	void			*main_img;
 } t_mlx;
+
+typedef struct s_ray
+{
+	float			h_x;
+	float			h_y;
+	float			w_x;
+	float			w_y;
+	float			angle;
+	float			slope;
+	float			dx;
+	float			dy;
+	float			d_angle;
+	float			hit_points[57600][2];
+}t_ray;
 
 typedef struct s_cube
 {
@@ -95,6 +116,7 @@ typedef struct s_cube
 	t_parse			*prs;
 	t_lines			*lines;
 	t_mlx			*mlx;
+	t_ray			*ray;
 	float			radius;
 	float			player_x;
 	float			player_y;
@@ -102,18 +124,6 @@ typedef struct s_cube
 	float			player_dy;
 	float			player_angle;
 	float			slope;
-	float			ray_h_x;
-	float			ray_h_y;
-	float			ray_w_x;
-	float			ray_w_y;
-	float			ray_angle;
-	float			ray_slope;
-	float			ray_dx;
-	float			ray_dy;
-	int				rotated_x;
-	int				rotated_y;
-	int				dx_rot;
-	int				dy_rot;
 	int				map_h;
 	int				map_w;
 	int				**map;
@@ -149,7 +159,7 @@ void				cast_h(int rayx, float rayy, t_cube *cube);
 void				cast_w(float rayx, int rayy, t_cube *cube);
 void				find_start_h(t_cube *cube);
 void				find_start_w(t_cube *cube);
-void				draw_nearest_ray(t_cube *cube);
+float				draw_nearest_ray(t_cube *cube, int i);
 void				ray_cast(t_cube *cube);
 int					put_image(t_cube *cube);
 void				copy_playable_map(t_cube *cube);
@@ -158,4 +168,5 @@ int					key_handler(int keycode, t_cube *cube);
 void				init_player(t_cube *cube);
 void				init_ray(t_cube *cube);
 void				render(t_cube *cube);
+void				draw_main_pixel(t_cube *cube, int x, int y, int color);
 #endif

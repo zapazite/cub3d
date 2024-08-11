@@ -34,16 +34,17 @@ void init_player(t_cube *cube)
 
 void init_ray(t_cube *cube)
 {
-	cube->ray_angle = cube->player_angle;
-	cube->ray_angle += 0.523599;
-	cube->ray_dx = cos(cube->ray_angle);
-	cube->ray_dy = sin(cube->ray_angle);
+	cube->ray->d_angle = FOV / WINDOW_W;
+	cube->ray->angle = cube->player_angle;
+	cube->ray->angle += 0.523599;
+	cube->ray->dx = cos(cube->ray->angle);
+	cube->ray->dy = sin(cube->ray->angle);
 }
 
 int close_window(t_cube *cube)
 {
 	ft_free_gc(cube->gc);
-	mlx_destroy_image(cube->mlx->mlx_ptr, cube->mlx->image);
+	mlx_destroy_image(cube->mlx->mlx_ptr, cube->mlx->map_img);
 	mlx_destroy_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr);
 	mlx_destroy_display(cube->mlx->mlx_ptr);
 	free(cube->mlx->mlx_ptr);
