@@ -31,13 +31,16 @@
 
 int check_player_position(int64_t player_x, int64_t player_y, t_cube *cube)
 {
-	if(cube->map[(player_x + cube->radius.i) >> 32][(player_y + cube->radius.i) >> 32] == '#')
+	fixed_point radius;
+
+	radius.i = (int64_t)(cube->radius * ((int64_t)1 << 32));
+	if(cube->map[(player_x + radius.i) >> 32][(player_y + radius.i) >> 32] == '#')
 		return (0);
-	if(cube->map[(player_x + cube->radius.i) >> 32][(player_y - cube->radius.i) >> 32] == '#')
+	if(cube->map[(player_x + radius.i) >> 32][(player_y - radius.i) >> 32] == '#')
 		return (0);
-	if(cube->map[(player_x - cube->radius.i) >> 32][(player_y + cube->radius.i) >> 32] == '#')
+	if(cube->map[(player_x - radius.i) >> 32][(player_y + radius.i) >> 32] == '#')
 		return (0);
-	if(cube->map[(player_x - cube->radius.i) >> 32][(player_y - cube->radius.i) >> 32] == '#')
+	if(cube->map[(player_x - radius.i) >> 32][(player_y - radius.i) >> 32] == '#')
 		return (0);
 	return (1);
 }
@@ -49,8 +52,8 @@ void rotate_player(int keycode, t_cube *cube)
 		cube->player_angle -= 0.01;
 		if(cube->player_angle < 0)
 			cube->player_angle += 2 * PI;
-		cube->player_dx.i = (int64_t)(cos(cube->player_angle) * ((int64_t)(int64_t)1 << 32));
-		cube->player_dy.i = (int64_t)(sin(cube->player_angle) * ((int64_t)(int64_t)1 << 32));
+		cube->player_dx.i = (int64_t)(cos(cube->player_angle) * ((int64_t)1 << 32));
+		cube->player_dy.i = (int64_t)(sin(cube->player_angle) * ((int64_t)1 << 32));
 	}
 	else if(keycode == XK_Left)
 	{
@@ -91,7 +94,7 @@ void draw_pixel(t_cube *cube, int x, int y, int color)
 {
 	int pixel_index;
 	//if it's -3 it's gonna crash everything right?
-	if(x < 0 || y < 0 || x > cube->map_h*MINIMAP_SCALE || y > cube->map_w*MINIMAP_SCALE)
+	if(x < 0 || y < 0 || x > cube->map_h * MINIMAP_SCALE || y > cube->map_w * MINIMAP_SCALE)
 		return ;
 	pixel_index = (x * cube->mlx->size_line) + (y * (cube->mlx->pixel_bits / 8));
 	cube->mlx->img_data[pixel_index] = color & 0xFF;
@@ -101,17 +104,19 @@ void draw_pixel(t_cube *cube, int x, int y, int color)
 
 void draw_player(t_cube *cube, int color)
 {
-	int		x;
-	int		y;
+	int	x;
+	int	y;
+	float radius;
 
-	x = -1;
-	while(++x < MINIMAP_SCALE)
+	radius = cube->radius * MINIMAP_SCALE;
+	x = -MINIMAP_SCALE / 2;
+	while(++x < MINIMAP_SCALE / 2)
 	{
-		y = -1;
-		while(++y < MINIMAP_SCALE)
+		y = -MINIMAP_SCALE / 2;
+		while(++y < MINIMAP_SCALE / 2)
 		{
-			if(pow(((cube->radius.i * MINIMAP_SCALE) >> 32) - x, 2) + pow(((cube->radius.i * MINIMAP_SCALE) >> 32) - y, 2) <= pow((cube->radius.i * MINIMAP_SCALE) >> 32, 2))
-				draw_pixel(cube, (((cube->player_x.i - cube->radius.i) * MINIMAP_SCALE) >> 32) + x + 1  , (((cube->player_y.i - cube->radius.i) * MINIMAP_SCALE) >> 32) + y + 1 , color);
+			if(x * x + y * y <= radius * radius)
+				draw_pixel(cube, ((cube->player_x.i * MINIMAP_SCALE) >> 32) + x, ((cube->player_y.i * MINIMAP_SCALE) >> 32) + y , color);
 		}
 	}
 }
@@ -127,9 +132,10 @@ void draw_square(t_cube *cube, int x_scaled , int y_scaled, int color)
 		pixel_size_y = -1;
 		while(++pixel_size_y < MINIMAP_SCALE)
 		{
-			draw_pixel(cube, pixel_size_x + x_scaled, pixel_size_y + y_scaled, color);
 			if (pixel_size_x == 0 || pixel_size_y == 0)
 				draw_pixel(cube, pixel_size_x + x_scaled, pixel_size_y + y_scaled, 0x000000);
+			else
+				draw_pixel(cube, pixel_size_x + x_scaled, pixel_size_y + y_scaled, color);
 		}
 	}
 }
@@ -147,7 +153,7 @@ void draw_minimap(t_cube *cube)
 		{
 			if(cube->map[x][y] == '!')
 				draw_square(cube, x*MINIMAP_SCALE, y*MINIMAP_SCALE, 0x0066b2);
-			else if(cube->map[x][y] == '#')
+			else
 				draw_square(cube, x*MINIMAP_SCALE, y*MINIMAP_SCALE, 0x990000);
 		}
 	}
@@ -162,7 +168,7 @@ void	find_start_h(t_cube *cube)
 		cube->rayx.hi = cube->player_x.hi + 1;
 	else
 		cube->rayx.hi = cube->player_x.hi;
-	cube->rayy.i = ((cube->rayx.i - cube->player_x.i)  / (1 << 16)) * ((cube->player_dy.i * (1 << 16)) / cube->player_dx.i) + cube->player_y.i;
+	cube->rayy.i = ((cube->rayx.i - cube->player_x.i)  >> 16) * ((cube->player_dy.i << 16) / cube->player_dx.i) + cube->player_y.i;
 	draw_pixel(cube, ((cube->rayx.i * MINIMAP_SCALE) >> 32), ((cube->rayy.i * MINIMAP_SCALE) >> 32), 0xff00ff);
 }
 
@@ -175,12 +181,12 @@ void	find_start_w(t_cube *cube)
 		cube->rayy.hi = cube->player_y.hi + 1;
 	else
 		cube->rayy.hi = cube->player_y.hi;
-	cube->rayx.i = ((cube->rayy.i - cube->player_y.i) / (1 << 16)) * ((cube->player_dx.i * (1 << 16)) / cube->player_dy.i) + cube->player_x.i;
+	cube->rayx.i = ((cube->rayy.i - cube->player_y.i) >> 16) * ((cube->player_dx.i << 16) / cube->player_dy.i) + cube->player_x.i;
 }
 
 void	raycast_h(t_cube *cube)
 {
-	int64_t slope = (cube->player_dy.i  * ((int64_t)1 << 30)) / (cube->player_dx.i / 4);
+	int64_t slope = (cube->player_dy.i << 31) / (cube->player_dx.i >> 1);
 	fixed_point rayx = cube->rayx;
 	fixed_point rayy = cube->rayy;
 	draw_pixel(cube, ((rayx.i * MINIMAP_SCALE) >> 32), ((rayy.i * MINIMAP_SCALE) >> 32), 0xff00ff);
@@ -202,7 +208,7 @@ void	raycast_h(t_cube *cube)
 
 void	raycast_w(t_cube *cube)
 {
-	int64_t slope = (cube->player_dx.i  * (1 << 16)) / (cube->player_dy.i / (1 << 16));
+	int64_t slope = (cube->player_dx.i  << 31) / (cube->player_dy.i >> 1);
 	fixed_point rayx = cube->rayx;
 	fixed_point rayy = cube->rayy;
 	while(rayx.hi < cube->map_h && rayy.hi < cube->map_w && rayx.i > 0 && rayy.i > 0 && cube->map[rayx.hi][rayy.hi - (cube->player_dy.i < 0)] != '#')
@@ -390,7 +396,7 @@ void render(t_cube *cube)
 	cube->rayy.i = 0;
 	cube->rayx.hi = 0;
 	cube->rayy.hi = 0;
-	cube->radius.i = (int64_t)(0.5 * ((int64_t)1 << 32));
+	cube->radius = 0.5;
 	cube->player_angle = PI/2;
 	cube->player_dx.i = (int64_t)(cos(cube->player_angle) * ((int64_t)1 << 32));
 	cube->player_dy.i = (int64_t)(sin(cube->player_angle) * ((int64_t)1 << 32));

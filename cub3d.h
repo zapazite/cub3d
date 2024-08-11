@@ -91,7 +91,6 @@ typedef struct s_cube
 	t_parse			*prs;
 	t_lines			*lines;
 	t_mlx			*mlx;
-	fixed_point		radius;
 	fixed_point		player_x;
 	fixed_point		player_y;
 	fixed_point		rayx;
@@ -100,9 +99,8 @@ typedef struct s_cube
 	fixed_point		player_dy;
 	fixed_point		rotated_x;
 	fixed_point		rotated_y;
+	float			radius;
 	float			player_angle;
-	int64_t			dx_rot;
-	int64_t			dy_rot;
 	int				map_h;
 	int				map_w;
 	int				**map;
