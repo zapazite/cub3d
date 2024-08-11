@@ -15,7 +15,7 @@
 void	parse_map(t_cube *cube, int fd)
 {
 	char	*line;
-	int		i;
+	int		x;
 
 	line = get_next_line(cube, fd);
 	if (!line)
@@ -24,9 +24,9 @@ void	parse_map(t_cube *cube, int fd)
 		line = get_next_line(cube, fd);
 	while (line)
 	{
-		i = -1;
-		check_line(cube, &i, line);
-		line[i] = '\0';
+		x = -1;
+		check_line(cube, &x, line);
+		line[x] = '\0';
 		if ((int)ft_strlen(line) > cube->map_w)
 			cube->map_w = (int)ft_strlen(line);
 		add_line(cube, line);
@@ -43,27 +43,27 @@ void	parse_map(t_cube *cube, int fd)
 
 void	fill_map(t_cube *cube)
 {
-	int	i;
-	int	j;
+	int	x;
+	int	y;
 
-	i = cube->map_h;
+	x = cube->map_h;
 	cube->prs->prs_map = (int **)ft_malloc(cube, sizeof(int *) * cube->map_h);
-	while (i--)
+	while (x--)
 	{
-		j = -1;
-		cube->prs->prs_map[i] = (int *)ft_malloc(cube, sizeof(int) * cube->map_w);
-		while (++j < (int)ft_strlen(cube->lines->line))
+		y = -1;
+		cube->prs->prs_map[x] = (int *)ft_malloc(cube, sizeof(int) * cube->map_w);
+		while (++y < (int)ft_strlen(cube->lines->line))
 		{
-			cube->prs->prs_map[i][j] = cube->lines->line[j];
-			if (cube->prs->prs_map[i][j] == 'N' || cube->prs->prs_map[i][j] == 'S'
-				|| cube->prs->prs_map[i][j] == 'W' || cube->prs->prs_map[i][j] == 'E')
+			cube->prs->prs_map[x][y] = cube->lines->line[y];
+			if (cube->prs->prs_map[x][y] == 'N' || cube->prs->prs_map[x][y] == 'S'
+				|| cube->prs->prs_map[x][y] == 'W' || cube->prs->prs_map[x][y] == 'E')
 			{
-				cube->player_x.hi = i;
-				cube->player_y.hi = j;
+				cube->player_x.hi = x;
+				cube->player_y.hi = y;
 			}
 		}
-		while (j < cube->map_w)
-			cube->prs->prs_map[i][j++] = ' ';
+		while (y < cube->map_w)
+			cube->prs->prs_map[x][y++] = ' ';
 		cube->lines = cube->lines->next;
 	}
 	if (cube->player_x.i == -1)

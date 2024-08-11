@@ -29,10 +29,10 @@
 # define PI 3.1415926535
 
 typedef union {
-    int32_t i;     // 32-bit integer representing the fixed-point number
+    int64_t i;     // 32-bit integer representing the fixed-point number
     struct {
-        int16_t lo; // 16-bit fractional part (lower bits)
-        int16_t hi; // 16-bit integer part (higher bits)
+        int32_t lo; // 16-bit fractional part (lower bits)
+        int32_t hi; // 16-bit integer part (higher bits)
     };
 } fixed_point;
 
@@ -101,8 +101,8 @@ typedef struct s_cube
 	fixed_point		rotated_x;
 	fixed_point		rotated_y;
 	float			player_angle;
-	int32_t			dx_rot;
-	int32_t			dy_rot;
+	int64_t			dx_rot;
+	int64_t			dy_rot;
 	int				map_h;
 	int				map_w;
 	int				**map;
