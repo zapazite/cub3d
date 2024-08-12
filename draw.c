@@ -93,7 +93,7 @@ void draw_minimap(t_cube *cube)
 	}
 }
 
-void	save_ray_distance(t_cube *cube, int i)
+void	save_ray_distance(t_cube *cube, int i, float d_player_screen)
 {
 	float h_hit;
 	float w_hit;
@@ -101,7 +101,7 @@ void	save_ray_distance(t_cube *cube, int i)
 	h_hit = pow(cube->player_x - cube->ray->h_x, 2) + pow(cube->player_y - cube->ray->h_y, 2);
 	w_hit = pow(cube->player_x - cube->ray->w_x, 2) + pow(cube->player_y - cube->ray->w_y, 2);
 	if(h_hit <= w_hit)
-		cube->ray->hit_points[i] = sqrt(h_hit);
+		cube->ray->hit_points[i] = sqrt(h_hit) * d_player_screen / (sqrt(pow(cube->ray->dx, 2) + pow(cube->ray->dy, 2)));
 	else
-		cube->ray->hit_points[i] = sqrt(w_hit);
+		cube->ray->hit_points[i] = sqrt(w_hit) * d_player_screen / (sqrt(pow(cube->ray->dx, 2) + pow(cube->ray->dy, 2)));
 }

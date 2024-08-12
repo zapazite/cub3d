@@ -14,10 +14,12 @@
 # define CUB3D_H
 
 # include "gc/gc.h"
+#include <X11/Xlib.h>
 # include <math.h>
 # include "minilibx-linux/mlx.h"
 # include "get_next_line/get_next_line_bonus.h"
 # include <fcntl.h>
+#include <stdint.h>
 # include <unistd.h>
 # include <math.h>
 # include "minilibx-linux/mlx.h"
@@ -93,6 +95,18 @@ typedef struct s_mlx
 	void			*main_img;
 } t_mlx;
 
+typedef struct s_keys
+{
+	Bool key_w;
+	Bool key_s;
+	Bool key_d;
+	Bool key_a;
+	Bool key_up;
+	Bool key_down;
+	Bool key_left;
+	Bool key_right;
+} t_keys;
+
 typedef struct s_ray
 {
 	float			h_x;
@@ -114,6 +128,7 @@ typedef struct s_cube
 	t_lines			*lines;
 	t_mlx			*mlx;
 	t_ray			*ray;
+	t_keys			*keys;
 	float			radius;
 	float			player_x;
 	float			player_y;
@@ -145,8 +160,8 @@ int					ft_strncmp(const char *str1, const char *str2, size_t n);
 void				clean_exit(t_cube *cube, int error_type);
 int					ft_isdigit(int c);
 int					check_player_position(float player_x, float player_y, t_cube *cube);
-void				rotate_player(int keycode, t_cube *cube);
-void				move_player(int keycode, t_cube *cube);
+void				rotate_player(t_cube *cube);
+void				move_player(t_cube *cube);
 void				draw_pixel(t_cube *cube, int x, int y, int color);
 void				draw_player(t_cube *cube);
 void				draw_line(float rayx, float rayy, t_cube *cube);
@@ -156,7 +171,7 @@ void				cast_h(int rayx, float rayy, t_cube *cube);
 void				cast_w(float rayx, int rayy, t_cube *cube);
 void				find_start_h(t_cube *cube);
 void				find_start_w(t_cube *cube);
-void				save_ray_distance(t_cube *cube, int i);
+void				save_ray_distance(t_cube *cube, int i, float d_player_screen);
 void				ray_cast(t_cube *cube);
 int					put_image(t_cube *cube);
 void				copy_playable_map(t_cube *cube);

@@ -1,6 +1,7 @@
 #include "cub3d.h"
 #include "gc/gc.h"
 #include "minilibx-linux/mlx.h"
+#include <math.h>
 
 void	cast_h(int rayx, float rayy, t_cube *cube)
 {
@@ -88,13 +89,13 @@ void	draw_world(t_cube *cube)
 		j = -1;
 		while(++j < WINDOW_W)
 		{
-			wall_size = WINDOW_W / (cube->ray->hit_points[j] * sqrt(3));
+			wall_size = WINDOW_W * sqrt(3) / cube->ray->hit_points[j] / 2;
 			if(i < WINDOW_H / 2. - (wall_size / 2))
 				draw_main_pixel(cube, i, j, cube->colors[CIELLING]);
 			else if (i > WINDOW_H / 2. + (wall_size / 2))
 				draw_main_pixel(cube, i, j, cube->colors[FLOOR]);
 			else
-				draw_main_pixel(cube, i, j, 0x000000);
+				draw_main_pixel(cube, i, j, 0xbc001a);
 		}
 	}
 }
@@ -102,20 +103,21 @@ void	draw_world(t_cube *cube)
 void	ray_cast(t_cube *cube)
 {
 	int		i;
+	float	d_player_screen;
 
 	i = 0;
-	cube->ray->angle = cube->player_angle;
-	cube->ray->angle += 0.523599; //30 degrees offset
-	cube->ray->dx = cos(cube->ray->angle);
-	cube->ray->dy = sin(cube->ray->angle);
-	while(cube->ray->angle > cube->player_angle - 0.523599)
+	cube->ray->dx = (WINDOW_W / 2.) / tan(FOV / 2) * cube->player_dx;
+	cube->ray->dy = (WINDOW_W / 2.) / tan(FOV / 2) * cube->player_dy;
+	d_player_screen = sqrt(pow(cube->ray->dx, 2) + pow(cube->ray->dy, 2));
+	cube->ray->dx += WINDOW_W / 2. * -cube->player_dy;
+	cube->ray->dy += WINDOW_W / 2. * cube->player_dx;
+	while(i < WINDOW_W)
 	{
 		find_start_h(cube);
 		find_start_w(cube);
-		save_ray_distance(cube, i);
-		cube->ray->angle -= cube->ray->d_angle;
-		cube->ray->dx = cos(cube->ray->angle);
-		cube->ray->dy = sin(cube->ray->angle);
+		save_ray_distance(cube, i, d_player_screen);
+		cube->ray->dx -= -cube->player_dy;
+		cube->ray->dy -= cube->player_dx;
 		i++;
 	}
 }

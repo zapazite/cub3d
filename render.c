@@ -4,15 +4,58 @@ int	key_handler(int keycode, t_cube *cube)
 {
 	if(keycode == XK_Escape)
 		close_window(cube);
-	if(keycode == XK_Up || keycode == XK_Down)
-		move_player(keycode, cube);
-	if(keycode == XK_Left || keycode == XK_Right)
-		rotate_player(keycode, cube);
+	if(keycode == XK_Up || keycode == XK_w)
+	{
+		cube->keys->key_w = 1;
+		cube->keys->key_up = 1;
+	}
+	if(keycode == XK_Down || keycode == XK_s )
+	{
+		cube->keys->key_down = 1;
+		cube->keys->key_s = 1;
+	}
+	if(keycode == XK_Left || keycode == XK_a)
+	{
+		cube->keys->key_a = 1;
+		cube->keys->key_left = 1;
+	}
+	if(keycode == XK_Right || keycode == XK_d)
+	{
+		cube->keys->key_d = 1;
+		cube->keys->key_right = 1;
+	}
+	return (0);
+}
+
+int key_release(int keycode, t_cube *cube)
+{
+	if(keycode == XK_Up || keycode == XK_w)
+	{
+		cube->keys->key_w = 0;
+		cube->keys->key_up = 0;
+	}
+	if(keycode == XK_Down || keycode == XK_s)
+	{
+		cube->keys->key_s = 0;
+		cube->keys->key_down = 0;
+	}
+	if(keycode == XK_Left || keycode == XK_a)
+	{
+		cube->keys->key_a = 0;
+		cube->keys->key_left = 0;
+	}
+	if(keycode == XK_Right || keycode == XK_d)
+	{
+		cube->keys->key_d = 0;
+		cube->keys->key_right = 0;
+	}
 	return (0);
 }
 
 int put_image(t_cube *cube)
 {
+	move_player(cube);
+	rotate_player(cube);
 	draw_minimap(cube);
 	draw_player(cube);
 	ray_cast(cube);
@@ -35,6 +78,7 @@ void	render(t_cube *cube)
 	init_ray(cube);
 	mlx_hook(cube->mlx->win_ptr, 17, 0, close_window, cube);
 	mlx_hook(cube->mlx->win_ptr, KeyPress,KeyPressMask, key_handler, cube);
+	mlx_hook(cube->mlx->win_ptr, KeyRelease,KeyReleaseMask, key_release, cube);
 	mlx_loop_hook(cube->mlx->mlx_ptr, put_image, cube);
 	mlx_loop(cube->mlx->mlx_ptr);
 }

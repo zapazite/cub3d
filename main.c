@@ -44,6 +44,12 @@ void	cube_init(t_cube *cube, t_parse *prs, t_mlx *mlx,t_ray *ray, char *map_file
 	cube->player_y = -1;
 	cube->lines = NULL;
 	cube->prs->map_file = map_file;
+	cube->keys->key_a = 0;
+	cube->keys->key_d = 0;
+	cube->keys->key_w = 0;
+	cube->keys->key_s = 0;
+	cube->keys->key_down = 0;
+	cube->keys->key_up = 0;
 	while (++i < 2)
 		cube->colors[i] = -1;
 	i = -1;
@@ -57,6 +63,9 @@ int	main(int argc, char *argv[])
 	t_parse prs;
 	t_mlx	mlx;
 	t_ray	ray;
+	t_keys	keys;
+
+	cube.keys = &keys;
 
 	if (argc != 2)
 		return (write(1, "Error\n", 6), 1);

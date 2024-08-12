@@ -13,15 +13,15 @@ int	check_player_position(float player_x, float player_y, t_cube *cube)
 	return (1);
 }
 
-void	rotate_player(int keycode, t_cube *cube)
+void	rotate_player(t_cube *cube)
 {
-	if(keycode == XK_Right)
+	if(cube->keys->key_right || cube->keys->key_d)
 	{
 		cube->player_angle -= 0.01;
 		if(cube->player_angle < 0)
 			cube->player_angle += 2*PI;
 	}
-	else if(keycode == XK_Left)
+	else if(cube->keys->key_left || cube->keys->key_a)
 	{
 		cube->player_angle += 0.01;
 		if(cube->player_angle > 2*PI)
@@ -31,19 +31,19 @@ void	rotate_player(int keycode, t_cube *cube)
 	cube->player_dy = sin(cube->player_angle);
 }
 
-void	move_player(int keycode, t_cube *cube)
+void	move_player(t_cube *cube)
 {
 	float move_x;
 	float move_y;
 
 	move_x = cube->player_x;
 	move_y = cube->player_y;
-	if(keycode == XK_Up)
+	if(cube->keys->key_up || cube->keys->key_w)
 	{
 		move_x += cube->player_dx/MINIMAP_SCALE;
 		move_y += cube->player_dy/MINIMAP_SCALE;
 	}
-	else if(keycode == XK_Down)
+	else if(cube->keys->key_down || cube->keys->key_s)
 	{
 		move_x -= cube->player_dx/MINIMAP_SCALE;
 		move_y -= cube->player_dy/MINIMAP_SCALE;
