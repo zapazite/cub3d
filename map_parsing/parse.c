@@ -36,9 +36,36 @@ void	parse_map(t_cube *cube, int fd)
 	fill_map(cube);
 	cube->prs->min_x = cube->map_h;
 	cube->prs->min_y = cube->map_w;
-	check_spawn(cube, cube->player_x.hi, cube->player_y.hi);
+	check_map(cube, cube->player_x.hi, cube->player_y.hi);
 	cube->player_x.hi -= cube->prs->min_x;
 	cube->player_y.hi -= cube->prs->min_y;
+}
+
+void    check_spawn(t_cube *cube, int x, int y)
+{
+    if (cube->prs->prs_map[x][y] == 'S')
+    {
+        cube->player_x.hi = x;
+        cube->player_y.hi = y;
+    }
+    else if (cube->prs->prs_map[x][y] == 'E')
+    {
+        cube->player_x.hi = x;
+        cube->player_y.hi = y;
+        cube->player_angle = PI / 2;
+    }
+    else if (cube->prs->prs_map[x][y] == 'N')
+    {
+        cube->player_x.hi = x;
+        cube->player_y.hi = y;
+        cube->player_angle = PI;
+    }
+    else if (cube->prs->prs_map[x][y] == 'W')
+    {
+        cube->player_x.hi = x;
+        cube->player_y.hi = y;
+        cube->player_angle = 3 * PI / 2;
+    }
 }
 
 void	fill_map(t_cube *cube)
@@ -55,12 +82,7 @@ void	fill_map(t_cube *cube)
 		while (++y < (int)ft_strlen(cube->lines->line))
 		{
 			cube->prs->prs_map[x][y] = cube->lines->line[y];
-			if (cube->prs->prs_map[x][y] == 'N' || cube->prs->prs_map[x][y] == 'S'
-				|| cube->prs->prs_map[x][y] == 'W' || cube->prs->prs_map[x][y] == 'E')
-			{
-				cube->player_x.hi = x;
-				cube->player_y.hi = y;
-			}
+		    check_spawn(cube, x, y);
 		}
 		while (y < cube->map_w)
 			cube->prs->prs_map[x][y++] = ' ';

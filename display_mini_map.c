@@ -152,9 +152,9 @@ void draw_minimap(t_cube *cube)
 		while(y-- > 0)
 		{
 			if(cube->map[x][y] == '!')
-				draw_square(cube, x*MINIMAP_SCALE, y*MINIMAP_SCALE, 0x0066b2);
+				draw_square(cube, x * MINIMAP_SCALE, y * MINIMAP_SCALE, 0x0066b2);
 			else
-				draw_square(cube, x*MINIMAP_SCALE, y*MINIMAP_SCALE, 0x990000);
+				draw_square(cube, x * MINIMAP_SCALE, y * MINIMAP_SCALE, 0x990000);
 		}
 	}
 }
@@ -186,9 +186,12 @@ void	find_start_w(t_cube *cube)
 
 void	raycast_h(t_cube *cube)
 {
-	int64_t slope = (cube->player_dy.i << 31) / (cube->player_dx.i >> 1);
+	int64_t slope;
 	fixed_point rayx = cube->rayx;
 	fixed_point rayy = cube->rayy;
+	if (cube->player_dx.i == 0)
+	    return ;
+	slope = (cube->player_dy.i << 31) / (cube->player_dx.i >> 1);
 	draw_pixel(cube, ((rayx.i * MINIMAP_SCALE) >> 32), ((rayy.i * MINIMAP_SCALE) >> 32), 0xff00ff);
 	while(rayx.hi < cube->map_h && rayy.hi < cube->map_w && rayx.i > 0 && rayy.i > 0 && cube->map[rayx.hi - (cube->player_dx.i < 0)][rayy.hi] != '#')
 	{
@@ -208,9 +211,12 @@ void	raycast_h(t_cube *cube)
 
 void	raycast_w(t_cube *cube)
 {
-	int64_t slope = (cube->player_dx.i  << 31) / (cube->player_dy.i >> 1);
+	int64_t slope;
 	fixed_point rayx = cube->rayx;
 	fixed_point rayy = cube->rayy;
+	if (!cube->player_dy.i)
+        return ;
+	slope = (cube->player_dx.i  << 31) / (cube->player_dy.i >> 1);
 	while(rayx.hi < cube->map_h && rayy.hi < cube->map_w && rayx.i > 0 && rayy.i > 0 && cube->map[rayx.hi][rayy.hi - (cube->player_dy.i < 0)] != '#')
 	{
 		if(cube->player_dy.i > 0)
@@ -397,7 +403,7 @@ void render(t_cube *cube)
 	cube->rayx.hi = 0;
 	cube->rayy.hi = 0;
 	cube->radius = 0.5;
-	cube->player_angle = PI/2;
+	cube->player_angle = 0;
 	cube->player_dx.i = (int64_t)(cos(cube->player_angle) * ((int64_t)1 << 32));
 	cube->player_dy.i = (int64_t)(sin(cube->player_angle) * ((int64_t)1 << 32));
 

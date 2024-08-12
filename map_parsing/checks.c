@@ -106,7 +106,7 @@ void	check_line(t_cube *cube, int *i, char *line)
 	}
 }
 
-void	check_spawn(t_cube *cube, int x, int y)
+void	check_map(t_cube *cube, int x, int y)
 {
 	if (x >= cube->map_h || x < 0 || y < 0 || y >= cube->map_w
 		|| cube->prs->prs_map[x][y] == ' ')
@@ -127,8 +127,8 @@ void	check_spawn(t_cube *cube, int x, int y)
 	if(cube->prs->prs_map[x][y] == '!' || cube->prs->prs_map[x][y] == '#')
 		return ;
 	cube->prs->prs_map[x][y] = '!';
-	check_spawn(cube, x - 1, y);
-	check_spawn(cube, x + 1, y);
-	check_spawn(cube, x, y - 1);
-	check_spawn(cube, x, y + 1);
+	check_map(cube, x - 1, y);
+	check_map(cube, x + 1, y);
+	check_map(cube, x, y - 1);
+	check_map(cube, x, y + 1);
 }

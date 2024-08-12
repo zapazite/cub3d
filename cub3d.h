@@ -111,7 +111,7 @@ typedef struct s_cube
 void				clean_exit(t_cube *cube, int error_type);
 void				parse(t_cube *cube);
 void				parse_map(t_cube *cube, int fd);
-void				check_spawn(t_cube *cube, int x, int y);
+void				check_map(t_cube *cube, int x, int y);
 void				fill_map(t_cube *cube);
 void				check_line(t_cube *cube, int *i, char *line);
 void				add_line(t_cube *cube, char *line);
@@ -128,4 +128,5 @@ void				render(t_cube *cube);
 void				draw_pixel(t_cube *cube, int x, int y, int color);
 void 				line_algo(t_cube * cube);
 void				draw_square(t_cube *cube, int x_scaled , int y_scaled, int color);
+void                check_spawn(t_cube *cube, int x, int y);
 #endif
