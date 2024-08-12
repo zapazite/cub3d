@@ -120,6 +120,19 @@ typedef struct s_ray
 	float			hit_points[WINDOW_W];
 }t_ray;
 
+typedef struct s_textures
+{
+	char	*wall_path;
+	void	*wall_ptr;
+	int 	wall_w;
+	int		wall_h;
+	char	*wall_data;
+	int		wall_p_bits;
+	int		wall_size_line;
+	int		wall_endian;
+
+} t_textures;
+
 typedef struct s_cube
 {
 	t_gc			*gc;
@@ -128,6 +141,7 @@ typedef struct s_cube
 	t_mlx			*mlx;
 	t_ray			*ray;
 	t_keys			*keys;
+	t_textures		*textures;
 	float			radius;
 	float			player_x;
 	float			player_y;

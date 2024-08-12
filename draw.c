@@ -97,12 +97,15 @@ void	draw_world(t_cube *cube)
 {
 	int		i;
 	int		j;
+	int		wall_idx;
 	float	wall_size;
 
 	i = -1;
+	wall_idx = 0;
 	while(++i < WINDOW_H)
 	{
 		j = -1;
+		wall_idx = 0;
 		while(++j < WINDOW_W)
 		{
 			wall_size = WINDOW_W * sqrt(3) / cube->ray->hit_points[j] / 2;
@@ -111,7 +114,7 @@ void	draw_world(t_cube *cube)
 			else if (i > WINDOW_H / 2. + (wall_size / 2))
 				draw_main_pixel(cube, i, j, cube->colors[FLOOR]);
 			else
-				draw_main_pixel(cube, i, j, 0xbc001a);
+				draw_main_pixel(cube, i, j, cube->textures->wall_data[wall_idx++]);
 		}
 	}
 }

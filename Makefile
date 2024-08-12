@@ -4,7 +4,7 @@ CC = clang
 
 LIBS = -L./minilibx-linux -lXext -lX11 -lm -lmlx_Linux
 
-CFLAGS =  -Wall -Wextra -Werror -o3 -g
+CFLAGS =  -Wall -Wextra -Werror -o3
 
 SRCS = main.c\
        gc/gc.c\
