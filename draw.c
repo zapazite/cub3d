@@ -93,15 +93,25 @@ void draw_minimap(t_cube *cube)
 	}
 }
 
-void	save_ray_distance(t_cube *cube, int i, float d_player_screen)
+void	draw_world(t_cube *cube)
 {
-	float h_hit;
-	float w_hit;
+	int		i;
+	int		j;
+	float	wall_size;
 
-	h_hit = pow(cube->player_x - cube->ray->h_x, 2) + pow(cube->player_y - cube->ray->h_y, 2);
-	w_hit = pow(cube->player_x - cube->ray->w_x, 2) + pow(cube->player_y - cube->ray->w_y, 2);
-	if(h_hit <= w_hit)
-		cube->ray->hit_points[i] = sqrt(h_hit) * d_player_screen / (sqrt(pow(cube->ray->dx, 2) + pow(cube->ray->dy, 2)));
-	else
-		cube->ray->hit_points[i] = sqrt(w_hit) * d_player_screen / (sqrt(pow(cube->ray->dx, 2) + pow(cube->ray->dy, 2)));
+	i = -1;
+	while(++i < WINDOW_H)
+	{
+		j = -1;
+		while(++j < WINDOW_W)
+		{
+			wall_size = WINDOW_W * sqrt(3) / cube->ray->hit_points[j] / 2;
+			if(i < WINDOW_H / 2. - (wall_size / 2))
+				draw_main_pixel(cube, i, j, cube->colors[CIELLING]);
+			else if (i > WINDOW_H / 2. + (wall_size / 2))
+				draw_main_pixel(cube, i, j, cube->colors[FLOOR]);
+			else
+				draw_main_pixel(cube, i, j, 0xbc001a);
+		}
+	}
 }

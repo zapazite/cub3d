@@ -1,4 +1,6 @@
 #include "cub3d.h"
+#include "minilibx-linux/mlx.h"
+#include <stdio.h>
 
 int	key_handler(int keycode, t_cube *cube)
 {
@@ -65,18 +67,31 @@ int put_image(t_cube *cube)
 	return 0;
 }
 
+int	mouse_handler(int x, int y, t_cube *cube)
+{
+	(void)x;
+
+	cube->player_angle += (WINDOW_W / 2. - x) * MOUSE_LUCAS;
+	cube->player_dx = cos(cube->player_angle);
+	cube->player_dy = sin(cube->player_angle);
+	printf("y %d\n", y);
+	mlx_mouse_move(cube->mlx->mlx_ptr, cube->mlx->win_ptr, WINDOW_W / 2, WINDOW_H / 2);
+	return (0);
+}
+
 void	render(t_cube *cube)
 {
 	copy_playable_map(cube);
+	init_player(cube);
+	init_keyes(cube);
 	cube->mlx->mlx_ptr = mlx_init();
 	cube->mlx->win_ptr = mlx_new_window(cube->mlx->mlx_ptr, WINDOW_W, WINDOW_H, "cub3d");
 	cube->mlx->map_img = mlx_new_image(cube->mlx->mlx_ptr, cube->map_w*MINIMAP_SCALE, cube->map_h*MINIMAP_SCALE);
 	cube->mlx->map_data = mlx_get_data_addr(cube->mlx->map_img, &cube->mlx->map_p_bits, &cube->mlx->map_size_line, &cube->mlx->map_endian);
 	cube->mlx->main_img = mlx_new_image(cube->mlx->mlx_ptr, WINDOW_W, WINDOW_H);
 	cube->mlx->main_data = mlx_get_data_addr(cube->mlx->main_img, &cube->mlx->main_p_bits, &cube->mlx->main_size_line, &cube->mlx->main_endian);
-	init_player(cube);
-	init_ray(cube);
 	mlx_hook(cube->mlx->win_ptr, 17, 0, close_window, cube);
+	mlx_hook(cube->mlx->win_ptr, MotionNotify, PointerMotionMask, mouse_handler, cube);
 	mlx_hook(cube->mlx->win_ptr, KeyPress,KeyPressMask, key_handler, cube);
 	mlx_hook(cube->mlx->win_ptr, KeyRelease,KeyReleaseMask, key_release, cube);
 	mlx_loop_hook(cube->mlx->mlx_ptr, put_image, cube);

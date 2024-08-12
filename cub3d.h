@@ -15,14 +15,12 @@
 
 # include "gc/gc.h"
 #include <X11/Xlib.h>
-# include <math.h>
 # include "minilibx-linux/mlx.h"
 # include "get_next_line/get_next_line_bonus.h"
 # include <fcntl.h>
 #include <stdint.h>
 # include <unistd.h>
 # include <math.h>
-# include "minilibx-linux/mlx.h"
 # include <X11/X.h>
 # include <X11/Xutil.h>
 
@@ -33,6 +31,7 @@
 # define PI 3.1415926535
 # define GREEN 0x00ff00
 # define FOV 1.0472
+#define	MOUSE_LUCAS 0.001
 
 typedef union {
     int32_t i;     // 32-bit integer representing the fixed-point number
@@ -178,8 +177,9 @@ void				copy_playable_map(t_cube *cube);
 int					close_window(t_cube *cube);
 int					key_handler(int keycode, t_cube *cube);
 void				init_player(t_cube *cube);
-void				init_ray(t_cube *cube);
+void				ray_init(t_cube *cube);
 void				render(t_cube *cube);
 void				draw_main_pixel(t_cube *cube, int x, int y, int color);
 void				draw_world(t_cube *cube);
+void				init_keyes(t_cube *cube);
 #endif
