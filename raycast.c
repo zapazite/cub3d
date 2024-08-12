@@ -76,23 +76,32 @@ void	find_start_w(t_cube *cube)
 	cast_w(rayx, rayy, cube);
 }
 
-void	draw_walls(t_cube *cube, float hit_distance)
+void	draw_world(t_cube *cube)
 {
-	float wall_h;
-	int i;
+	int		i;
+	int		j;
+	float	wall_size;
 
-	wall_h = (50*WINDOW_H) / hit_distance;
-	while(wall_h > 0)
+	i = -1;
+	while(++i < WINDOW_H)
 	{
-		draw_main_pixel(cube, (cube->ray->hit_points[i][0]*50)+wall_h, cube->ray->hit_points[i][1]*50, 0xff0000);
-		wall_h--;
+		j = -1;
+		while(++j < WINDOW_W)
+		{
+			wall_size = WINDOW_W / (cube->ray->hit_points[j] * sqrt(3));
+			if(i < WINDOW_H / 2. - (wall_size / 2))
+				draw_main_pixel(cube, i, j, cube->colors[CIELLING]);
+			else if (i > WINDOW_H / 2. + (wall_size / 2))
+				draw_main_pixel(cube, i, j, cube->colors[FLOOR]);
+			else
+				draw_main_pixel(cube, i, j, 0x000000);
+		}
 	}
 }
 
 void	ray_cast(t_cube *cube)
 {
 	int		i;
-	float	hit_distance;
 
 	i = 0;
 	cube->ray->angle = cube->player_angle;
@@ -103,11 +112,10 @@ void	ray_cast(t_cube *cube)
 	{
 		find_start_h(cube);
 		find_start_w(cube);
-		hit_distance = draw_nearest_ray(cube, i);
+		save_ray_distance(cube, i);
 		cube->ray->angle -= cube->ray->d_angle;
 		cube->ray->dx = cos(cube->ray->angle);
 		cube->ray->dy = sin(cube->ray->angle);
 		i++;
 	}
-	draw_walls(cube, hit_distance);
 }

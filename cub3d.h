@@ -23,11 +23,10 @@
 # include "minilibx-linux/mlx.h"
 # include <X11/X.h>
 # include <X11/Xutil.h>
-# include <math.h>
 
 # define BUFFERSIZE 8192
 # define MINIMAP_SCALE 15
-# define WINDOW_H  1080
+# define WINDOW_H  1000
 # define WINDOW_W  1920
 # define PI 3.1415926535
 # define GREEN 0x00ff00
@@ -81,11 +80,9 @@ typedef struct s_parse
 typedef struct s_mlx
 {
 	int				map_p_bits;
-	int				map_p_index;
 	int				map_size_line;
 	int				map_endian;
 	int				main_p_bits;
-	int				main_p_index;
 	int				main_size_line;
 	int				main_endian;
 	char			*main_data;
@@ -107,7 +104,7 @@ typedef struct s_ray
 	float			dx;
 	float			dy;
 	float			d_angle;
-	float			hit_points[57600][2];
+	float			hit_points[WINDOW_W];
 }t_ray;
 
 typedef struct s_cube
@@ -159,7 +156,7 @@ void				cast_h(int rayx, float rayy, t_cube *cube);
 void				cast_w(float rayx, int rayy, t_cube *cube);
 void				find_start_h(t_cube *cube);
 void				find_start_w(t_cube *cube);
-float				draw_nearest_ray(t_cube *cube, int i);
+void				save_ray_distance(t_cube *cube, int i);
 void				ray_cast(t_cube *cube);
 int					put_image(t_cube *cube);
 void				copy_playable_map(t_cube *cube);
@@ -169,4 +166,5 @@ void				init_player(t_cube *cube);
 void				init_ray(t_cube *cube);
 void				render(t_cube *cube);
 void				draw_main_pixel(t_cube *cube, int x, int y, int color);
+void				draw_world(t_cube *cube);
 #endif

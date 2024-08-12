@@ -16,8 +16,9 @@ int put_image(t_cube *cube)
 	draw_minimap(cube);
 	draw_player(cube);
 	ray_cast(cube);
+	draw_world(cube);
 	mlx_put_image_to_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr, cube->mlx->main_img, 0, 0);
-	// mlx_put_image_to_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr, cube->mlx->map_img, 0, 0);
+	mlx_put_image_to_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr, cube->mlx->map_img, 0, 0);
 	return 0;
 }
 

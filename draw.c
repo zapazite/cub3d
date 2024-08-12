@@ -93,9 +93,7 @@ void draw_minimap(t_cube *cube)
 	}
 }
 
-float draw_nearest_ray(t_cube *cube, int i)
-//can be modified later so that function just returns distance between player and wall
-//when there is no need to draw rays on the screen
+void	save_ray_distance(t_cube *cube, int i)
 {
 	float h_hit;
 	float w_hit;
@@ -103,17 +101,7 @@ float draw_nearest_ray(t_cube *cube, int i)
 	h_hit = pow(cube->player_x - cube->ray->h_x, 2) + pow(cube->player_y - cube->ray->h_y, 2);
 	w_hit = pow(cube->player_x - cube->ray->w_x, 2) + pow(cube->player_y - cube->ray->w_y, 2);
 	if(h_hit <= w_hit)
-	{
-		cube->ray->hit_points[i][0] = cube->ray->h_x;
-		cube->ray->hit_points[i][1] = cube->ray->h_y;
-		return (h_hit);
-		// draw_line(cube->ray->h_x, cube->ray->h_y, cube);
-	}
+		cube->ray->hit_points[i] = sqrt(h_hit);
 	else
-	{
-		cube->ray->hit_points[i][0] = cube->ray->w_x;
-		cube->ray->hit_points[i][1] = cube->ray->w_y;
-		return (w_hit);
-		// draw_line(cube->ray->w_x, cube->ray->w_y, cube);
-	}
+		cube->ray->hit_points[i] = sqrt(w_hit);
 }
