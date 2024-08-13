@@ -59,35 +59,45 @@ int key_release(int keycode, t_cube *cube)
 
 void draw_floor(t_cube *cube)
 {
-	int x;
-	int y;
-	int p;
-	float camera;
-	float row_dist;
+    int x;
+    int y;
+    int p;
 
-	x = WINDOW_H / 2;
-	while(x++ < WINDOW_H)
-	{
-		y = -1;
-		p = WINDOW_H / 2 - x;
-		camera = WINDOW_H / 2.;
-		row_dist = camera / p;
-		while(++y < WINDOW_W)
-		{
+    x = WINDOW_H / 2;
+    while (++x < WINDOW_H)
+    {
+        y = -1;
+        float plane_x = cube->player_dy * tan(FOV / 2);
+        float plane_y = -cube->player_dx * tan(FOV / 2);
+        float ray_dirx = cube->player_dx - plane_x;
+        float ray_diry = cube->player_dy - plane_y;
+        float ray_dirx1 = cube->player_dx + plane_x;
+        float ray_diry1 = cube->player_dy + plane_y;
+        float posZ = 0.5 * WINDOW_H;
 
-		}
-	}
+        p = x - WINDOW_H / 2;  // Initialize p here
+        float rowDistance = posZ / p;  // Now p is properly initialized
+
+        float floorStepX = rowDistance * (ray_dirx1 - ray_dirx) / WINDOW_W;
+        float floorStepY = rowDistance * (ray_diry1 - ray_diry) / WINDOW_W;
+        float floorX = cube->player_x + rowDistance * ray_dirx;
+        float floorY = cube->player_y + rowDistance * ray_diry;
+        while (++y < WINDOW_W)
+        {
+            int cellX = (int)(floorX);
+            int cellY = (int)(floorY);
+            int tx = (int)(64 * (floorX - cellX)) & (64 - 1);
+            int ty = (int)(64 * (floorY - cellY)) & (64 - 1);
+            floorX += floorStepX;
+            floorY += floorStepY;
+            draw_main_pixel(cube, x, y, cube->textures->wall_data[3][64 * ty + tx]);
+            draw_main_pixel(cube, WINDOW_H - x - 1, y, cube->textures->wall_data[2][64 * ty + tx]);
+        }
+    }
 }
 
 int put_image(t_cube *cube)
 {
-	// if(cube->keys->key_space == 1)
-	// 	cube->player_jump += 2;
-	int x = (WINDOW_H / 2) - 1;
-	int y = -1;
-	float px_pl_dist = 0;
-	float vectorx;
-	float vectory;
 	move_player(cube);
 	rotate_player(cube);
 	draw_minimap(cube);

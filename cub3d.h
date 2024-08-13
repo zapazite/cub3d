@@ -181,7 +181,6 @@ int					ft_isdigit(int c);
 int					check_player_position(float player_x, float player_y, t_cube *cube);
 void				rotate_player(t_cube *cube);
 void				move_player(t_cube *cube);
-void				draw_pixel(t_cube *cube, int x, int y, int color);
 void				draw_player(t_cube *cube);
 void				draw_line(float rayx, float rayy, t_cube *cube);
 void				draw_square(t_cube *cube, int x_scaled , int y_scaled, int color);
