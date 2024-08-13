@@ -97,21 +97,21 @@ void	draw_world(t_cube *cube)
 {
 	int			y;
 	int			x;
-	int			i;
+	int			txt;
 	float		wall_idx;
 	float		wall_size;
 	float		wall_offset;
 
 	y = -1;
-	i = -1;
 	while(++y < WINDOW_W)
 	{
 		x = -1;
 		wall_idx = 0;
+		txt = cube->ray->hit_direction[y];
 		wall_offset = 0;
-		wall_size = WINDOW_W * sqrt(3) / cube->ray->hit_dist[y] / 2;
+		wall_size = WINDOW_W / (tan(FOV / 2)) / cube->ray->hit_dist[y] / 2;
 		if(wall_size > WINDOW_H)
-			wall_offset = (wall_size - WINDOW_H) / 2 * cube->textures->wall_h[i] / wall_size;
+			wall_offset = (wall_size - WINDOW_H) / 2 * cube->textures->wall_h[txt] / wall_size;
 		while(++x < WINDOW_H)
 		{
 			if(x < WINDOW_H / 2. - (wall_size / 2))
@@ -120,9 +120,9 @@ void	draw_world(t_cube *cube)
 				draw_main_pixel(cube, x, y, cube->colors[FLOOR]);
 			else
 			{
-				draw_main_pixel(cube, x, y, cube->textures->wall_data[1][(int)(wall_idx + wall_offset) * cube->textures->wall_w[1]
-					+ (int)(cube->ray->hit_coordn[y] * cube->textures->wall_h[1])]);
-				wall_idx += cube->textures->wall_h[i] / wall_size;
+				draw_main_pixel(cube, x, y, cube->textures->wall_data[txt][(int)(wall_idx + wall_offset) * cube->textures->wall_w[txt]
+					+ (int)(cube->ray->hit_coordn[y] * cube->textures->wall_h[txt])]);
+				wall_idx += cube->textures->wall_h[txt] / wall_size;
 			}
 		}
 	}
