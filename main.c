@@ -27,7 +27,6 @@ void	cube_init(t_cube *cube, t_parse *prs, char *map_file)
 {
 	int		i;
 
-	i = -1;
 	cube->gc = NULL;
 	cube->map_h = 0;
 	cube->map_w = 0;
@@ -35,12 +34,10 @@ void	cube_init(t_cube *cube, t_parse *prs, char *map_file)
 	cube->player_y = -1;
 	cube->lines = NULL;
 	cube->prs = prs;
-	cube->textures->wall_data = NULL;
-	cube->textures->wall_ptr = NULL;
-	cube->textures->wall_path = "./redbrick.xpm";
 	cube->prs->max_x = 0;
 	cube->prs->max_y = 0;
 	cube->prs->map_file = map_file;
+	i = -1;
 	while (++i < 2)
 		cube->colors[i] = -1;
 	i = -1;

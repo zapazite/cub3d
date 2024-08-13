@@ -1,6 +1,6 @@
 #include "cub3d.h"
 #include "minilibx-linux/mlx.h"
-#include <stdio.h>
+#include <time.h>
 
 int	key_handler(int keycode, t_cube *cube)
 {
@@ -79,6 +79,29 @@ int	mouse_handler(int x, int y, t_cube *cube)
 	return (0);
 }
 
+void load_textures(t_cube *cube)
+{
+	int i;
+
+	i = -1;
+	while(++i < 4)
+	{
+		cube->textures->wall_ptr[i] = NULL;
+		cube->textures->wall_h[i] = 0;
+		cube->textures->wall_w[i] = 0;
+		cube->textures->wall_p_bits[i] = 0;
+		cube->textures->wall_size_line[i] = 0;
+		cube->textures->wall_endian[i] = 0;
+		cube->textures->wall_data[i] = NULL;
+	}
+	i = -1;
+	while(++i < 4)
+	{
+		cube->textures->wall_ptr[i] = mlx_xpm_file_to_image(cube->mlx->mlx_ptr, cube->textures->wall_paths[i], &cube->textures->wall_w[i], &cube->textures->wall_h[i]);
+		cube->textures->wall_data[i] = (int *)mlx_get_data_addr(cube->textures->wall_ptr[i], &cube->textures->wall_p_bits[i], &cube->textures->wall_size_line[i], &cube->textures->wall_endian[i]);
+	}
+}
+
 void	render(t_cube *cube)
 {
 	copy_playable_map(cube);
@@ -90,11 +113,7 @@ void	render(t_cube *cube)
 	cube->mlx->map_data = mlx_get_data_addr(cube->mlx->map_img, &cube->mlx->map_p_bits, &cube->mlx->map_size_line, &cube->mlx->map_endian);
 	cube->mlx->main_img = mlx_new_image(cube->mlx->mlx_ptr, WINDOW_W, WINDOW_H);
 	cube->mlx->main_data = mlx_get_data_addr(cube->mlx->main_img, &cube->mlx->main_p_bits, &cube->mlx->main_size_line, &cube->mlx->main_endian);
-	//trying to add a wall texure
-
-	cube->textures->wall_ptr = mlx_xpm_file_to_image(cube->mlx->mlx_ptr, cube->textures->wall_path, &cube->textures->wall_w, &cube->textures->wall_h);
-	cube->textures->wall_data = mlx_get_data_addr(cube->textures->wall_ptr, &cube->textures->wall_p_bits, &cube->textures->wall_size_line, &cube->textures->wall_endian);
-
+	load_textures(cube);
 	mlx_hook(cube->mlx->win_ptr, 17, 0, close_window, cube);
 	mlx_hook(cube->mlx->win_ptr, MotionNotify, PointerMotionMask, mouse_handler, cube);
 	mlx_hook(cube->mlx->win_ptr, KeyPress,KeyPressMask, key_handler, cube);

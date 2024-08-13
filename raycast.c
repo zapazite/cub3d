@@ -74,7 +74,7 @@ void	find_start_w(t_cube *cube)
 	cast_w(rayx, rayy, cube);
 }
 
-void	save_ray_distance(t_cube *cube, int i, float d_player_screen)
+void	save_ray_info(t_cube *cube, int i, float d_player_screen)
 {
 	float h_hit;
 	float w_hit;
@@ -82,9 +82,17 @@ void	save_ray_distance(t_cube *cube, int i, float d_player_screen)
 	h_hit = pow(cube->player_x - cube->ray->h_x, 2) + pow(cube->player_y - cube->ray->h_y, 2);
 	w_hit = pow(cube->player_x - cube->ray->w_x, 2) + pow(cube->player_y - cube->ray->w_y, 2);
 	if(h_hit <= w_hit)
-		cube->ray->hit_points[i] = sqrt(h_hit) * d_player_screen / (sqrt(pow(cube->ray->dx, 2) + pow(cube->ray->dy, 2)));
+	{
+		cube->ray->hit_direction[i] = (cube->ray->dx > 0);
+		cube->ray->hit_coordn[i] = cube->ray->h_y - (int)cube->ray->h_y;
+		cube->ray->hit_dist[i] = sqrt(h_hit) * d_player_screen / (sqrt(pow(cube->ray->dx, 2) + pow(cube->ray->dy, 2)));
+	}
 	else
-		cube->ray->hit_points[i] = sqrt(w_hit) * d_player_screen / (sqrt(pow(cube->ray->dx, 2) + pow(cube->ray->dy, 2)));
+	{
+		cube->ray->hit_direction[i] = (cube->ray->dy > 0) + 2;
+		cube->ray->hit_coordn[i] = cube->ray->w_x - (int)cube->ray->w_x;
+		cube->ray->hit_dist[i] = sqrt(w_hit) * d_player_screen / (sqrt(pow(cube->ray->dx, 2) + pow(cube->ray->dy, 2)));
+	}
 }
 
 void	ray_cast(t_cube *cube)
@@ -102,7 +110,7 @@ void	ray_cast(t_cube *cube)
 	{
 		find_start_h(cube);
 		find_start_w(cube);
-		save_ray_distance(cube, i, d_player_screen);
+		save_ray_info(cube, i, d_player_screen);
 		cube->ray->dx -= -cube->player_dy;
 		cube->ray->dy -= cube->player_dx;
 		i++;

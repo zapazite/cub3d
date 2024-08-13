@@ -31,8 +31,8 @@ int	check_path(t_cube *cube, char *line, int index)
 		close(fd);
 		i = -1;
 		while (line[++i])
-			cube->paths[index][i] = line[i];
-		cube->paths[index][i] = '\0';
+			cube->textures->wall_paths[index][i] = line[i];
+		cube->textures->wall_paths[index][i] = '\0';
 	}
 	return (1);
 }

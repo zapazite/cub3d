@@ -1,7 +1,7 @@
-NO ./dummy.cub
-SO ./dummy.cub
-WE ./dummy.cub
-EA ./dummy.cub
+NO  ./colorstone.xpm
+SO  ./bluestone.xpm
+WE  ./eagle.xpm
+EA  ./redbrick.xpm
 
 F  129,95,50
 C  72,120,170

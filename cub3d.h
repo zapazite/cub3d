@@ -117,19 +117,21 @@ typedef struct s_ray
 	float			dx;
 	float			dy;
 	float			d_angle;
-	float			hit_points[WINDOW_W];
+	float			hit_direction[WINDOW_W];
+	float			hit_coordn[WINDOW_W];
+	float			hit_dist[WINDOW_W];
 }t_ray;
 
 typedef struct s_textures
 {
-	char	*wall_path;
-	void	*wall_ptr;
-	int 	wall_w;
-	int		wall_h;
-	char	*wall_data;
-	int		wall_p_bits;
-	int		wall_size_line;
-	int		wall_endian;
+	char	wall_paths[4][4096];
+	void	*wall_ptr[4];
+	int 	wall_w[4];
+	int		wall_h[4];
+	int		*wall_data[4];
+	int		wall_p_bits[4];
+	int		wall_size_line[4];
+	int		wall_endian[4];
 
 } t_textures;
 
@@ -184,7 +186,7 @@ void				cast_h(int rayx, float rayy, t_cube *cube);
 void				cast_w(float rayx, int rayy, t_cube *cube);
 void				find_start_h(t_cube *cube);
 void				find_start_w(t_cube *cube);
-void				save_ray_distance(t_cube *cube, int i, float d_player_screen);
+void				save_ray_info(t_cube *cube, int i, float d_player_screen);
 void				ray_cast(t_cube *cube);
 int					put_image(t_cube *cube);
 void				copy_playable_map(t_cube *cube);

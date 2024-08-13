@@ -95,26 +95,35 @@ void draw_minimap(t_cube *cube)
 
 void	draw_world(t_cube *cube)
 {
-	int		i;
-	int		j;
-	int		wall_idx;
-	float	wall_size;
+	int			y;
+	int			x;
+	int			i;
+	float		wall_idx;
+	float		wall_size;
+	float		wall_offset;
 
+	y = -1;
 	i = -1;
-	wall_idx = 0;
-	while(++i < WINDOW_H)
+	while(++y < WINDOW_W)
 	{
-		j = -1;
+		x = -1;
 		wall_idx = 0;
-		while(++j < WINDOW_W)
+		wall_offset = 0;
+		wall_size = WINDOW_W * sqrt(3) / cube->ray->hit_dist[y] / 2;
+		if(wall_size > WINDOW_H)
+			wall_offset = (wall_size - WINDOW_H) / 2 * cube->textures->wall_h[i] / wall_size;
+		while(++x < WINDOW_H)
 		{
-			wall_size = WINDOW_W * sqrt(3) / cube->ray->hit_points[j] / 2;
-			if(i < WINDOW_H / 2. - (wall_size / 2))
-				draw_main_pixel(cube, i, j, cube->colors[CIELLING]);
-			else if (i > WINDOW_H / 2. + (wall_size / 2))
-				draw_main_pixel(cube, i, j, cube->colors[FLOOR]);
+			if(x < WINDOW_H / 2. - (wall_size / 2))
+				draw_main_pixel(cube, x, y, cube->colors[CIELLING]);
+			else if (x > WINDOW_H / 2. + (wall_size / 2))
+				draw_main_pixel(cube, x, y, cube->colors[FLOOR]);
 			else
-				draw_main_pixel(cube, i, j, cube->textures->wall_data[wall_idx++]);
+			{
+				draw_main_pixel(cube, x, y, cube->textures->wall_data[1][(int)(wall_idx + wall_offset) * cube->textures->wall_w[1]
+					+ (int)(cube->ray->hit_coordn[y] * cube->textures->wall_h[1])]);
+				wall_idx += cube->textures->wall_h[i] / wall_size;
+			}
 		}
 	}
 }
