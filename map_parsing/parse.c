@@ -36,34 +36,56 @@ void	parse_map(t_cube *cube, int fd)
 	fill_map(cube);
 	cube->prs->min_x = cube->map_h;
 	cube->prs->min_y = cube->map_w;
-	check_spawn(cube, cube->player_x, cube->player_y);
+	check_map(cube, cube->player_x, cube->player_y);
 	cube->player_x -= cube->prs->min_x;
 	cube->player_y -= cube->prs->min_y;
 }
 
+void    check_spawn(t_cube *cube, int x, int y)
+{
+    if (cube->prs->prs_map[x][y] == 'S')
+    {
+        cube->player_x = x;
+        cube->player_y = y;
+    }
+    else if (cube->prs->prs_map[x][y] == 'E')
+    {
+        cube->player_x = x;
+        cube->player_y = y;
+        cube->player_angle = PI / 2;
+    }
+    else if (cube->prs->prs_map[x][y] == 'N')
+    {
+        cube->player_x = x;
+        cube->player_y = y;
+        cube->player_angle = PI;
+    }
+    else if (cube->prs->prs_map[x][y] == 'W')
+    {
+        cube->player_x = x;
+        cube->player_y = y;
+        cube->player_angle = 3 * PI / 2;
+    }
+}
+
 void	fill_map(t_cube *cube)
 {
-	int	i;
-	int	j;
+	int	x;
+	int	y;
 
-	i = cube->map_h;
+	x = cube->map_h;
 	cube->prs->prs_map = (int **)ft_malloc(cube, sizeof(int *) * cube->map_h);
-	while (i--)
+	while (x--)
 	{
-		j = -1;
-		cube->prs->prs_map[i] = (int *)ft_malloc(cube, sizeof(int) * cube->map_w);
-		while (++j < (int)ft_strlen(cube->lines->line))
+		y = -1;
+		cube->prs->prs_map[x] = (int *)ft_malloc(cube, sizeof(int) * cube->map_w);
+		while (++y < (int)ft_strlen(cube->lines->line))
 		{
-			cube->prs->prs_map[i][j] = cube->lines->line[j];
-			if (cube->prs->prs_map[i][j] == 'N' || cube->prs->prs_map[i][j] == 'S'
-				|| cube->prs->prs_map[i][j] == 'W' || cube->prs->prs_map[i][j] == 'E')
-			{
-				cube->player_x = i;
-				cube->player_y = j;
-			}
+			cube->prs->prs_map[x][y] = cube->lines->line[y];
+		    check_spawn(cube, x, y);
 		}
-		while (j < cube->map_w)
-			cube->prs->prs_map[i][j++] = ' ';
+		while (y < cube->map_w)
+			cube->prs->prs_map[x][y++] = ' ';
 		cube->lines = cube->lines->next;
 	}
 	if (cube->player_x == -1)

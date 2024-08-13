@@ -30,7 +30,7 @@
 # define WINDOW_W  1920
 # define PI 3.1415926535
 # define GREEN 0x00ff00
-# define FOV 2.0944
+# define FOV 1.0472
 #define	MOUSE_LUCAS 0.001
 
 typedef union {
@@ -104,6 +104,7 @@ typedef struct s_keys
 	Bool key_down;
 	Bool key_left;
 	Bool key_right;
+	Bool key_space;
 } t_keys;
 
 typedef struct s_ray
@@ -145,6 +146,8 @@ typedef struct s_cube
 	t_keys			*keys;
 	t_textures		*textures;
 	float			radius;
+	float			pixel_player_dist;
+	float			player_jump;
 	float			player_x;
 	float			player_y;
 	float			player_dx;
@@ -162,6 +165,7 @@ void				clean_exit(t_cube *cube, int error_type);
 void				parse(t_cube *cube);
 void				parse_map(t_cube *cube, int fd);
 void				check_spawn(t_cube *cube, int x, int y);
+void				check_map(t_cube *cube, int x, int y);
 void				fill_map(t_cube *cube);
 void				check_line(t_cube *cube, int *i, char *line);
 void				add_line(t_cube *cube, char *line);

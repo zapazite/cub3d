@@ -114,9 +114,9 @@ void	draw_world(t_cube *cube)
 			wall_offset = (wall_size - WINDOW_H) / 2 * cube->textures->wall_h[txt] / wall_size;
 		while(++x < WINDOW_H)
 		{
-			if(x < WINDOW_H / 2. - (wall_size / 2))
+			if(x < WINDOW_H / 2. + cube->player_jump / cube->ray->hit_dist[y] - (wall_size / 2))
 				draw_main_pixel(cube, x, y, cube->colors[CIELLING]);
-			else if (x > WINDOW_H / 2. + (wall_size / 2))
+			else if (x > WINDOW_H / 2. + cube->player_jump / cube->ray->hit_dist[y] + (wall_size / 2))
 				draw_main_pixel(cube, x, y, cube->colors[FLOOR]);
 			else
 			{

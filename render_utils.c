@@ -34,9 +34,9 @@ void ray_init(t_cube *cube)
 void init_player(t_cube *cube)
 {
 	cube->player_x += 0.5;
+	cube->player_jump = 0;
 	cube->player_y += 0.5;
 	cube->radius = 0.3;
-	cube->player_angle = 0;
 	cube->player_dx = cos(cube->player_angle);
 	cube->player_dy = sin(cube->player_angle);
 }

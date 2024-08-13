@@ -1,5 +1,6 @@
 #include "cub3d.h"
 #include "minilibx-linux/mlx.h"
+#include <X11/Xutil.h>
 #include <time.h>
 
 int	key_handler(int keycode, t_cube *cube)
@@ -26,6 +27,8 @@ int	key_handler(int keycode, t_cube *cube)
 		cube->keys->key_d = 1;
 		cube->keys->key_right = 1;
 	}
+	if(keycode == XK_space)
+		cube->keys->key_space = 1;
 	return (0);
 }
 
@@ -54,13 +57,43 @@ int key_release(int keycode, t_cube *cube)
 	return (0);
 }
 
+void draw_floor(t_cube *cube)
+{
+	int x;
+	int y;
+	int p;
+	float camera;
+	float row_dist;
+
+	x = WINDOW_H / 2;
+	while(x++ < WINDOW_H)
+	{
+		y = -1;
+		p = WINDOW_H / 2 - x;
+		camera = WINDOW_H / 2.;
+		row_dist = camera / p;
+		while(++y < WINDOW_W)
+		{
+
+		}
+	}
+}
+
 int put_image(t_cube *cube)
 {
+	// if(cube->keys->key_space == 1)
+	// 	cube->player_jump += 2;
+	int x = (WINDOW_H / 2) - 1;
+	int y = -1;
+	float px_pl_dist = 0;
+	float vectorx;
+	float vectory;
 	move_player(cube);
 	rotate_player(cube);
 	draw_minimap(cube);
 	draw_player(cube);
 	ray_cast(cube);
+	draw_floor(cube);
 	draw_world(cube);
 	mlx_put_image_to_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr, cube->mlx->main_img, 0, 0);
 	mlx_put_image_to_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr, cube->mlx->map_img, 0, 0);
