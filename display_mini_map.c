@@ -63,7 +63,7 @@ void rotate_player(int keycode, t_cube *cube)
 		cube->player_dx.i = (int64_t)(cos(cube->player_angle) * ((int64_t)1 << 32));
 		cube->player_dy.i = (int64_t)(sin(cube->player_angle) * ((int64_t)1 << 32));
 	}
-	// draw_pixel(cube, (cube->rayx.i / (float)((int64_t)1 << 32))*MINIMAP_SCALE, (cube->rayy.i / (float)((int64_t)1 << 32))*MINIMAP_SCALE, 0xffffff);
+	// draw_pixel(cube, (cube->ray_x.i / (float)((int64_t)1 << 32))*MINIMAP_SCALE, (cube->ray_y.i / (float)((int64_t)1 << 32))*MINIMAP_SCALE, 0xffffff);
 }
 
 void move_player(int keycode, t_cube *cube)
@@ -161,75 +161,75 @@ void draw_minimap(t_cube *cube)
 
 void	find_start_h(t_cube *cube)
 {
-	cube->rayx.i = 0;
+	cube->ray_x.i = 0;
 	if(cube->player_dx.i == 0)
 		return ;
 	if(cube->player_dx.i > 0)
-		cube->rayx.hi = cube->player_x.hi + 1;
+		cube->ray_x.hi = cube->player_x.hi + 1;
 	else
-		cube->rayx.hi = cube->player_x.hi;
-	cube->rayy.i = ((cube->rayx.i - cube->player_x.i)  >> 16) * ((cube->player_dy.i << 16) / cube->player_dx.i) + cube->player_y.i;
-	draw_pixel(cube, ((cube->rayx.i * MINIMAP_SCALE) >> 32), ((cube->rayy.i * MINIMAP_SCALE) >> 32), 0xff00ff);
+		cube->ray_x.hi = cube->player_x.hi;
+	cube->ray_y.i = ((cube->ray_x.i - cube->player_x.i)  >> 16) * ((cube->player_dy.i << 16) / cube->player_dx.i) + cube->player_y.i;
+	draw_pixel(cube, ((cube->ray_x.i * MINIMAP_SCALE) >> 32), ((cube->ray_y.i * MINIMAP_SCALE) >> 32), 0xff00ff);
 }
 
 void	find_start_w(t_cube *cube)
 {
-	cube->rayy.i = 0;
+	cube->ray_y.i = 0;
 	if(cube->player_dy.i == 0)
 		return ;
 	if(cube->player_dy.i > 0)
-		cube->rayy.hi = cube->player_y.hi + 1;
+		cube->ray_y.hi = cube->player_y.hi + 1;
 	else
-		cube->rayy.hi = cube->player_y.hi;
-	cube->rayx.i = ((cube->rayy.i - cube->player_y.i) >> 16) * ((cube->player_dx.i << 16) / cube->player_dy.i) + cube->player_x.i;
+		cube->ray_y.hi = cube->player_y.hi;
+	cube->ray_x.i = ((cube->ray_y.i - cube->player_y.i) >> 16) * ((cube->player_dx.i << 16) / cube->player_dy.i) + cube->player_x.i;
 }
 
 void	raycast_h(t_cube *cube)
 {
 	int64_t slope;
-	fixed_point rayx = cube->rayx;
-	fixed_point rayy = cube->rayy;
+	fixed_point ray_x = cube->ray_x;
+	fixed_point ray_y = cube->ray_y;
 	if (cube->player_dx.i == 0)
 	    return ;
 	slope = (cube->player_dy.i << 31) / (cube->player_dx.i >> 1);
-	draw_pixel(cube, ((rayx.i * MINIMAP_SCALE) >> 32), ((rayy.i * MINIMAP_SCALE) >> 32), 0xff00ff);
-	while(rayx.hi < cube->map_h && rayy.hi < cube->map_w && rayx.i > 0 && rayy.i > 0 && cube->map[rayx.hi - (cube->player_dx.i < 0)][rayy.hi] != '#')
+	draw_pixel(cube, ((ray_x.i * MINIMAP_SCALE) >> 32), ((ray_y.i * MINIMAP_SCALE) >> 32), 0xff00ff);
+	while(ray_x.hi < cube->map_h && ray_y.hi < cube->map_w && ray_x.i > 0 && ray_y.i > 0 && cube->map[ray_x.hi - (cube->player_dx.i < 0)][ray_y.hi] != '#')
 	{
 		if(cube->player_dx.i > 0)
 		{
-			rayx.hi += 1;
-			rayy.i += slope;
+			ray_x.hi += 1;
+			ray_y.i += slope;
 		}
 		else
 		{
-			rayx.hi -= 1;
-			rayy.i -= slope;
+			ray_x.hi -= 1;
+			ray_y.i -= slope;
 		}
-		draw_pixel(cube, ((rayx.i * MINIMAP_SCALE) >> 32), ((rayy.i * MINIMAP_SCALE) >> 32), 0xff00ff);
+		draw_pixel(cube, ((ray_x.i * MINIMAP_SCALE) >> 32), ((ray_y.i * MINIMAP_SCALE) >> 32), 0xff00ff);
 	}
 }
 
 void	raycast_w(t_cube *cube)
 {
 	int64_t slope;
-	fixed_point rayx = cube->rayx;
-	fixed_point rayy = cube->rayy;
+	fixed_point ray_x = cube->ray_x;
+	fixed_point ray_y = cube->ray_y;
 	if (!cube->player_dy.i)
         return ;
 	slope = (cube->player_dx.i  << 31) / (cube->player_dy.i >> 1);
-	while(rayx.hi < cube->map_h && rayy.hi < cube->map_w && rayx.i > 0 && rayy.i > 0 && cube->map[rayx.hi][rayy.hi - (cube->player_dy.i < 0)] != '#')
+	while(ray_x.hi < cube->map_h && ray_y.hi < cube->map_w && ray_x.i > 0 && ray_y.i > 0 && cube->map[ray_x.hi][ray_y.hi - (cube->player_dy.i < 0)] != '#')
 	{
 		if(cube->player_dy.i > 0)
 		{
-			rayy.hi += 1;
-			rayx.i += slope;
+			ray_y.hi += 1;
+			ray_x.i += slope;
 		}
 		else
 		{
-			rayy.hi -= 1;
-			rayx.i -= slope;
+			ray_y.hi -= 1;
+			ray_x.i -= slope;
 		}
-		draw_pixel(cube, ((rayx.i * MINIMAP_SCALE) >> 32), ((rayy.i * MINIMAP_SCALE) >> 32), 0xffffff);
+		draw_pixel(cube, ((ray_x.i * MINIMAP_SCALE) >> 32), ((ray_y.i * MINIMAP_SCALE) >> 32), 0xffffff);
 		// printf("slope is: (%f)\n", slope);
 	}
 }
@@ -240,10 +240,10 @@ int put_image(t_cube *cube)
 	draw_player(cube, 0x46eb34);
 	find_start_h(cube);
 	raycast_h(cube);
-	draw_pixel(cube, ((cube->rayx.i * MINIMAP_SCALE) >> 32), ((cube->rayy.i * MINIMAP_SCALE) >> 32), 0x00ff00);
+	draw_pixel(cube, ((cube->ray_x.i * MINIMAP_SCALE) >> 32), ((cube->ray_y.i * MINIMAP_SCALE) >> 32), 0x00ff00);
 	find_start_w(cube);
 	raycast_w(cube);
-	draw_pixel(cube, ((cube->rayx.i * MINIMAP_SCALE) >> 32), ((cube->rayy.i * MINIMAP_SCALE) >> 32), 0xffffff);
+	draw_pixel(cube, ((cube->ray_x.i * MINIMAP_SCALE) >> 32), ((cube->ray_y.i * MINIMAP_SCALE) >> 32), 0xffffff);
 	// find_star_w(cube);
 
 
@@ -303,13 +303,13 @@ int key_handler(int keycode, t_cube *cube)
 // 		return;
 // 	else if (cube->player_dx > 0)
 // 	{
-// 		cube->rayx = ceil(cube->player_x) - cube->player_x;
-// 		cube->rayy = cube->rayx * (cube->player_dy / fabs(cube->player_dx));
+// 		cube->ray_x = ceil(cube->player_x) - cube->player_x;
+// 		cube->ray_y = cube->ray_x * (cube->player_dy / fabs(cube->player_dx));
 // 	}
 // 	else
 // 	{
-// 		cube->rayx = cube->player_x - floor(cube->player_x);
-// 		cube->rayy = cube->rayx * (cube->player_dy / fabs(cube->player_dx));
+// 		cube->ray_x = cube->player_x - floor(cube->player_x);
+// 		cube->ray_y = cube->ray_x * (cube->player_dy / fabs(cube->player_dx));
 // 	}
 // }
 
@@ -322,7 +322,7 @@ int key_handler(int keycode, t_cube *cube)
 // 	m = (cube->player_dx != 0) ? cube->player_dy / cube->player_dx : 0; // Ensure dx is not zero before division
 
 //     // Initialize f.i with y1 in fixed-point format
-//     f.i = (int64_t)cube->rayx << 32;
+//     f.i = (int64_t)cube->ray_x << 32;
 
 //     // Iterate through x coordinates from x1 to x2
 //     for (x = x1; x <= x2; x++, f.i += m) {
@@ -398,18 +398,13 @@ void render(t_cube *cube)
 	cube->mlx->img_data = mlx_get_data_addr(cube->mlx->image, &cube->mlx->pixel_bits, &cube->mlx->size_line, &cube->mlx->endian);
 	cube->player_x.i += (int64_t)(0.5 * ((int64_t)1 << 32));
 	cube->player_y.i += (int64_t)(0.5 * ((int64_t)1 << 32));
-	cube->rayx.i = 0;
-	cube->rayy.i = 0;
-	cube->rayx.hi = 0;
-	cube->rayy.hi = 0;
+	cube->ray_x.i = 0;
+	cube->ray_y.i = 0;
+	cube->ray_x.hi = 0;
+	cube->ray_y.hi = 0;
 	cube->radius = 0.5;
-	cube->player_angle = 0;
-	cube->player_dx.i = (int64_t)(cos(cube->player_angle) * ((int64_t)1 << 32));
-	cube->player_dy.i = (int64_t)(sin(cube->player_angle) * ((int64_t)1 << 32));
-
-
 	mlx_hook(cube->mlx->win_ptr, 17, 0, close_window, cube);
-	mlx_hook(cube->mlx->win_ptr, KeyPress,KeyPressMask, key_handler, cube);
+	mlx_hook(cube->mlx->win_ptr, KeyPress, KeyPressMask, key_handler, cube);
 	mlx_loop_hook(cube->mlx->mlx_ptr, put_image, cube);
 	mlx_loop(cube->mlx->mlx_ptr);
 }

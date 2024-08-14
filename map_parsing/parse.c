@@ -50,13 +50,13 @@ void    check_spawn(t_cube *cube, int x, int y)
     }
     else if (cube->prs->prs_map[x][y] == 'E')
     {
-        cube->player_x.hi = x;
+    	cube->player_x.hi = x;
         cube->player_y.hi = y;
         cube->player_angle = PI / 2;
     }
     else if (cube->prs->prs_map[x][y] == 'N')
     {
-        cube->player_x.hi = x;
+    	cube->player_x.hi = x;
         cube->player_y.hi = y;
         cube->player_angle = PI;
     }
@@ -66,6 +66,8 @@ void    check_spawn(t_cube *cube, int x, int y)
         cube->player_y.hi = y;
         cube->player_angle = 3 * PI / 2;
     }
+	cube->player_dx.i = (int64_t)(cos(cube->player_angle) * ((int64_t)1 << 32));
+	cube->player_dy.i = (int64_t)(sin(cube->player_angle) * ((int64_t)1 << 32));
 }
 
 void	fill_map(t_cube *cube)

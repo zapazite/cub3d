@@ -60,7 +60,6 @@ typedef struct s_lines
 {
 	char			*line;
 	struct s_lines	*next;
-
 }					t_lines;
 
 typedef struct s_parse

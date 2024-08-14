@@ -74,14 +74,18 @@ int	check_param(t_cube *cube, char *line)
 	j = -1;
 	success = 0;
 	while (++j < 4)
+	{
 		if (!ft_strncmp(line, param_array[j], ft_strlen(param_array[j]))
 			&& cube->paths[j][0] == '\0')
 			success = check_path(cube, line + 3, j);
+	}
 	j = -1;
 	while (++j < 2 && !success)
+	{
 		if (!ft_strncmp(line, color_array[j], ft_strlen(color_array[j]))
 			&& cube->colors[j] == -1)
 			success = check_rgb(cube, line + 2, j);
+	}
 	if (!success)
 		clean_exit(cube, ERR_PARSING);
 	return (1);
