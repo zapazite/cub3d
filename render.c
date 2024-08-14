@@ -64,30 +64,25 @@ void draw_floor(t_cube *cube)
     int p;
 
     x = WINDOW_H / 2;
+    float plane_x = (cube->player_dy) * tan(FOV / 2);
+    float plane_y = (-cube->player_dx) * tan(FOV / 2);
+    float ray_dirx = (cube->player_dx) - plane_x;
+    float ray_diry = (cube->player_dy) - plane_y;
+    float ray_dirx1 = (cube->player_dx) + plane_x;
+    float ray_diry1 = (cube->player_dy) + plane_y;
     while (++x < WINDOW_H)
     {
-        y = -1;
-        float plane_x = cube->player_dy * tan(FOV / 2);
-        float plane_y = -cube->player_dx * tan(FOV / 2);
-        float ray_dirx = cube->player_dx - plane_x;
-        float ray_diry = cube->player_dy - plane_y;
-        float ray_dirx1 = cube->player_dx + plane_x;
-        float ray_diry1 = cube->player_dy + plane_y;
-        float posZ = 0.5 * WINDOW_H;
-
         p = x - WINDOW_H / 2;  // Initialize p here
-        float rowDistance = posZ / p;  // Now p is properly initialized
-
-        float floorStepX = rowDistance * (ray_dirx1 - ray_dirx) / WINDOW_W;
-        float floorStepY = rowDistance * (ray_diry1 - ray_diry) / WINDOW_W;
-        float floorX = cube->player_x + rowDistance * ray_dirx;
-        float floorY = cube->player_y + rowDistance * ray_diry;
+        float rowDistance = 0.5 / p;  // Now p is properly initialized
+        float floorStepX = rowDistance * (ray_dirx1 - ray_dirx) / (2 * tan(FOV/2));
+        float floorStepY = rowDistance * (ray_diry1 - ray_diry) / (2 * tan(FOV/2));
+        float floorX = cube->player_x + rowDistance * ray_dirx * WINDOW_W / (2 * tan(FOV/2));
+        float floorY = cube->player_y + rowDistance * ray_diry * WINDOW_W / (2 * tan(FOV/2));
+        y = -1;
         while (++y < WINDOW_W)
         {
-            int cellX = (int)(floorX);
-            int cellY = (int)(floorY);
-            int tx = (int)(64 * (floorX - cellX)) & (64 - 1);
-            int ty = (int)(64 * (floorY - cellY)) & (64 - 1);
+            int tx = (int)(64 * (floorX - (int)(floorX))) & (64 - 1);
+            int ty = (int)(64 * (floorY - (int)(floorY))) & (64 - 1);
             floorX += floorStepX;
             floorY += floorStepY;
             draw_main_pixel(cube, x, y, cube->textures->wall_data[3][64 * ty + tx]);

@@ -30,7 +30,7 @@
 # define WINDOW_W  1920
 # define PI 3.1415926535
 # define GREEN 0x00ff00
-# define FOV 1.0472
+# define FOV 90 * (PI / 180)
 #define	MOUSE_LUCAS 0.001
 
 typedef union {
