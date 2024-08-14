@@ -53,7 +53,6 @@ void	init_keyes(t_cube *cube)
 	cube->keys->key_right = 0;
 }
 
-
 int close_window(t_cube *cube)
 {
 	ft_free_gc(cube->gc);

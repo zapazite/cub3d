@@ -1,7 +1,4 @@
 #include "cub3d.h"
-#include "minilibx-linux/mlx.h"
-#include <X11/Xutil.h>
-#include <time.h>
 
 int	key_handler(int keycode, t_cube *cube)
 {
@@ -12,7 +9,7 @@ int	key_handler(int keycode, t_cube *cube)
 		cube->keys->key_w = 1;
 		cube->keys->key_up = 1;
 	}
-	if(keycode == XK_Down || keycode == XK_s )
+	if(keycode == XK_Down || keycode == XK_s)
 	{
 		cube->keys->key_down = 1;
 		cube->keys->key_s = 1;
@@ -72,8 +69,8 @@ void draw_floor(t_cube *cube)
     float ray_diry1 = (cube->player_dy) + plane_y;
     while (++x < WINDOW_H)
     {
-        p = x - WINDOW_H / 2;  // Initialize p here
-        float rowDistance = 0.5 / p;  // Now p is properly initialized
+        p = x - WINDOW_H / 2;
+        float rowDistance = 0.5 / p;
         float floorStepX = rowDistance * (ray_dirx1 - ray_dirx) / (2 * tan(FOV/2));
         float floorStepY = rowDistance * (ray_diry1 - ray_diry) / (2 * tan(FOV/2));
         float floorX = cube->player_x + rowDistance * ray_dirx * WINDOW_W / (2 * tan(FOV/2));
@@ -94,7 +91,6 @@ void draw_floor(t_cube *cube)
 int put_image(t_cube *cube)
 {
 	move_player(cube);
-	rotate_player(cube);
 	draw_minimap(cube);
 	draw_player(cube);
 	ray_cast(cube);

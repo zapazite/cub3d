@@ -101,7 +101,7 @@ void	check_line(t_cube *cube, int *i, char *line)
 			if (spwan_flag++)
 				clean_exit(cube, ERR_PARSING);
 		}
-		else if (line[(*i)] != '0' && line[(*i)] != '1' && line[(*i)] != ' ')
+		else if (line[(*i)] != '0' && line[(*i)] != '1' && line[(*i)] != ' ' && line[(*i)] != '+')
 			clean_exit(cube, ERR_PARSING);
 	}
 }
@@ -120,13 +120,13 @@ void	check_map(t_cube *cube, int x, int y)
 	if(cube->prs->min_y > y)
 		cube->prs->min_y = y;
 	if (cube->prs->prs_map[x][y] == '1')
-	{
-		cube->prs->prs_map[x][y] = '#';
-		return;
-	}
-	if(cube->prs->prs_map[x][y] == '!' || cube->prs->prs_map[x][y] == '#')
+		return (cube->prs->prs_map[x][y] = '#', (void)0);
+	if(cube->prs->prs_map[x][y] == '!' || cube->prs->prs_map[x][y] == '#' || cube->prs->prs_map[x][y] == '=')
 		return ;
-	cube->prs->prs_map[x][y] = '!';
+	if(cube->prs->prs_map[x][y] == '+')
+		cube->prs->prs_map[x][y] = '=';
+	else
+		cube->prs->prs_map[x][y] = '!';
 	check_map(cube, x - 1, y);
 	check_map(cube, x + 1, y);
 	check_map(cube, x, y - 1);

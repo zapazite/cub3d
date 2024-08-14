@@ -13,24 +13,6 @@ int	check_player_position(float player_x, float player_y, t_cube *cube)
 	return (1);
 }
 
-void	rotate_player(t_cube *cube)
-{
-	if(cube->keys->key_right || cube->keys->key_d)
-	{
-		cube->player_angle -= 0.01;
-		if(cube->player_angle < 0)
-			cube->player_angle += 2*PI;
-	}
-	else if(cube->keys->key_left || cube->keys->key_a)
-	{
-		cube->player_angle += 0.01;
-		if(cube->player_angle > 2*PI)
-			cube->player_angle -= 2*PI;
-	}
-	cube->player_dx = cos(cube->player_angle);
-	cube->player_dy = sin(cube->player_angle);
-}
-
 void	move_player(t_cube *cube)
 {
 	float move_x;
@@ -47,6 +29,17 @@ void	move_player(t_cube *cube)
 	{
 		move_x -= cube->player_dx/MINIMAP_SCALE;
 		move_y -= cube->player_dy/MINIMAP_SCALE;
+	}
+	if(cube->keys->key_right || cube->keys->key_d)
+	{
+		move_x += cube->player_dy/MINIMAP_SCALE;
+		move_y -= cube->player_dx/MINIMAP_SCALE;
+
+	}
+	else if(cube->keys->key_left || cube->keys->key_a)
+	{
+		move_x -= cube->player_dy/MINIMAP_SCALE;
+		move_y += cube->player_dx/MINIMAP_SCALE;
 	}
 	if(check_player_position(move_x, move_y, cube))
 	{

@@ -2,7 +2,7 @@
 
 void	cast_h(int rayx, float rayy, t_cube *cube)
 {
-	while(rayx < cube->map_h && (int)rayy < cube->map_w && rayx > 0 && rayy > 0 &&cube->map[rayx - (cube->ray->dx < 0)][(int)rayy] != '#')
+	while(rayx < cube->map_h && (int)rayy < cube->map_w && rayx > 0 && rayy > 0 && cube->map[rayx - (cube->ray->dx < 0)][(int)rayy] != '#' && cube->map[rayx - (cube->ray->dx < 0)][(int)rayy] != '=')
 	{
 		if(cube->ray->dx > 0)
 		{
@@ -21,7 +21,7 @@ void	cast_h(int rayx, float rayy, t_cube *cube)
 
 void	cast_w(float rayx, int rayy, t_cube *cube)
 {
-	while((int)rayx < cube->map_h && rayy < cube->map_w && rayx > 0 && rayy > 0 &&cube->map[(int)rayx][rayy - (cube->ray->dy < 0)] != '#')
+	while((int)rayx < cube->map_h && rayy < cube->map_w && rayx > 0 && rayy > 0 && cube->map[(int)rayx][rayy - (cube->ray->dy < 0)] != '#' && cube->map[(int)rayx][rayy - (cube->ray->dy < 0)] != '=')
 	{
 		if(cube->ray->dy > 0)
 		{
