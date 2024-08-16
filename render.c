@@ -1,4 +1,6 @@
 #include "cub3d.h"
+#include <X11/Xutil.h>
+#include <string.h>
 
 int	key_handler(int keycode, t_cube *cube)
 {
@@ -26,6 +28,8 @@ int	key_handler(int keycode, t_cube *cube)
 	}
 	if(keycode == XK_space)
 		cube->keys->key_space = 1;
+	if(keycode == XK_o)
+		cube->keys->key_open = 1;
 	return (0);
 }
 
@@ -51,6 +55,8 @@ int key_release(int keycode, t_cube *cube)
 		cube->keys->key_d = 0;
 		cube->keys->key_right = 0;
 	}
+	if(keycode == XK_o)
+		cube->keys->key_open = 0;
 	return (0);
 }
 
@@ -88,14 +94,27 @@ void draw_floor(t_cube *cube)
     }
 }
 
+void open_door(t_cube *cube)
+{
+	int i;
+
+	i = -1;
+	while(++i < WINDOW_W)
+	{
+		if(cube->ray->hit_door[i] == 1 && cube->ray->hit_dist[i] <= 1.5 && cube->keys->key_open == 1)
+			cube->door_state = 1;
+	}
+}
+
 int put_image(t_cube *cube)
 {
 	move_player(cube);
 	draw_minimap(cube);
 	draw_player(cube);
 	ray_cast(cube);
+	open_door(cube);
 	draw_floor(cube);
-	draw_world(cube);
+	draw_walls(cube);
 	mlx_put_image_to_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr, cube->mlx->main_img, 0, 0);
 	mlx_put_image_to_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr, cube->mlx->map_img, 0, 0);
 	return 0;
@@ -106,7 +125,7 @@ int	mouse_handler(int x, int y, t_cube *cube)
 	(void)x;
 	(void)y;
 
-	cube->player_angle += (WINDOW_W / 2. - x) * MOUSE_LUCAS;
+	cube->player_angle += (WINDOW_W / 2. - x) * MOUSE_SENS;
 	cube->player_dx = cos(cube->player_angle);
 	cube->player_dy = sin(cube->player_angle);
 	mlx_mouse_move(cube->mlx->mlx_ptr, cube->mlx->win_ptr, WINDOW_W / 2, WINDOW_H / 2);
@@ -118,7 +137,7 @@ void load_textures(t_cube *cube)
 	int i;
 
 	i = -1;
-	while(++i < 4)
+	while(++i < 6)
 	{
 		cube->textures->wall_ptr[i] = NULL;
 		cube->textures->wall_h[i] = 0;
@@ -128,8 +147,9 @@ void load_textures(t_cube *cube)
 		cube->textures->wall_endian[i] = 0;
 		cube->textures->wall_data[i] = NULL;
 	}
+	ft_strlcpy(cube->textures->wall_paths[4], "./textures/door.xpm", ft_strlen("./textures/door.xpm") + 1);
 	i = -1;
-	while(++i < 4)
+	while(++i < 5)
 	{
 		cube->textures->wall_ptr[i] = mlx_xpm_file_to_image(cube->mlx->mlx_ptr, cube->textures->wall_paths[i], &cube->textures->wall_w[i], &cube->textures->wall_h[i]);
 		cube->textures->wall_data[i] = (int *)mlx_get_data_addr(cube->textures->wall_ptr[i], &cube->textures->wall_p_bits[i], &cube->textures->wall_size_line[i], &cube->textures->wall_endian[i]);

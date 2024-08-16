@@ -2,13 +2,17 @@
 
 int	check_player_position(float player_x, float player_y, t_cube *cube)
 {
-	if(cube->map[(int)((player_x + cube->radius))][(int)((player_y + cube->radius))] == '#')
+	if(cube->map[(int)((player_x + cube->radius))][(int)((player_y + cube->radius))] == '#' ||
+		(cube->map[(int)((player_x + cube->radius))][(int)((player_y + cube->radius))] == '=' && cube->door_state == 0))
 		return (0);
-	if(cube->map[(int)((player_x + cube->radius))][(int)((player_y - cube->radius))] == '#')
+	if(cube->map[(int)((player_x + cube->radius))][(int)((player_y - cube->radius))] == '#' ||
+		(cube->map[(int)((player_x + cube->radius))][(int)((player_y + cube->radius))] == '=' && cube->door_state == 0))
 		return (0);
-	if(cube->map[(int)((player_x - cube->radius))][(int)((player_y + cube->radius))] == '#')
+	if(cube->map[(int)((player_x - cube->radius))][(int)((player_y + cube->radius))] == '#' ||
+		(cube->map[(int)((player_x - cube->radius))][(int)((player_y + cube->radius))] == '=' && cube->door_state == 0))
 		return (0);
-	if(cube->map[(int)((player_x - cube->radius))][(int)((player_y - cube->radius))] == '#')
+	if(cube->map[(int)((player_x - cube->radius))][(int)((player_y - cube->radius))] == '#' ||
+		(cube->map[(int)((player_x - cube->radius))][(int)((player_y - cube->radius))] == '=' && cube->door_state == 0))
 		return (0);
 	return (1);
 }

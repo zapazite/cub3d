@@ -31,15 +31,7 @@
 # define PI 3.1415926535
 # define GREEN 0x00ff00
 # define FOV 90 * (PI / 180)
-#define	MOUSE_LUCAS 0.001
-
-typedef union {
-    int32_t i;     // 32-bit integer representing the fixed-point number
-    struct {
-        int16_t lo; // 16-bit fractional part (lower bits)
-        int16_t hi; // 16-bit integer part (higher bits)
-    };
-} fixed_point;
+#define	MOUSE_SENS 0.001
 
 typedef enum
 {
@@ -105,6 +97,7 @@ typedef struct s_keys
 	Bool key_left;
 	Bool key_right;
 	Bool key_space;
+	Bool key_open;
 } t_keys;
 
 typedef struct s_ray
@@ -118,6 +111,9 @@ typedef struct s_ray
 	float			dx;
 	float			dy;
 	float			d_angle;
+	int				hit_door_h;
+	int				hit_door_w;
+	int				hit_door[WINDOW_W];
 	float			hit_direction[WINDOW_W];
 	float			hit_coordn[WINDOW_W];
 	float			hit_dist[WINDOW_W];
@@ -125,15 +121,14 @@ typedef struct s_ray
 
 typedef struct s_textures
 {
-	char	wall_paths[4][4096];
-	void	*wall_ptr[4];
-	int 	wall_w[4];
-	int		wall_h[4];
-	int		*wall_data[4];
-	int		wall_p_bits[4];
-	int		wall_size_line[4];
-	int		wall_endian[4];
-
+	char	wall_paths[5][4096];
+	void	*wall_ptr[5];
+	int 	wall_w[5];
+	int		wall_h[5];
+	int		*wall_data[5];
+	int		wall_p_bits[5];
+	int		wall_size_line[5];
+	int		wall_endian[5];
 } t_textures;
 
 typedef struct s_cube
@@ -145,6 +140,7 @@ typedef struct s_cube
 	t_ray			*ray;
 	t_keys			*keys;
 	t_textures		*textures;
+	int				door_state;
 	float			radius;
 	float			pixel_player_dist;
 	float			player_jump;
@@ -199,6 +195,7 @@ void				init_player(t_cube *cube);
 void				ray_init(t_cube *cube);
 void				render(t_cube *cube);
 void				draw_main_pixel(t_cube *cube, int x, int y, int color);
-void				draw_world(t_cube *cube);
+void				draw_walls(t_cube *cube);
 void				init_keyes(t_cube *cube);
+size_t				ft_strlcpy(char *dst, const char *src, size_t size);
 #endif

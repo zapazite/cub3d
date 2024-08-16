@@ -89,11 +89,13 @@ void draw_minimap(t_cube *cube)
 				draw_square(cube, x * MINIMAP_SCALE, y * MINIMAP_SCALE, 0x0066b2);
 			else if(cube->map[x][y] == '#')
 				draw_square(cube, x * MINIMAP_SCALE, y * MINIMAP_SCALE, 0x990000);
+			else if(cube->map[x][y] == '=')
+				draw_square(cube, x * MINIMAP_SCALE, y * MINIMAP_SCALE, 0xffffff);
 		}
 	}
 }
 
-void	draw_world(t_cube *cube)
+void	draw_walls(t_cube *cube)
 {
 	int			y;
 	int			x;
@@ -107,22 +109,21 @@ void	draw_world(t_cube *cube)
 	{
 		x = -1;
 		wall_idx = 0;
-		txt = cube->ray->hit_direction[y];
+		if(cube->ray->hit_door[y] == 1 && cube->door_state == 0)
+			txt = 4;
+		else
+			txt = cube->ray->hit_direction[y];
 		wall_offset = 0;
 		wall_size = WINDOW_W / (tan(FOV / 2)) / cube->ray->hit_dist[y] / 2;
 		if(wall_size > WINDOW_H)
 			wall_offset = (wall_size - WINDOW_H) / 2 * cube->textures->wall_h[txt] / wall_size;
 		while(++x < WINDOW_H)
 		{
-			if(x < WINDOW_H / 2. + cube->player_jump / cube->ray->hit_dist[y] - (wall_size / 2))
-				;
-			else if (x > WINDOW_H / 2. + cube->player_jump / cube->ray->hit_dist[y] + (wall_size / 2))
-				;
-			else
+			if(x > WINDOW_H / 2. - (wall_size / 2) && x < WINDOW_H / 2. + (wall_size / 2) && txt != 4)
 			{
 				draw_main_pixel(cube, x, y, cube->textures->wall_data[txt][(int)(wall_idx + wall_offset) * cube->textures->wall_w[txt]
 					+ (int)(cube->ray->hit_coordn[y] * cube->textures->wall_h[txt])]);
-				wall_idx += cube->textures->wall_h[txt] / wall_size;
+						wall_idx += cube->textures->wall_h[txt] / wall_size;
 			}
 		}
 	}

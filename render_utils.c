@@ -22,15 +22,6 @@ void copy_playable_map(t_cube *cube)
 	}
 }
 
-void ray_init(t_cube *cube)
-{
-	cube->ray->d_angle = FOV / WINDOW_W;
-	cube->ray->angle = cube->player_angle;
-	cube->ray->angle += 0.523599;
-	cube->ray->dx = cos(cube->ray->angle);
-	cube->ray->dy = sin(cube->ray->angle);
-}
-
 void init_player(t_cube *cube)
 {
 	cube->player_x += 0.5;

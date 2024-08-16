@@ -15,6 +15,8 @@ void	cast_h(int rayx, float rayy, t_cube *cube)
 			rayy -= cube->ray->slope;
 		}
 	}
+	if(rayx < cube->map_h && (int)rayy < cube->map_w && rayx > 0 && rayy > 0 && cube->map[rayx - (cube->ray->dx < 0)][(int)rayy] == '=' && cube->door_state == 0)
+		cube->ray->hit_door_h = 1;
 	cube->ray->h_x = rayx;
 	cube->ray->h_y = rayy;
 }
@@ -34,6 +36,8 @@ void	cast_w(float rayx, int rayy, t_cube *cube)
 			rayx -= cube->ray->slope;
 		}
 	}
+	if((int)rayx < cube->map_h && rayy < cube->map_w && rayx > 0 && rayy > 0 && cube->map[(int)rayx][rayy - (cube->ray->dy < 0)] == '=' && cube->door_state == 0)
+		cube->ray->hit_door_w = 1;
 	cube->ray->w_x = rayx;
 	cube->ray->w_y = rayy;
 }
@@ -83,12 +87,14 @@ void	save_ray_info(t_cube *cube, int i, float d_player_screen)
 	w_hit = pow(cube->player_x - cube->ray->w_x, 2) + pow(cube->player_y - cube->ray->w_y, 2);
 	if(h_hit <= w_hit)
 	{
+		cube->ray->hit_door[i] = cube->ray->hit_door_h;
 		cube->ray->hit_direction[i] = (cube->ray->dx > 0);
 		cube->ray->hit_coordn[i] = cube->ray->h_y - (int)cube->ray->h_y;
 		cube->ray->hit_dist[i] = sqrt(h_hit) * d_player_screen / (sqrt(pow(cube->ray->dx, 2) + pow(cube->ray->dy, 2)));
 	}
 	else
 	{
+		cube->ray->hit_door[i] = cube->ray->hit_door_w;
 		cube->ray->hit_direction[i] = (cube->ray->dy > 0) + 2;
 		cube->ray->hit_coordn[i] = cube->ray->w_x - (int)cube->ray->w_x;
 		cube->ray->hit_dist[i] = sqrt(w_hit) * d_player_screen / (sqrt(pow(cube->ray->dx, 2) + pow(cube->ray->dy, 2)));
@@ -111,6 +117,8 @@ void	ray_cast(t_cube *cube)
 		find_start_h(cube);
 		find_start_w(cube);
 		save_ray_info(cube, i, d_player_screen);
+		cube->ray->hit_door_h = 0;
+		cube->ray->hit_door_w = 0;
 		cube->ray->dx -= -cube->player_dy;
 		cube->ray->dy -= cube->player_dx;
 		i++;
