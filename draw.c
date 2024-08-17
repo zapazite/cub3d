@@ -112,19 +112,16 @@ void	draw_walls(t_cube *cube)
 		x = -1;
 		wall_idx = 0;
 		wall_offset = 0;
-		txt = cube->ray->hit_direction[y];
+		if(cube->ray->hit_door[y])
+			txt = 4;
+		else
+			txt = cube->ray->hit_direction[y];
 		wall_size = WINDOW_W / (tan(FOV / 2)) / cube->ray->hit_dist[y] / 2;
 		if(wall_size > WINDOW_H)
 			wall_offset = (wall_size - WINDOW_H) / 2 * cube->textures->wall_h[txt] / wall_size;
 		while(++x < WINDOW_H)
 		{
-			if(x > WINDOW_H / 2. - (wall_size / 2) && x < WINDOW_H / 2. + (wall_size / 2) && cube->ray->hit_door[y])
-			{
-				draw_main_pixel(cube, x, y, cube->textures->wall_data[4][(int)(wall_idx + wall_offset) * cube->textures->wall_w[4]
-					+ (int)(cube->ray->hit_coordn[y] * cube->textures->wall_h[4])]);
-						wall_idx += cube->textures->wall_h[4] / wall_size;
-			}
-			else if(x > WINDOW_H / 2. - (wall_size / 2) && x < WINDOW_H / 2. + (wall_size / 2))
+			if(x > WINDOW_H / 2. - (wall_size / 2) && x < WINDOW_H / 2. + (wall_size / 2))
 			{
 				draw_main_pixel(cube, x, y, cube->textures->wall_data[txt][(int)(wall_idx + wall_offset) * cube->textures->wall_w[txt]
 					+ (int)(cube->ray->hit_coordn[y] * cube->textures->wall_h[txt])]);
