@@ -63,11 +63,11 @@ int	door_check(t_cube *cube, float x, float y)
 
 	if(cube->map[(int)x][(int)y] >= 1000 && cube->map[(int)x][(int)y] <= 2000)
 	{
-		y_percent = ((y - (int)y) / ((int)y + 1 - (int)y)) * 100 ;
-		door_percent = fabs(((cube->map[(int)x][(int)y] - 2000.) / 1000) * 100);
+		y_percent = ((y - (int)y) / ((int)y + 1 - (int)y)) * 100;
+		door_percent = fabs(((cube->map[(int)x][(int)y] - 2000.) / 1000)) * 100;
 		if(y_percent <= door_percent)
 		{
-			cube->ray->door_check_flag = 1;
+			cube->ray->door_check_flag = door_percent;
 			return (1);
 		}
 	}

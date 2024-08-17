@@ -16,8 +16,7 @@ void	cast_h(int rayx, float rayy, t_cube *cube)
 			rayy -= cube->ray->slope;
 		}
 	}
-	if(cube->ray->door_check_flag)
-		cube->ray->hit_door_h = 1;
+	cube->ray->hit_door_h = cube->ray->door_check_flag;
 	cube->ray->h_x = rayx;
 	cube->ray->h_y = rayy;
 }
@@ -38,8 +37,7 @@ void	cast_w(float rayx, int rayy, t_cube *cube)
 			rayx -= cube->ray->slope;
 		}
 	}
-	if(cube->ray->door_check_flag)
-		cube->ray->hit_door_w = 1;
+	cube->ray->hit_door_w = cube->ray->door_check_flag;
 	cube->ray->w_x = rayx;
 	cube->ray->w_y = rayy;
 }

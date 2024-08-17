@@ -123,9 +123,18 @@ void	draw_walls(t_cube *cube)
 		{
 			if(x > WINDOW_H / 2. - (wall_size / 2) && x < WINDOW_H / 2. + (wall_size / 2))
 			{
-				draw_main_pixel(cube, x, y, cube->textures->wall_data[txt][(int)(wall_idx + wall_offset) * cube->textures->wall_w[txt]
-					+ (int)(cube->ray->hit_coordn[y] * cube->textures->wall_h[txt])]);
-						wall_idx += cube->textures->wall_h[txt] / wall_size;
+				if(txt == 4)
+				{
+					draw_main_pixel(cube, x, y, cube->textures->wall_data[txt][(int)(wall_idx + wall_offset) * cube->textures->wall_w[txt]
+						+ (int)(cube->ray->hit_coordn[y] * cube->textures->wall_h[txt] + ((1 - cube->ray->hit_door[y] / 100.) * 1024))]);
+							wall_idx += cube->textures->wall_h[txt] / wall_size;
+				}
+				else
+				{
+					draw_main_pixel(cube, x, y, cube->textures->wall_data[txt][(int)(wall_idx + wall_offset) * cube->textures->wall_w[txt]
+						+ (int)(cube->ray->hit_coordn[y] * cube->textures->wall_h[txt])]);
+							wall_idx += cube->textures->wall_h[txt] / wall_size;
+				}
 			}
 		}
 	}
