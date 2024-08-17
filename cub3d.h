@@ -98,6 +98,7 @@ typedef struct s_keys
 	Bool key_right;
 	Bool key_space;
 	Bool key_open;
+	Bool key_close;
 } t_keys;
 
 typedef struct s_ray

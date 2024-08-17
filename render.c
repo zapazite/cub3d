@@ -30,6 +30,8 @@ int	key_handler(int keycode, t_cube *cube)
 		cube->keys->key_space = 1;
 	if(keycode == XK_o)
 		cube->keys->key_open = 1;
+	if(keycode == XK_c)
+		cube->keys->key_close = 1;
 	return (0);
 }
 
@@ -57,6 +59,8 @@ int key_release(int keycode, t_cube *cube)
 	}
 	if(keycode == XK_o)
 		cube->keys->key_open = 0;
+	if(keycode == XK_c)
+		cube->keys->key_close = 0;
 	return (0);
 }
 
@@ -94,30 +98,46 @@ void draw_floor(t_cube *cube)
     }
 }
 
+// void	open_door(t_cube *cube)
+// {
+// 	int i;
+// 	int ray_counter;
+
+// 	i = -1;
+// 	ray_counter = 0;
+// 	while(++i < WINDOW_W)
+// 	{
+// 		if(cube->ray->hit_door[i] == 1)
+// 			ray_counter++;
+// 		if(cube->ray->hit_door[i] == 1 && cube->ray->hit_dist[i] <= 1.5 && ray_counter >= WINDOW_W / 2 && cube->keys->key_open == 1)
+// 		{
+// 			if(cube->player_dx > 0 && cube->map[(int)cube->player_x + 1][(int)cube->player_y] == 1000)
+// 				cube->map[(int)cube->player_x + 1][(int)cube->player_y] = 2000;
+// 			else if((cube->player_dx < 0 && cube->map[(int)cube->player_x - 1][(int)cube->player_y] == 1000))
+// 				cube->map[(int)cube->player_x - 1][(int)cube->player_y] = 2000;
+// 		}
+// 	}
+// }
+
 void	open_door(t_cube *cube)
 {
-	// printf("plater x %f\n", cube->player_x);
-	// printf("plater y %f", cube->player_y);
-	int i;
-	int ray_counter;
-
-	i = -1;
-	ray_counter = 0;
-	while(++i < WINDOW_W)
+	if(cube->keys->key_open == 1)
 	{
-		//maybe use mouse coordinates to detect if im looking at a door or not
-		if(cube->ray->hit_door[i] == 1 && cube->ray->hit_dist[i] <= 1.5 && ray_counter > WINDOW_W / 2)
-		{
-			write(1, "X", 1);
-			// cube->map[(int)cube->player_dx + 1][(int)cube->player_dy] = 2000;
-			// for(int i = 0; i < cube->map_h; i++)
-			// {
-			// 	for(int j = 0; j < cube->map_w; j++)
-			// 		printf("%d", cube->map[i][j]);
-			// 	printf("\n");
-			// }
-		}
-		ray_counter++;
+		if(cube->player_dx > 0 && cube->map[(int)cube->player_x + 1][(int)cube->player_y] == 1000)
+			cube->map[(int)cube->player_x + 1][(int)cube->player_y] = 2000;
+		else if((cube->player_dx < 0 && cube->map[(int)cube->player_x - 1][(int)cube->player_y] == 1000))
+			cube->map[(int)cube->player_x - 1][(int)cube->player_y] = 2000;
+	}
+}
+
+void	close_door(t_cube *cube)
+{
+	if(cube->keys->key_close == 1)
+	{
+		if(cube->player_dx > 0 && cube->map[(int)cube->player_x + 1][(int)cube->player_y] == 2000 )
+			cube->map[(int)cube->player_x + 1][(int)cube->player_y] = 1000;
+		else if((cube->player_dx < 0 && cube->map[(int)cube->player_x - 1][(int)cube->player_y] == 2000))
+			cube->map[(int)cube->player_x - 1][(int)cube->player_y] = 1000;
 	}
 }
 
@@ -129,6 +149,7 @@ int put_image(t_cube *cube)
 	ray_cast(cube);
 	draw_floor(cube);
 	open_door(cube);
+	close_door(cube);
 	draw_walls(cube);
 	mlx_put_image_to_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr, cube->mlx->main_img, 0, 0);
 	mlx_put_image_to_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr, cube->mlx->map_img, 0, 0);
