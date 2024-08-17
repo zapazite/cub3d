@@ -2,7 +2,8 @@
 
 void	cast_h(int rayx, float rayy, t_cube *cube)
 {
-	while(rayx < cube->map_h && (int)rayy < cube->map_w && rayx > 0 && rayy > 0 && cube->map[rayx - (cube->ray->dx < 0)][(int)rayy] != '#' && cube->map[rayx - (cube->ray->dx < 0)][(int)rayy] != '=')
+	while(rayx < cube->map_h && (int)rayy < cube->map_w && rayx > 0 && rayy > 0 && cube->map[rayx - (cube->ray->dx < 0)][(int)rayy] != '#' &&
+		cube->map[rayx - (cube->ray->dx < 0)][(int)rayy] != 1000)
 	{
 		if(cube->ray->dx > 0)
 		{
@@ -15,7 +16,7 @@ void	cast_h(int rayx, float rayy, t_cube *cube)
 			rayy -= cube->ray->slope;
 		}
 	}
-	if(rayx < cube->map_h && (int)rayy < cube->map_w && rayx > 0 && rayy > 0 && cube->map[rayx - (cube->ray->dx < 0)][(int)rayy] == '=' && cube->door_state == 0)
+	if(rayx < cube->map_h && (int)rayy < cube->map_w && rayx > 0 && rayy > 0 && cube->map[rayx - (cube->ray->dx < 0)][(int)rayy] == 1000)
 		cube->ray->hit_door_h = 1;
 	cube->ray->h_x = rayx;
 	cube->ray->h_y = rayy;
@@ -23,7 +24,8 @@ void	cast_h(int rayx, float rayy, t_cube *cube)
 
 void	cast_w(float rayx, int rayy, t_cube *cube)
 {
-	while((int)rayx < cube->map_h && rayy < cube->map_w && rayx > 0 && rayy > 0 && cube->map[(int)rayx][rayy - (cube->ray->dy < 0)] != '#' && cube->map[(int)rayx][rayy - (cube->ray->dy < 0)] != '=')
+	while((int)rayx < cube->map_h && rayy < cube->map_w && rayx > 0 && rayy > 0 && cube->map[(int)rayx][rayy - (cube->ray->dy < 0)] != '#' &&
+		cube->map[(int)rayx][rayy - (cube->ray->dy < 0)] != 1000)
 	{
 		if(cube->ray->dy > 0)
 		{
@@ -36,7 +38,7 @@ void	cast_w(float rayx, int rayy, t_cube *cube)
 			rayx -= cube->ray->slope;
 		}
 	}
-	if((int)rayx < cube->map_h && rayy < cube->map_w && rayx > 0 && rayy > 0 && cube->map[(int)rayx][rayy - (cube->ray->dy < 0)] == '=' && cube->door_state == 0)
+	if((int)rayx < cube->map_h && rayy < cube->map_w && rayx > 0 && rayy > 0 && cube->map[(int)rayx][rayy - (cube->ray->dy < 0)] == 1000)
 		cube->ray->hit_door_w = 1;
 	cube->ray->w_x = rayx;
 	cube->ray->w_y = rayy;

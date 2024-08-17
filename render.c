@@ -94,15 +94,30 @@ void draw_floor(t_cube *cube)
     }
 }
 
-void open_door(t_cube *cube)
+void	open_door(t_cube *cube)
 {
+	// printf("plater x %f\n", cube->player_x);
+	// printf("plater y %f", cube->player_y);
 	int i;
+	int ray_counter;
 
 	i = -1;
+	ray_counter = 0;
 	while(++i < WINDOW_W)
 	{
-		if(cube->ray->hit_door[i] == 1 && cube->ray->hit_dist[i] <= 1.5 && cube->keys->key_open == 1)
-			cube->door_state = 1;
+		//maybe use mouse coordinates to detect if im looking at a door or not
+		if(cube->ray->hit_door[i] == 1 && cube->ray->hit_dist[i] <= 1.5 && ray_counter > WINDOW_W / 2)
+		{
+			write(1, "X", 1);
+			// cube->map[(int)cube->player_dx + 1][(int)cube->player_dy] = 2000;
+			// for(int i = 0; i < cube->map_h; i++)
+			// {
+			// 	for(int j = 0; j < cube->map_w; j++)
+			// 		printf("%d", cube->map[i][j]);
+			// 	printf("\n");
+			// }
+		}
+		ray_counter++;
 	}
 }
 
@@ -112,8 +127,8 @@ int put_image(t_cube *cube)
 	draw_minimap(cube);
 	draw_player(cube);
 	ray_cast(cube);
-	open_door(cube);
 	draw_floor(cube);
+	open_door(cube);
 	draw_walls(cube);
 	mlx_put_image_to_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr, cube->mlx->main_img, 0, 0);
 	mlx_put_image_to_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr, cube->mlx->map_img, 0, 0);

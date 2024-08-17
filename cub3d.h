@@ -26,8 +26,8 @@
 
 # define BUFFERSIZE 8192
 # define MINIMAP_SCALE 15
-# define WINDOW_H  1000
-# define WINDOW_W  1920
+# define WINDOW_H  800
+# define WINDOW_W  800
 # define PI 3.1415926535
 # define GREEN 0x00ff00
 # define FOV 90 * (PI / 180)
