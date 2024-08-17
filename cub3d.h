@@ -114,6 +114,7 @@ typedef struct s_ray
 	float			d_angle;
 	int				hit_door_h;
 	int				hit_door_w;
+	int				door_state;
 	int				hit_door[WINDOW_W];
 	float			hit_direction[WINDOW_W];
 	float			hit_coordn[WINDOW_W];
@@ -199,4 +200,6 @@ void				draw_main_pixel(t_cube *cube, int x, int y, int color);
 void				draw_walls(t_cube *cube);
 void				init_keyes(t_cube *cube);
 size_t				ft_strlcpy(char *dst, const char *src, size_t size);
+int					door_check(t_cube *cube, float x, float y);
+void				open_door(t_cube *cube);
 #endif

@@ -1,4 +1,5 @@
 #include "cub3d.h"
+#include <stdio.h>
 
 void copy_playable_map(t_cube *cube)
 {
@@ -53,4 +54,19 @@ int close_window(t_cube *cube)
 	mlx_destroy_display(cube->mlx->mlx_ptr);
 	free(cube->mlx->mlx_ptr);
 	exit(0);
+}
+
+int	door_check(t_cube *cube, float x, float y)
+{
+	float	y_percent;
+	float	door_percent;
+
+	if(cube->map[(int)x][(int)y] >= 1000 && cube->map[(int)x][(int)y] <= 2000)
+	{
+		y_percent = ((y - (int)y) / ((int)y + 1 - (int)y)) * 100 ;
+		door_percent = fabs(((cube->map[(int)x][(int)y] - 2000.) / 1000) * 100);
+		if(y_percent <= door_percent)
+			return (1);
+	}
+	return (0);
 }
