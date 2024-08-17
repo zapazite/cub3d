@@ -115,6 +115,7 @@ typedef struct s_ray
 	int				hit_door_h;
 	int				hit_door_w;
 	int				door_state;
+	int				door_check_flag;
 	int				hit_door[WINDOW_W];
 	float			hit_direction[WINDOW_W];
 	float			hit_coordn[WINDOW_W];
