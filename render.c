@@ -1,5 +1,7 @@
 #include "cub3d.h"
+#include "minilibx-linux/mlx.h"
 #include <X11/Xutil.h>
+#include <stdio.h>
 #include <string.h>
 
 int	key_handler(int keycode, t_cube *cube)
@@ -35,9 +37,9 @@ int	key_handler(int keycode, t_cube *cube)
 
 void	open_door(t_cube *cube)
 {
-	if(cube->player_dx > 0 && cube->map[(int)cube->player_x + 1][(int)cube->player_y] == 1000)
+	if(cube->map[(int)cube->player_x + 1][(int)cube->player_y] == 1000)
 		cube->map[(int)cube->player_x + 1][(int)cube->player_y] += 5;
-	else if(cube->player_dx < 0 && cube->map[(int)cube->player_x - 1][(int)cube->player_y] == 1000)
+	else if(cube->map[(int)cube->player_x - 1][(int)cube->player_y] == 1000)
 		cube->map[(int)cube->player_x - 1][(int)cube->player_y] += 5;
 	else if (cube->map[(int)cube->player_x][(int)cube->player_y + 1] == 1000)
 		cube->map[(int)cube->player_x][(int)cube->player_y + 1] += 5;
@@ -104,38 +106,6 @@ void draw_floor(t_cube *cube)
     }
 }
 
-// void	open_door(t_cube *cube)
-// {
-// 	int i;
-// 	int ray_counter;
-
-// 	i = -1;
-// 	ray_counter = 0;
-// 	while(++i < WINDOW_W)
-// 	{
-// 		if(cube->ray->hit_door[i] == 1)
-// 			ray_counter++;
-// 		if(cube->ray->hit_door[i] == 1 && cube->ray->hit_dist[i] <= 1.5 && ray_counter >= WINDOW_W / 2 && cube->keys->key_open == 1)
-// 		{
-// 			if(cube->player_dx > 0 && cube->map[(int)cube->player_x + 1][(int)cube->player_y] == 1000)
-// 				cube->map[(int)cube->player_x + 1][(int)cube->player_y] = 2000;
-// 			else if((cube->player_dx < 0 && cube->map[(int)cube->player_x - 1][(int)cube->player_y] == 1000))
-// 				cube->map[(int)cube->player_x - 1][(int)cube->player_y] = 2000;
-// 		}
-// 	}
-// }
-
-// void	close_door(t_cube *cube)
-// {
-// 	if(cube->keys->key_close == 1)
-// 	{
-// 		if(cube->player_dx > 0 && cube->map[(int)cube->player_x + 1][(int)cube->player_y] == 2000 )
-// 			cube->map[(int)cube->player_x + 1][(int)cube->player_y] = 1000;
-// 		else if((cube->player_dx < 0 && cube->map[(int)cube->player_x - 1][(int)cube->player_y] == 2000))
-// 			cube->map[(int)cube->player_x - 1][(int)cube->player_y] = 1000;
-// 	}
-// }
-
 void door_manager(t_cube *cube)
 {
 	int x;
@@ -160,6 +130,7 @@ int put_image(t_cube *cube)
 	door_manager(cube);
 	draw_floor(cube);
 	draw_walls(cube);
+	mlx_mouse_move(cube->mlx->mlx_ptr, cube->mlx->win_ptr, WINDOW_W / 2, WINDOW_H / 2);
 	mlx_put_image_to_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr, cube->mlx->main_img, 0, 0);
 	mlx_put_image_to_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr, cube->mlx->map_img, 0, 0);
 	return 0;
@@ -169,11 +140,13 @@ int	mouse_handler(int x, int y, t_cube *cube)
 {
 	(void)x;
 	(void)y;
-
 	cube->player_angle += (WINDOW_W / 2. - x) * MOUSE_SENS;
+	if(cube->player_angle < 0)
+		cube->player_angle += 2*PI;
+	if(cube->player_angle > 2*PI)
+		cube->player_angle -= 2*PI;
 	cube->player_dx = cos(cube->player_angle);
 	cube->player_dy = sin(cube->player_angle);
-	mlx_mouse_move(cube->mlx->mlx_ptr, cube->mlx->win_ptr, WINDOW_W / 2, WINDOW_H / 2);
 	return (0);
 }
 
