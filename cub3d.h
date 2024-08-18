@@ -201,6 +201,6 @@ void				draw_main_pixel(t_cube *cube, int x, int y, int color);
 void				draw_walls(t_cube *cube);
 void				init_keyes(t_cube *cube);
 size_t				ft_strlcpy(char *dst, const char *src, size_t size);
-int					door_check(t_cube *cube, float x, float y);
+int					door_check(t_cube *cube, float x, float y, char line);
 void				open_door(t_cube *cube);
 #endif

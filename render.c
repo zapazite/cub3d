@@ -39,6 +39,10 @@ void	open_door(t_cube *cube)
 		cube->map[(int)cube->player_x + 1][(int)cube->player_y] += 5;
 	else if(cube->player_dx < 0 && cube->map[(int)cube->player_x - 1][(int)cube->player_y] == 1000)
 		cube->map[(int)cube->player_x - 1][(int)cube->player_y] += 5;
+	else if (cube->map[(int)cube->player_x][(int)cube->player_y + 1] == 1000)
+		cube->map[(int)cube->player_x][(int)cube->player_y + 1] += 5;
+	else if (cube->map[(int)cube->player_x][(int)cube->player_y - 1] == 1000)
+		cube->map[(int)cube->player_x][(int)cube->player_y - 1] += 5;
 }
 
 int key_release(int keycode, t_cube *cube)
