@@ -81,12 +81,17 @@ typedef struct s_mlx
 	int				main_p_bits;
 	int				main_size_line;
 	int				main_endian;
+	int				mini_p_bits;
+	int				mini_size_line;
+	int				mini_endian;
 	char			*main_data;
 	char			*map_data;
+	char			*mini_map_data;
 	void			*mlx_ptr;
 	void			*win_ptr;
 	void			*map_img;
 	void			*main_img;
+	void			*mini_map_img;
 } t_mlx;
 
 typedef struct s_keys

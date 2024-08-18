@@ -168,14 +168,14 @@ int put_image(t_cube *cube)
 {
 	move_player(cube);
 	draw_minimap(cube);
-	draw_player(cube);
+	// draw_player(cube);
 	ray_cast(cube);
 	door_manager(cube);
 	draw_floor(cube);
 	draw_walls(cube);
 	mlx_mouse_move(cube->mlx->mlx_ptr, cube->mlx->win_ptr, WINDOW_W / 2, WINDOW_H / 2);
 	mlx_put_image_to_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr, cube->mlx->main_img, 0, 0);
-	mlx_put_image_to_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr, cube->mlx->map_img, 0, 0);
+	mlx_put_image_to_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr, cube->mlx->mini_map_img, 0, 0);
 	return 0;
 }
 
@@ -226,8 +226,13 @@ void	render(t_cube *cube)
 	init_keyes(cube);
 	cube->mlx->mlx_ptr = mlx_init();
 	cube->mlx->win_ptr = mlx_new_window(cube->mlx->mlx_ptr, WINDOW_W, WINDOW_H, "cub3d");
+
 	cube->mlx->map_img = mlx_new_image(cube->mlx->mlx_ptr, cube->map_w*MINIMAP_SCALE, cube->map_h*MINIMAP_SCALE);
 	cube->mlx->map_data = mlx_get_data_addr(cube->mlx->map_img, &cube->mlx->map_p_bits, &cube->mlx->map_size_line, &cube->mlx->map_endian);
+
+	cube->mlx->mini_map_img = mlx_new_image(cube->mlx->mlx_ptr, 5*MINIMAP_SCALE, 5*MINIMAP_SCALE);
+	cube->mlx->mini_map_data = mlx_get_data_addr(cube->mlx->mini_map_img, &cube->mlx->mini_p_bits, &cube->mlx->mini_size_line, &cube->mlx->mini_endian);
+
 	cube->mlx->main_img = mlx_new_image(cube->mlx->mlx_ptr, WINDOW_W, WINDOW_H);
 	cube->mlx->main_data = mlx_get_data_addr(cube->mlx->main_img, &cube->mlx->main_p_bits, &cube->mlx->main_size_line, &cube->mlx->main_endian);
 	load_textures(cube);

@@ -14,6 +14,19 @@ void	draw_map_pixel(t_cube *cube, int x, int y, int color)
     cube->mlx->map_data[pixel_index + 2] = (color >> 16) & 0xFF;
 }
 
+void	draw_mini_map_pixel(t_cube *cube, int x, int y, int color)
+{
+	int pixel_index;
+	if(x < 0 || y < 0 || x > 10*MINIMAP_SCALE || y > 10*MINIMAP_SCALE)
+		return ;
+	if(x > 150 || y > 150)
+		return ;
+	pixel_index = (x * cube->mlx->mini_size_line) + (y * (cube->mlx->mini_p_bits / 8));
+	cube->mlx->mini_map_data[pixel_index] = color & 0xFF;
+    cube->mlx->mini_map_data[pixel_index + 1] = (color >> 8) & 0xFF;
+    cube->mlx->mini_map_data[pixel_index + 2] = (color >> 16) & 0xFF;
+}
+
 void	draw_main_pixel(t_cube *cube, int x, int y, int color)
 {
 	int pixel_index;
@@ -89,6 +102,21 @@ void draw_square(t_cube *cube, int x_scaled , int y_scaled, int color)
 	}
 }
 
+void draw_window(t_cube *cube)
+{
+	int x;
+	int y;
+	int index = (cube->player_x - 4);
+
+	x = -1;
+	while(++x < 10*MINIMAP_SCALE)
+	{
+		y = -1;
+		while(++y < 10*MINIMAP_SCALE)
+			draw_mini_map_pixel(cube, x, y, cube->mlx->map_data[index++]);
+	}
+}
+
 void draw_minimap(t_cube *cube)
 {
 	int x;
@@ -110,7 +138,9 @@ void draw_minimap(t_cube *cube)
 				draw_square(cube, x * MINIMAP_SCALE, y * MINIMAP_SCALE, 0x7b7d79);
 		}
 	}
+	draw_window(cube);
 }
+
 
 void	draw_walls(t_cube *cube)
 {
