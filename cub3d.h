@@ -31,7 +31,9 @@
 # define PI 3.1415926535
 # define GREEN 0x00ff00
 # define FOV 90 * (PI / 180)
-#define	MOUSE_SENS 0.001
+# define	MOUSE_SENS 0.001
+# define	CLOSE_DOOR 1001.
+# define	OPEN_DOOR 2000.
 
 typedef enum
 {
@@ -203,4 +205,5 @@ void				init_keyes(t_cube *cube);
 size_t				ft_strlcpy(char *dst, const char *src, size_t size);
 int					door_check(t_cube *cube, float x, float y, char line);
 void				open_door(t_cube *cube);
+void				close_door(t_cube *cube);
 #endif

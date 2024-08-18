@@ -32,19 +32,33 @@ int	key_handler(int keycode, t_cube *cube)
 		cube->keys->key_space = 1;
 	if(keycode == XK_o)
 		open_door(cube);
+	if(keycode == XK_c)
+		close_door(cube);
 	return (0);
 }
 
 void	open_door(t_cube *cube)
 {
-	if(cube->map[(int)cube->player_x + 1][(int)cube->player_y] == 1000)
-		cube->map[(int)cube->player_x + 1][(int)cube->player_y] += 5;
-	else if(cube->map[(int)cube->player_x - 1][(int)cube->player_y] == 1000)
-		cube->map[(int)cube->player_x - 1][(int)cube->player_y] += 5;
-	else if (cube->map[(int)cube->player_x][(int)cube->player_y + 1] == 1000)
-		cube->map[(int)cube->player_x][(int)cube->player_y + 1] += 5;
-	else if (cube->map[(int)cube->player_x][(int)cube->player_y - 1] == 1000)
-		cube->map[(int)cube->player_x][(int)cube->player_y - 1] += 5;
+	if(cube->map[(int)cube->player_x + 1][(int)cube->player_y] == CLOSE_DOOR)
+		cube->map[(int)cube->player_x + 1][(int)cube->player_y] += 6;
+	else if(cube->map[(int)cube->player_x - 1][(int)cube->player_y] == CLOSE_DOOR)
+		cube->map[(int)cube->player_x - 1][(int)cube->player_y] += 6;
+	else if (cube->map[(int)cube->player_x][(int)cube->player_y + 1] == CLOSE_DOOR)
+		cube->map[(int)cube->player_x][(int)cube->player_y + 1] += 6;
+	else if (cube->map[(int)cube->player_x][(int)cube->player_y - 1] == CLOSE_DOOR)
+		cube->map[(int)cube->player_x][(int)cube->player_y - 1] += 6;
+}
+
+void	close_door(t_cube *cube)
+{
+	if(cube->map[(int)cube->player_x + 1][(int)cube->player_y] == OPEN_DOOR)
+		cube->map[(int)cube->player_x + 1][(int)cube->player_y] -= 6;
+	else if(cube->map[(int)cube->player_x - 1][(int)cube->player_y] == OPEN_DOOR)
+		cube->map[(int)cube->player_x - 1][(int)cube->player_y] -= 6;
+	else if (cube->map[(int)cube->player_x][(int)cube->player_y + 1] == OPEN_DOOR)
+		cube->map[(int)cube->player_x][(int)cube->player_y + 1] -= 6;
+	else if (cube->map[(int)cube->player_x][(int)cube->player_y - 1] == OPEN_DOOR)
+		cube->map[(int)cube->player_x][(int)cube->player_y - 1] -= 6;
 }
 
 int key_release(int keycode, t_cube *cube)
@@ -116,8 +130,20 @@ void door_manager(t_cube *cube)
 	{
 		y = -1;
 		while(++y < cube->map_w)
-			if(cube->map[x][y] > 1000 && cube->map[x][y] < 2000)
-				cube->map[x][y] += 5;
+		{
+			if(cube->map[x][y] > CLOSE_DOOR && cube->map[x][y] < OPEN_DOOR && cube->map[x][y] % 2 != 0)
+			{
+				cube->map[x][y] += 6;
+				if(cube->map[x][y] >= OPEN_DOOR)
+					cube->map[x][y] = OPEN_DOOR;
+			}
+			else if(cube->map[x][y] > CLOSE_DOOR && cube->map[x][y] < OPEN_DOOR && cube->map[x][y] % 2 == 0)
+			{
+				cube->map[x][y] -= 6;
+				if(cube->map[x][y] <= CLOSE_DOOR && cube->map[x][y] > 900)
+					cube->map[x][y] = CLOSE_DOOR;
+			}
+		}
 	}
 }
 

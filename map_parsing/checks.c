@@ -121,10 +121,10 @@ void	check_map(t_cube *cube, int x, int y)
 		cube->prs->min_y = y;
 	if (cube->prs->prs_map[x][y] == '1')
 		return (cube->prs->prs_map[x][y] = '#', (void)0);
-	if(cube->prs->prs_map[x][y] == '!' || cube->prs->prs_map[x][y] == '#' || cube->prs->prs_map[x][y] == 1000)
+	if(cube->prs->prs_map[x][y] == '!' || cube->prs->prs_map[x][y] == '#' || cube->prs->prs_map[x][y] == CLOSE_DOOR)
 		return ;
 	if(cube->prs->prs_map[x][y] == 'H')
-		cube->prs->prs_map[x][y] = 1000;
+		cube->prs->prs_map[x][y] = CLOSE_DOOR;
 	else
 		cube->prs->prs_map[x][y] = '!';
 	check_map(cube, x - 1, y);

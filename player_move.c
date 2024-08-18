@@ -5,7 +5,7 @@ int door_state(int x, int y, t_cube *cube)
 	int door_value;
 
 	door_value = cube->map[x][y];
-	if(door_value <= 1500 && door_value >= 1000)
+	if(door_value >= CLOSE_DOOR && door_value < OPEN_DOOR)
 		return (1);
 	return (0);
 }

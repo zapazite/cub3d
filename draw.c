@@ -48,11 +48,11 @@ void	draw_line(float rayx, float rayy, t_cube *cube)
 	xi = cube->player_x;
 	yi = cube->player_y;
 	i = -1;
-	while(++i < 1000)
+	while(++i < CLOSE_DOOR)
 	{
 		draw_map_pixel(cube, xi * MINIMAP_SCALE, yi * MINIMAP_SCALE, 0xffffff);
-		xi += (rayx - cube->player_x) / 1000; //calue to be changed based on map dimensions. Defines how many pixels to color on a line
-		yi += (rayy - cube->player_y) / 1000;
+		xi += (rayx - cube->player_x) / CLOSE_DOOR; //calue to be changed based on map dimensions. Defines how many pixels to color on a line
+		yi += (rayy - cube->player_y) / CLOSE_DOOR;
 	}
 }
 
@@ -89,7 +89,7 @@ void draw_minimap(t_cube *cube)
 				draw_square(cube, x * MINIMAP_SCALE, y * MINIMAP_SCALE, 0x0066b2);
 			else if(cube->map[x][y] == '#')
 				draw_square(cube, x * MINIMAP_SCALE, y * MINIMAP_SCALE, 0x990000);
-			else if(cube->map[x][y] >= 1000 && cube->map[x][y] <= 1700)
+			else if(cube->map[x][y] >= CLOSE_DOOR && cube->map[x][y] <= 1700)
 				draw_square(cube, x * MINIMAP_SCALE, y * MINIMAP_SCALE, 0xffffff);
 			else if(cube->map[x][y] > 1700)
 				draw_square(cube, x * MINIMAP_SCALE, y * MINIMAP_SCALE, 0xffff00);

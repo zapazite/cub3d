@@ -64,9 +64,9 @@ int	door_check(t_cube *cube, float x, float y, char line)
 		line_percent = ((y - (int)y) / ((int)y + 1 - (int)y)) * 100;
 	else
 		line_percent = ((x - (int)x) / ((int)x + 1 - (int)x)) * 100;
-	if(cube->map[(int)x][(int)y] >= 1000 && cube->map[(int)x][(int)y] <= 2000)
+	if(cube->map[(int)x][(int)y] >= CLOSE_DOOR && cube->map[(int)x][(int)y] <= OPEN_DOOR)
 	{
-		door_percent = fabs(((cube->map[(int)x][(int)y] - 2000.) / 1000)) * 100;
+		door_percent = fabs(((cube->map[(int)x][(int)y] - OPEN_DOOR) / CLOSE_DOOR)) * 100;
 		if(line_percent <= door_percent)
 		{
 			cube->ray->door_check_flag = door_percent;
