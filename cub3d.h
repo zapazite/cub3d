@@ -25,15 +25,16 @@
 # include <X11/Xutil.h>
 
 # define BUFFERSIZE 8192
-# define MINIMAP_SCALE 15
-# define WINDOW_H  600
-# define WINDOW_W  600
+# define WINDOW_H  1000
+# define WINDOW_W  1920
 # define PI 3.1415926535
 # define GREEN 0x00ff00
 # define FOV 90 * (PI / 180)
 # define	MOUSE_SENS 0.001
 # define	CLOSE_DOOR 1001.
 # define	OPEN_DOOR 2000.
+# define	MINIMAP_SCALE 15
+# define	DOOR_SPEED 50
 
 typedef enum
 {
@@ -126,14 +127,14 @@ typedef struct s_ray
 
 typedef struct s_textures
 {
-	char	wall_paths[5][4096];
-	void	*wall_ptr[5];
-	int 	wall_w[5];
-	int		wall_h[5];
-	int		*wall_data[5];
-	int		wall_p_bits[5];
-	int		wall_size_line[5];
-	int		wall_endian[5];
+	char	wall_paths[7][4096];
+	void	*wall_ptr[7];
+	int 	wall_w[7];
+	int		wall_h[7];
+	int		*wall_data[7];
+	int		wall_p_bits[7];
+	int		wall_size_line[7];
+	int		wall_endian[7];
 } t_textures;
 
 typedef struct s_cube

@@ -37,28 +37,45 @@ int	key_handler(int keycode, t_cube *cube)
 	return (0);
 }
 
+int	is_door(t_cube *cube)
+{
+	if(cube->map[(int)(cube->player_x + 0.5)][(int)(cube->player_y)] >= 1000)
+		return (1);
+	if(cube->map[(int)(cube->player_x - 0.5)][(int)(cube->player_y)] >= 1000)
+		return (1);
+	if(cube->map[(int)(cube->player_x)][(int)(cube->player_y + 0.5)] >= 1000)
+		return (1);
+	if(cube->map[(int)(cube->player_x)][(int)(cube->player_y - 0.5)] >= 1000)
+		return (1);
+	return (0);
+}
+
 void	open_door(t_cube *cube)
 {
+	if(is_door(cube))
+		return ;
 	if(cube->map[(int)cube->player_x + 1][(int)cube->player_y] == CLOSE_DOOR)
-		cube->map[(int)cube->player_x + 1][(int)cube->player_y] += 6;
+		cube->map[(int)cube->player_x + 1][(int)cube->player_y] += DOOR_SPEED;
 	else if(cube->map[(int)cube->player_x - 1][(int)cube->player_y] == CLOSE_DOOR)
-		cube->map[(int)cube->player_x - 1][(int)cube->player_y] += 6;
+		cube->map[(int)cube->player_x - 1][(int)cube->player_y] += DOOR_SPEED;
 	else if (cube->map[(int)cube->player_x][(int)cube->player_y + 1] == CLOSE_DOOR)
-		cube->map[(int)cube->player_x][(int)cube->player_y + 1] += 6;
+		cube->map[(int)cube->player_x][(int)cube->player_y + 1] += DOOR_SPEED;
 	else if (cube->map[(int)cube->player_x][(int)cube->player_y - 1] == CLOSE_DOOR)
-		cube->map[(int)cube->player_x][(int)cube->player_y - 1] += 6;
+		cube->map[(int)cube->player_x][(int)cube->player_y - 1] += DOOR_SPEED;
 }
 
 void	close_door(t_cube *cube)
 {
+	if(is_door(cube))
+		return ;
 	if(cube->map[(int)cube->player_x + 1][(int)cube->player_y] == OPEN_DOOR)
-		cube->map[(int)cube->player_x + 1][(int)cube->player_y] -= 6;
+		cube->map[(int)cube->player_x + 1][(int)cube->player_y] -= DOOR_SPEED;
 	else if(cube->map[(int)cube->player_x - 1][(int)cube->player_y] == OPEN_DOOR)
-		cube->map[(int)cube->player_x - 1][(int)cube->player_y] -= 6;
+		cube->map[(int)cube->player_x - 1][(int)cube->player_y] -= DOOR_SPEED;
 	else if (cube->map[(int)cube->player_x][(int)cube->player_y + 1] == OPEN_DOOR)
-		cube->map[(int)cube->player_x][(int)cube->player_y + 1] -= 6;
+		cube->map[(int)cube->player_x][(int)cube->player_y + 1] -= DOOR_SPEED;
 	else if (cube->map[(int)cube->player_x][(int)cube->player_y - 1] == OPEN_DOOR)
-		cube->map[(int)cube->player_x][(int)cube->player_y - 1] -= 6;
+		cube->map[(int)cube->player_x][(int)cube->player_y - 1] -= DOOR_SPEED;
 }
 
 int key_release(int keycode, t_cube *cube)
@@ -114,8 +131,8 @@ void draw_floor(t_cube *cube)
             int ty = (int)(64 * (floorY - (int)(floorY))) & (64 - 1);
             floorX += floorStepX;
             floorY += floorStepY;
-            draw_main_pixel(cube, x, y, cube->textures->wall_data[3][64 * ty + tx]);
-            draw_main_pixel(cube, WINDOW_H - x - 1, y, cube->textures->wall_data[2][64 * ty + tx]);
+            draw_main_pixel(cube, x, y, cube->textures->wall_data[6][64 * ty + tx]);
+            draw_main_pixel(cube, WINDOW_H - x - 1, y, cube->textures->wall_data[5][64 * ty + tx]);
         }
     }
 }
@@ -140,7 +157,7 @@ void door_manager(t_cube *cube)
 			else if(cube->map[x][y] > CLOSE_DOOR && cube->map[x][y] < OPEN_DOOR && cube->map[x][y] % 2 == 0)
 			{
 				cube->map[x][y] -= 6;
-				if(cube->map[x][y] <= CLOSE_DOOR && cube->map[x][y] > 900)
+				if(cube->map[x][y] <= CLOSE_DOOR && cube->map[x][y] >= cube->map[x][y] - 6)
 					cube->map[x][y] = CLOSE_DOOR;
 			}
 		}
@@ -181,7 +198,7 @@ void load_textures(t_cube *cube)
 	int i;
 
 	i = -1;
-	while(++i < 6)
+	while(++i < 7)
 	{
 		cube->textures->wall_ptr[i] = NULL;
 		cube->textures->wall_h[i] = 0;
@@ -192,8 +209,10 @@ void load_textures(t_cube *cube)
 		cube->textures->wall_data[i] = NULL;
 	}
 	ft_strlcpy(cube->textures->wall_paths[4], "./textures/door.xpm", ft_strlen("./textures/door.xpm") + 1);
+	ft_strlcpy(cube->textures->wall_paths[5], "./textures/floor.xpm", ft_strlen("./textures/floor.xpm") + 1);
+	ft_strlcpy(cube->textures->wall_paths[6], "./textures/cealing.xpm", ft_strlen("./textures/cealing.xpm") + 1);
 	i = -1;
-	while(++i < 5)
+	while(++i < 7)
 	{
 		cube->textures->wall_ptr[i] = mlx_xpm_file_to_image(cube->mlx->mlx_ptr, cube->textures->wall_paths[i], &cube->textures->wall_w[i], &cube->textures->wall_h[i]);
 		cube->textures->wall_data[i] = (int *)mlx_get_data_addr(cube->textures->wall_ptr[i], &cube->textures->wall_p_bits[i], &cube->textures->wall_size_line[i], &cube->textures->wall_endian[i]);

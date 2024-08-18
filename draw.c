@@ -1,4 +1,5 @@
 #include "cub3d.h"
+#include <math.h>
 
 void	draw_map_pixel(t_cube *cube, int x, int y, int color)
 {
@@ -56,43 +57,57 @@ void	draw_line(float rayx, float rayy, t_cube *cube)
 	}
 }
 
+// void draw_square(t_cube *cube, int x_scaled , int y_scaled, int color)
+// {
+// 	int x;
+// 	int y;
+
+// 	x = -1;
+// 	(void)color;
+// 	while(++x < MINIMAP_SCALE)
+// 	{
+// 		y = -1;
+// 		while(++y < MINIMAP_SCALE)
+// 			draw_map_pixel(cube, x + x_scaled, y + y_scaled, cube->textures->wall_data[2][(x * MINIMAP_SCALE + y) * (64 / MINIMAP_SCALE)]);
+// 	}
+// }
+
 void draw_square(t_cube *cube, int x_scaled , int y_scaled, int color)
 {
-	int pixel_size_x;
-	int pixel_size_y;
+	int		x;
+	int		y;
+	// float	ratio;
 
-	pixel_size_x = -1;
-	while(++pixel_size_x < MINIMAP_SCALE)
+	// ratio = (float)cube->textures->wall_h[color] / MINIMAP_SCALE; if we want to use textures for minimap
+	// draw_map_pixel(cube, x + x_scaled, y + y_scaled, cube->textures->wall_data[color][(int)((y * ratio) * cube->textures->wall_h[color] + (x * ratio))]);
+	x = -1;
+	while(++x < MINIMAP_SCALE)
 	{
-		pixel_size_y = -1;
-		while(++pixel_size_y < MINIMAP_SCALE)
-		{
-			draw_map_pixel(cube, pixel_size_x + x_scaled, pixel_size_y + y_scaled, color);
-			if (pixel_size_x == 0 || pixel_size_y == 0)
-				draw_map_pixel(cube, pixel_size_x + x_scaled, pixel_size_y + y_scaled, 0x000000);
-		}
+		y = -1;
+		while(++y < MINIMAP_SCALE)
+			draw_map_pixel(cube, x + x_scaled, y + y_scaled, color);
 	}
 }
 
 void draw_minimap(t_cube *cube)
 {
-	int x = 0;
-	int y = 0;
+	int x;
+	int y;
 
-	x = cube->map_h;
-	while(x-- > 0)
+	x = -1;
+	while(++x < cube->map_h)
 	{
-		y = cube->map_w;
-		while(y-- > 0)
+		y = -1;
+		while(++y < cube->map_w)
 		{
 			if(cube->map[x][y] == '!')
-				draw_square(cube, x * MINIMAP_SCALE, y * MINIMAP_SCALE, 0x0066b2);
+				draw_square(cube, x * MINIMAP_SCALE, y * MINIMAP_SCALE, 0x7b7d79);
 			else if(cube->map[x][y] == '#')
-				draw_square(cube, x * MINIMAP_SCALE, y * MINIMAP_SCALE, 0x990000);
-			else if(cube->map[x][y] >= CLOSE_DOOR && cube->map[x][y] <= 1700)
-				draw_square(cube, x * MINIMAP_SCALE, y * MINIMAP_SCALE, 0xffffff);
-			else if(cube->map[x][y] > 1700)
-				draw_square(cube, x * MINIMAP_SCALE, y * MINIMAP_SCALE, 0xffff00);
+				draw_square(cube, x * MINIMAP_SCALE, y * MINIMAP_SCALE, 0x110b47);
+			else if(cube->map[x][y] >= CLOSE_DOOR && cube->map[x][y] < OPEN_DOOR)
+				draw_square(cube, x * MINIMAP_SCALE, y * MINIMAP_SCALE, 0x520a00);
+			else if(cube->map[x][y] == OPEN_DOOR)
+				draw_square(cube, x * MINIMAP_SCALE, y * MINIMAP_SCALE, 0x7b7d79);
 		}
 	}
 }
@@ -126,7 +141,7 @@ void	draw_walls(t_cube *cube)
 				if(txt == 4)
 				{
 					draw_main_pixel(cube, x, y, cube->textures->wall_data[txt][(int)(wall_idx + wall_offset) * cube->textures->wall_w[txt]
-						+ (int)(cube->ray->hit_coordn[y] * cube->textures->wall_h[txt] + ((1 - cube->ray->hit_door[y] / 100.) * 1024))]);
+						+ (int)(cube->ray->hit_coordn[y] * cube->textures->wall_h[txt] + ((1 - cube->ray->hit_door[y] / 100.) * cube->textures->wall_w[txt]))]);
 							wall_idx += cube->textures->wall_h[txt] / wall_size;
 				}
 				else
