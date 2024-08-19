@@ -75,15 +75,14 @@ void	move_player(t_cube *cube)
 	}
 	if(!check_player_position(move_x, move_y, cube) && player_dir(cube->player_dx, cube->player_dy))
 	{
-		if (cube->map[(int)(cube->player_dx + cube->player_x)][(int)cube->player_dy] == '#' && cube->map[(int)cube->player_x][(int)(cube->player_dy + cube->player_dy)] == '#')
-			return ;
-		if(cube->map[(int)(cube->player_dx + cube->player_x)][(int)cube->player_dy] == '#' && cube->map[(int)cube->player_x][(int)(cube->player_dy + cube->player_dy)] != '#')
+		if(cube->map[(int)(cube->player_dx + cube->player_x)][(int)cube->player_dy] == '#')
 			cube->player_y = move_y;
-		else if(cube->map[(int)cube->player_x][(int)(cube->player_dy + cube->player_dy)] == '#' && cube->map[(int)(cube->player_dx + cube->player_x)][(int)cube->player_dy] != '#')
+		else if(cube->map[(int)cube->player_dx][(int)(cube->player_y + cube->player_dy)] == '#')
 			cube->player_x = move_x;
 	}
 	else if(check_player_position(move_x, move_y, cube))
 	{
+		write(1, "X", 1);
 		cube->player_x = move_x;
 		cube->player_y = move_y;
 	}
