@@ -25,8 +25,8 @@
 # include <X11/Xutil.h>
 
 # define BUFFERSIZE 8192
-# define WINDOW_H  1000
-# define WINDOW_W  1920
+# define WINDOW_H  800
+# define WINDOW_W  800
 # define PI 3.1415926535
 # define GREEN 0x00ff00
 # define FOV 90 * (PI / 180)
@@ -212,4 +212,5 @@ size_t				ft_strlcpy(char *dst, const char *src, size_t size);
 int					door_check(t_cube *cube, float x, float y, char line);
 void				open_door(t_cube *cube);
 void				close_door(t_cube *cube);
+int					is_door(t_cube *cube);
 #endif

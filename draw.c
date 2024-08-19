@@ -1,5 +1,4 @@
 #include "cub3d.h"
-#include <math.h>
 
 void	draw_map_pixel(t_cube *cube, int x, int y, int color)
 {
