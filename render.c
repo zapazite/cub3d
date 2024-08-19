@@ -39,21 +39,19 @@ int	key_handler(int keycode, t_cube *cube)
 
 int	is_door(t_cube *cube)
 {
-	if(cube->map[(int)(cube->player_x + 0.5)][(int)(cube->player_y)] >= 1000)
+	if(cube->map[(int)(cube->player_x + 0.5)][(int)(cube->player_y)] >= 1001)
 		return (1);
-	if(cube->map[(int)(cube->player_x - 0.5)][(int)(cube->player_y)] >= 1000)
+	if(cube->map[(int)(cube->player_x - 0.5)][(int)(cube->player_y)] >= 1001)
 		return (1);
-	if(cube->map[(int)(cube->player_x)][(int)(cube->player_y + 0.5)] >= 1000)
+	if(cube->map[(int)(cube->player_x)][(int)(cube->player_y + 0.5)] >= 1001)
 		return (1);
-	if(cube->map[(int)(cube->player_x)][(int)(cube->player_y - 0.5)] >= 1000)
+	if(cube->map[(int)(cube->player_x)][(int)(cube->player_y - 0.5)] >= 1001)
 		return (1);
 	return (0);
 }
 
 void	open_door(t_cube *cube)
 {
-	if(is_door(cube))
-		return ;
 	if(cube->map[(int)cube->player_x + 1][(int)cube->player_y] == CLOSE_DOOR)
 		cube->map[(int)cube->player_x + 1][(int)cube->player_y] += DOOR_SPEED;
 	else if(cube->map[(int)cube->player_x - 1][(int)cube->player_y] == CLOSE_DOOR)
