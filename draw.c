@@ -70,21 +70,6 @@ void	draw_line(float rayx, float rayy, t_cube *cube)
 	}
 }
 
-// void draw_square(t_cube *cube, int x_scaled , int y_scaled, int color)
-// {
-// 	int x;
-// 	int y;
-
-// 	x = -1;
-// 	(void)color;
-// 	while(++x < MINIMAP_SCALE)
-// 	{
-// 		y = -1;
-// 		while(++y < MINIMAP_SCALE)
-// 			draw_map_pixel(cube, x + x_scaled, y + y_scaled, cube->textures->wall_data[2][(x * MINIMAP_SCALE + y) * (64 / MINIMAP_SCALE)]);
-// 	}
-// }
-
 void draw_square(t_cube *cube, int x_scaled , int y_scaled, int color)
 {
 	int		x;
@@ -102,18 +87,25 @@ void draw_square(t_cube *cube, int x_scaled , int y_scaled, int color)
 	}
 }
 
-void draw_window(t_cube *cube)
+void draw_window_map(t_cube *cube)
 {
 	int x;
 	int y;
-	int index = (cube->player_x - 4);
+	int indexx = ((cube->player_x - 4) * MINIMAP_SCALE);
+	int indexy = ((cube->player_y - 4) * MINIMAP_SCALE);
+	int color;
 
 	x = -1;
 	while(++x < 10*MINIMAP_SCALE)
 	{
 		y = -1;
 		while(++y < 10*MINIMAP_SCALE)
-			draw_mini_map_pixel(cube, x, y, cube->mlx->map_data[index++]);
+		{
+			color = 0x4a4a4a;
+			if((x + indexx < cube->map_h * MINIMAP_SCALE && y + indexy < cube->map_w * MINIMAP_SCALE) && (x + indexx > 0 && y + indexy > 0))
+				color = *(int *)(cube->mlx->map_data + (x + indexx) * cube->mlx->map_size_line + (y + indexy) * (cube->mlx->map_p_bits / 8));
+			draw_mini_map_pixel(cube, x, y, color);
+		}
 	}
 }
 
@@ -138,7 +130,8 @@ void draw_minimap(t_cube *cube)
 				draw_square(cube, x * MINIMAP_SCALE, y * MINIMAP_SCALE, 0x7b7d79);
 		}
 	}
-	draw_window(cube);
+	draw_player(cube);
+	draw_window_map(cube);
 }
 
 

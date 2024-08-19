@@ -168,7 +168,6 @@ int put_image(t_cube *cube)
 {
 	move_player(cube);
 	draw_minimap(cube);
-	// draw_player(cube);
 	ray_cast(cube);
 	door_manager(cube);
 	draw_floor(cube);
@@ -230,7 +229,7 @@ void	render(t_cube *cube)
 	cube->mlx->map_img = mlx_new_image(cube->mlx->mlx_ptr, cube->map_w*MINIMAP_SCALE, cube->map_h*MINIMAP_SCALE);
 	cube->mlx->map_data = mlx_get_data_addr(cube->mlx->map_img, &cube->mlx->map_p_bits, &cube->mlx->map_size_line, &cube->mlx->map_endian);
 
-	cube->mlx->mini_map_img = mlx_new_image(cube->mlx->mlx_ptr, 5*MINIMAP_SCALE, 5*MINIMAP_SCALE);
+	cube->mlx->mini_map_img = mlx_new_image(cube->mlx->mlx_ptr, 10*MINIMAP_SCALE, 10*MINIMAP_SCALE);
 	cube->mlx->mini_map_data = mlx_get_data_addr(cube->mlx->mini_map_img, &cube->mlx->mini_p_bits, &cube->mlx->mini_size_line, &cube->mlx->mini_endian);
 
 	cube->mlx->main_img = mlx_new_image(cube->mlx->mlx_ptr, WINDOW_W, WINDOW_H);
