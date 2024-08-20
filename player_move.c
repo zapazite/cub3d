@@ -27,20 +27,6 @@ int	check_player_position(float player_x, float player_y, t_cube *cube)
 	return (1);
 }
 
-int player_dir(int dx, int dy)
-{
-	if (dx == 0 && dy == -1)
-		return(0);
-    if (dx == 0 && dy == 1)
-    	return(0);
-    if (dx == -1 && dy == 0)
-    	return (0);
-    if (dx == 1 && dy == 0)
-    	return (0);
-    else
-    	return (1);
-}
-
 void	move_player(t_cube *cube)
 {
 	float move_x;
@@ -69,18 +55,8 @@ void	move_player(t_cube *cube)
 		move_x -= cube->player_dy/MINIMAP_SCALE;
 		move_y += cube->player_dx/MINIMAP_SCALE;
 	}
-	//needs to be fixed, player getting stuck in walls
-	if(check_player_position(move_x, move_y, cube))
-	{
-		if(cube->map[(int)cube->player_x][(int)(cube->player_dy + move_y)] == '#')
-			cube->player_x = move_x;
-		else if(cube->map[(int)(cube->player_dx + move_x)][(int)cube->player_y] == '#')
-			cube->player_y = move_y;
-	}
-	else
-	{
-		printf("move_x = %f\n", move_x);
+	if (check_player_position(move_x, cube->player_y, cube))
 		cube->player_x = move_x;
+	if (check_player_position(cube->player_x, move_y, cube))
 		cube->player_y = move_y;
-	}
 }
