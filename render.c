@@ -238,5 +238,6 @@ void	render(t_cube *cube)
 	mlx_hook(cube->mlx->win_ptr, KeyPress,KeyPressMask, key_handler, cube);
 	mlx_hook(cube->mlx->win_ptr, KeyRelease,KeyReleaseMask, key_release, cube);
 	mlx_loop_hook(cube->mlx->mlx_ptr, put_image, cube);
+	mlx_mouse_hide(cube->mlx->mlx_ptr, cube->mlx->win_ptr);
 	mlx_loop(cube->mlx->mlx_ptr);
 }

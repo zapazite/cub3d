@@ -2,7 +2,7 @@ NAME = cub3D
 
 CC = clang
 
-LIBS = -L./minilibx-linux -lXext -lX11 -lm -lmlx_Linux
+LIBS = -L./minilibx-linux -lXext -lXfixes -lX11 -lm -lmlx_Linux
 
 CFLAGS = -Wall -Wextra -Werror -g -o3
 

@@ -79,6 +79,7 @@ void	move_player(t_cube *cube)
 	}
 	else
 	{
+		printf("move_x = %f\n", move_x);
 		cube->player_x = move_x;
 		cube->player_y = move_y;
 	}

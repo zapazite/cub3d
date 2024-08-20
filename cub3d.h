@@ -15,12 +15,12 @@
 
 # include "gc/gc.h"
 #include <X11/Xlib.h>
-# include "minilibx-linux/mlx.h"
+# include "minilibx-linux/mlx.h" // IWYU pragma: keep
 # include "get_next_line/get_next_line_bonus.h"
 # include <fcntl.h>
 #include <stdint.h>
 # include <unistd.h>
-# include <math.h>
+# include <math.h> // IWYU pragma: keep
 # include <X11/X.h>
 # include <X11/Xutil.h>
 
