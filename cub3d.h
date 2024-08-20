@@ -149,6 +149,7 @@ typedef struct s_anim
 	int		p_bits[64];
 	int		size_line[64];
 	int		endian[64];
+	int		counter;
 } t_anim;
 
 typedef struct s_cube
