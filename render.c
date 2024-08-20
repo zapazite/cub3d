@@ -9,25 +9,13 @@ int	key_handler(int keycode, t_cube *cube)
 	if(keycode == XK_Escape)
 		close_window(cube);
 	if(keycode == XK_Up || keycode == XK_w)
-	{
-		cube->keys->key_w = 1;
 		cube->keys->key_up = 1;
-	}
 	if(keycode == XK_Down || keycode == XK_s)
-	{
 		cube->keys->key_down = 1;
-		cube->keys->key_s = 1;
-	}
 	if(keycode == XK_Left || keycode == XK_a)
-	{
-		cube->keys->key_a = 1;
 		cube->keys->key_left = 1;
-	}
 	if(keycode == XK_Right || keycode == XK_d)
-	{
-		cube->keys->key_d = 1;
 		cube->keys->key_right = 1;
-	}
 	if(keycode == XK_space)
 		cube->keys->key_space = 1;
 	if(keycode == XK_o)
@@ -61,25 +49,13 @@ void	close_door(t_cube *cube)
 int key_release(int keycode, t_cube *cube)
 {
 	if(keycode == XK_Up || keycode == XK_w)
-	{
-		cube->keys->key_w = 0;
 		cube->keys->key_up = 0;
-	}
 	if(keycode == XK_Down || keycode == XK_s)
-	{
-		cube->keys->key_s = 0;
 		cube->keys->key_down = 0;
-	}
 	if(keycode == XK_Left || keycode == XK_a)
-	{
-		cube->keys->key_a = 0;
 		cube->keys->key_left = 0;
-	}
 	if(keycode == XK_Right || keycode == XK_d)
-	{
-		cube->keys->key_d = 0;
 		cube->keys->key_right = 0;
-	}
 	return (0);
 }
 
@@ -144,9 +120,15 @@ void door_manager(t_cube *cube)
 	}
 }
 
+void animation(t_cube *cube)
+{
+	if(cube->keys->mouse_left)
+}
+
 int put_image(t_cube *cube)
 {
 	move_player(cube);
+	animation(cube);
 	draw_minimap(cube);
 	ray_cast(cube);
 	door_manager(cube);
@@ -158,7 +140,7 @@ int put_image(t_cube *cube)
 	return 0;
 }
 
-int	mouse_handler(int x, int y, t_cube *cube)
+int	mouse_move(int x, int y, t_cube *cube)
 {
 	(void)x;
 	(void)y;
@@ -170,6 +152,14 @@ int	mouse_handler(int x, int y, t_cube *cube)
 	cube->player_dx = cos(cube->player_angle);
 	cube->player_dy = sin(cube->player_angle);
 	return (0);
+}
+
+int	mouse_click(int button, int x, int y, t_cube *cube)
+{
+	(void)x;
+	(void)y;
+	if(button == 1)
+		cube->keys->mouse_left = 1;
 }
 
 void load_textures(t_cube *cube)
@@ -198,6 +188,33 @@ void load_textures(t_cube *cube)
 	}
 }
 
+void load_anim(t_cube *cube)
+{
+	int i;
+	char c;
+	char path[11] = "./anim/gun0";
+
+	i = -1;
+	while(++i < 64)
+	{
+		cube->anim->ptr[i] = NULL;
+		cube->anim->h[i] = 0;
+		cube->anim->w[i] = 0;
+		cube->anim->p_bits[i] = 0;
+		cube->anim->size_line[i] = 0;
+		cube->anim->endian[i] = 0;
+		cube->anim->data[i] = NULL;
+	}
+	i = -1;
+	while(++i < 64)
+	{
+		ft_strlcpy(cube->anim->paths[i], path, ft_strlen(path) + 1);
+		path[10]++;
+		cube->textures->wall_ptr[i] = mlx_xpm_file_to_image(cube->mlx->mlx_ptr, cube->textures->wall_paths[i], &cube->textures->wall_w[i], &cube->textures->wall_h[i]);
+		cube->textures->wall_data[i] = (int *)mlx_get_data_addr(cube->textures->wall_ptr[i], &cube->textures->wall_p_bits[i], &cube->textures->wall_size_line[i], &cube->textures->wall_endian[i]);
+	}
+}
+
 void	render(t_cube *cube)
 {
 	copy_playable_map(cube);
@@ -216,9 +233,10 @@ void	render(t_cube *cube)
 	cube->mlx->main_data = mlx_get_data_addr(cube->mlx->main_img, &cube->mlx->main_p_bits, &cube->mlx->main_size_line, &cube->mlx->main_endian);
 	load_textures(cube);
 	mlx_hook(cube->mlx->win_ptr, 17, 0, close_window, cube);
-	mlx_hook(cube->mlx->win_ptr, MotionNotify, PointerMotionMask, mouse_handler, cube);
+	mlx_hook(cube->mlx->win_ptr, MotionNotify, PointerMotionMask, mouse_move, cube);
 	mlx_hook(cube->mlx->win_ptr, KeyPress,KeyPressMask, key_handler, cube);
 	mlx_hook(cube->mlx->win_ptr, KeyRelease,KeyReleaseMask, key_release, cube);
+	mlx_mouse_hook(cube->mlx->mlx_ptr, mouse_click, NULL);
 	mlx_loop_hook(cube->mlx->mlx_ptr, put_image, cube);
 	mlx_mouse_hide(cube->mlx->mlx_ptr, cube->mlx->win_ptr);
 	mlx_loop(cube->mlx->mlx_ptr);

@@ -53,7 +53,8 @@ int	main(int argc, char *argv[])
 	t_ray		ray;
 	t_keys		key;
 	t_mlx		mlx;
-	t_textures textures;
+	t_textures	textures;
+	t_anim		anim;
 
 	if (argc != 2)
 		return (write(1, "Error\n", 6), 1);
@@ -61,6 +62,7 @@ int	main(int argc, char *argv[])
 	cube.ray = &ray;
 	cube.keys = &key;
 	cube.textures = &textures;
+	cube.anim = &anim;
 	cube_init(&cube, &prs, argv[1]);
 	parse(&cube);
 	render(&cube);

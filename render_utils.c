@@ -34,12 +34,8 @@ void init_player(t_cube *cube)
 
 void	init_keyes(t_cube *cube)
 {
-	cube->keys->key_w = 0;
-	cube->keys->key_s = 0;
-	cube->keys->key_d = 0;
-	cube->keys->key_a = 0;
-	cube->keys->key_up = 0;
-	cube->keys->key_down = 0;
+
+
 	cube->keys->key_left = 0;
 	cube->keys->key_right = 0;
 }

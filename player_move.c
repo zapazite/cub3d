@@ -34,23 +34,23 @@ void	move_player(t_cube *cube)
 
 	move_x = cube->player_x;
 	move_y = cube->player_y;
-	if(cube->keys->key_up || cube->keys->key_w)
+	if(cube->keys->key_up)
 	{
 		move_x += cube->player_dx/MINIMAP_SCALE;
 		move_y += cube->player_dy/MINIMAP_SCALE;
 	}
-	else if(cube->keys->key_down || cube->keys->key_s)
+	else if(cube->keys->key_down)
 	{
 		move_x -= cube->player_dx/MINIMAP_SCALE;
 		move_y -= cube->player_dy/MINIMAP_SCALE;
 	}
-	if(cube->keys->key_right || cube->keys->key_d)
+	if(cube->keys->key_right)
 	{
 		move_x += cube->player_dy/MINIMAP_SCALE;
 		move_y -= cube->player_dx/MINIMAP_SCALE;
 
 	}
-	else if(cube->keys->key_left || cube->keys->key_a)
+	else if(cube->keys->key_left)
 	{
 		move_x -= cube->player_dy/MINIMAP_SCALE;
 		move_y += cube->player_dx/MINIMAP_SCALE;
