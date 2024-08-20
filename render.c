@@ -39,13 +39,7 @@ int	key_handler(int keycode, t_cube *cube)
 
 int	is_door(t_cube *cube)
 {
-	if(cube->map[(int)(cube->player_x + cube->radius)][(int)(cube->player_y)] >= 1001)
-		return (1);
-	if(cube->map[(int)(cube->player_x - cube->radius)][(int)(cube->player_y)] >= 1001)
-		return (1);
-	if(cube->map[(int)(cube->player_x)][(int)(cube->player_y + cube->radius)] >= 1001)
-		return (1);
-	if(cube->map[(int)(cube->player_x)][(int)(cube->player_y - cube->radius)] >= 1001)
+	if(cube->map[(int)(cube->player_x + cube->radius * cube->player_dx)][(int)(cube->player_y + cube->radius * cube->player_dy)] >= 1001)
 		return (1);
 	return (0);
 }
