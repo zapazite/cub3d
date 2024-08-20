@@ -25,8 +25,8 @@
 # include <X11/Xutil.h>
 
 # define BUFFERSIZE 8192
-# define WINDOW_H  800
-# define WINDOW_W  800
+# define WINDOW_H  1000
+# define WINDOW_W  1920
 # define PI 3.1415926535
 # define GREEN 0x00ff00
 # define FOV 90 * (PI / 180)
@@ -145,7 +145,7 @@ typedef struct s_anim
 	void	*ptr[64];
 	int 	w[64];
 	int		h[64];
-	int		*data[64];
+	char	*data[64];
 	int		p_bits[64];
 	int		size_line[64];
 	int		endian[64];

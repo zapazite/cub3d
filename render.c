@@ -1,7 +1,7 @@
 #include "cub3d.h"
-#include "minilibx-linux/mlx.h"
 #include <dirent.h>
-#include <time.h>
+#include <stdio.h>
+#include <string.h>
 
 int	key_handler(int keycode, t_cube *cube)
 {
@@ -137,24 +137,24 @@ int	mouse_click(int button, int x, int y, t_cube *cube)
 {
 	(void)x;
 	(void)y;
-	if(button == 1 && cube->anim->counter == 0)
+	if(button == 1)
 		cube->keys->mouse_left = 1;
 	return (1);
 }
 
 void animation(t_cube *cube)
 {
-	int index = cube->anim->counter;
-	if(cube->keys->mouse_left)
-	{
-		mlx_put_image_to_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr, cube->anim->ptr[index], WINDOW_H/2, WINDOW_W/2);
+	// int index = cube->anim->counter;
+	// if(cube->keys->mouse_left)
+	// {
+		mlx_put_image_to_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr, cube->anim->ptr[2], 0, 0);
 		cube->anim->counter++;
-	}
-	if(cube->anim->counter == 64)
-	{
-		cube->keys->mouse_left = 0;
-		cube->anim->counter = 0;
-	}
+	// }
+	// if(cube->anim->counter == 64)
+	// {
+	// 	cube->keys->mouse_left = 0;
+	// 	cube->anim->counter = 0;
+	// }
 }
 
 int put_image(t_cube *cube)
@@ -203,16 +203,23 @@ void load_anim(t_cube *cube)
 {
 	int i;
 	DIR *dir;
+	char *buff;
 	struct dirent *ent = NULL;
 
 	dir = opendir("anim");
-	i = -2;
+	i = -1;
 	while((ent = readdir(dir)) != NULL)
-		if(i++ >= 0)
-			ft_strlcpy(cube->anim->paths[i], ent->d_name, ft_strlen(ent->d_name) + 1);
+	{
+		if(strcmp(ent->d_name, ".") && strcmp(ent->d_name, ".."))
+		{
+			buff = ent->d_name;
+			ft_strlcpy(cube->anim->paths[++i], "anim/ ", 6);
+			strcat(cube->anim->paths[i], buff);//reemmber to change
+		}
+	}
 	closedir(dir);
 	i = -1;
-	while(++i < 64)
+	while(++i < 63)
 	{
 		cube->anim->ptr[i] = NULL;
 		cube->anim->h[i] = 0;
@@ -223,10 +230,10 @@ void load_anim(t_cube *cube)
 		cube->anim->data[i] = NULL;
 	}
 	i = -1;
-	while(++i < 64)
+	while(++i < 63)
 	{
 		cube->anim->ptr[i] = mlx_xpm_file_to_image(cube->mlx->mlx_ptr, cube->anim->paths[i], &cube->anim->w[i], &cube->anim->h[i]);
-		cube->anim->data[i] = (int *)mlx_get_data_addr(cube->anim->ptr[i], &cube->anim->p_bits[i], &cube->anim->size_line[i], &cube->anim->endian[i]);
+		cube->anim->data[i] = mlx_get_data_addr(cube->anim->ptr[i], &cube->anim->p_bits[i], &cube->anim->size_line[i], &cube->anim->endian[i]);
 	}
 }
 
@@ -235,7 +242,6 @@ void	render(t_cube *cube)
 	copy_playable_map(cube);
 	init_player(cube);
 	init_keyes(cube);
-	load_anim(cube);
 	cube->mlx->mlx_ptr = mlx_init();
 	cube->mlx->win_ptr = mlx_new_window(cube->mlx->mlx_ptr, WINDOW_W, WINDOW_H, "cub3d");
 
@@ -247,12 +253,13 @@ void	render(t_cube *cube)
 
 	cube->mlx->main_img = mlx_new_image(cube->mlx->mlx_ptr, WINDOW_W, WINDOW_H);
 	cube->mlx->main_data = mlx_get_data_addr(cube->mlx->main_img, &cube->mlx->main_p_bits, &cube->mlx->main_size_line, &cube->mlx->main_endian);
+	load_anim(cube);
 	load_textures(cube);
 	mlx_hook(cube->mlx->win_ptr, 17, 0, close_window, cube);
 	mlx_hook(cube->mlx->win_ptr, MotionNotify, PointerMotionMask, mouse_move, cube);
 	mlx_hook(cube->mlx->win_ptr, KeyPress,KeyPressMask, key_handler, cube);
 	mlx_hook(cube->mlx->win_ptr, KeyRelease,KeyReleaseMask, key_release, cube);
-	mlx_mouse_hook(cube->mlx->mlx_ptr, mouse_click, NULL);
+	mlx_mouse_hook(cube->mlx->mlx_ptr, mouse_click, cube);
 	mlx_loop_hook(cube->mlx->mlx_ptr, put_image, cube);
 	mlx_mouse_hide(cube->mlx->mlx_ptr, cube->mlx->win_ptr);
 	mlx_loop(cube->mlx->mlx_ptr);
