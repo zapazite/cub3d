@@ -36,23 +36,23 @@ void	move_player(t_cube *cube)
 	move_y = cube->player_y;
 	if(cube->keys->key_up)
 	{
-		move_x += cube->player_dx/MINIMAP_SCALE;
-		move_y += cube->player_dy/MINIMAP_SCALE;
+		move_x += cube->player_dx*PLAYER_SPEED;
+		move_y += cube->player_dy*PLAYER_SPEED;
 	}
 	else if(cube->keys->key_down)
 	{
-		move_x -= cube->player_dx/MINIMAP_SCALE;
-		move_y -= cube->player_dy/MINIMAP_SCALE;
+		move_x -= cube->player_dx*PLAYER_SPEED;
+		move_y -= cube->player_dy*PLAYER_SPEED;
 	}
 	if(cube->keys->key_right)
 	{
-		move_x += cube->player_dy/MINIMAP_SCALE;
-		move_y -= cube->player_dx/MINIMAP_SCALE;
+		move_x += cube->player_dy*PLAYER_SPEED;
+		move_y -= cube->player_dx*PLAYER_SPEED;
 	}
 	else if(cube->keys->key_left)
 	{
-		move_x -= cube->player_dy/MINIMAP_SCALE;
-		move_y += cube->player_dx/MINIMAP_SCALE;
+		move_x -= cube->player_dy*PLAYER_SPEED;
+		move_y += cube->player_dx*PLAYER_SPEED;
 	}
 	if (check_player_position(move_x, cube->player_y, cube))
 		cube->player_x = move_x;

@@ -31,9 +31,7 @@ void	draw_mini_map_pixel(t_cube *cube, int x, int y, int color)
 {
 	int	pixel_idx;
 
-	if (x < 0 || y < 0 || x > 10 * MINIMAP_SCALE || y > 10 * MINIMAP_SCALE)
-		return ;
-	if (x > 150 || y > 150)
+	if (x < 0 || y < 0 || x > 10*MINIMAP_SCALE || y > 10*MINIMAP_SCALE)
 		return ;
 	pixel_idx = x * cube->mlx->mini_size_line + y * cube->mlx->mini_p_bits / 8;
 	cube->mlx->mini_map_data[pixel_idx] = color & 0xFF;
@@ -82,7 +80,7 @@ void	draw_line(float rayx, float rayy, t_cube *cube)
 	while (++i < CLOSE_DOOR)
 	{
 		draw_map_pixel(cube, xi * MINIMAP_SCALE, yi * MINIMAP_SCALE, 0xffffff);
-		xi += (rayx - cube->player_x) / CLOSE_DOOR; //value to be changed based on map dimensions. Defines how many pixels to color on a line
+		xi += (rayx - cube->player_x) / CLOSE_DOOR;
 		yi += (rayy - cube->player_y) / CLOSE_DOOR;
 	}
 }
@@ -91,14 +89,11 @@ void	draw_square(t_cube *cube, int x_scaled, int y_scaled, int color)
 {
 	int		x;
 	int		y;
-	// float	ratio;
-	// ratio = (float)cube->textures->wall_h[color] / MINIMAP_SCALE; if we want to use textures for minimap
-	// draw_map_pixel(cube, x + x_scaled, y + y_scaled, cube->textures->wall_data[color][(int)((y * ratio) * cube->textures->wall_h[color] + (x * ratio))]);
 	x = -1;
-	while (++x < MINIMAP_SCALE)
+	while (++x <= MINIMAP_SCALE)
 	{
 		y = -1;
-		while (++y < MINIMAP_SCALE)
+		while (++y <= MINIMAP_SCALE)
 			draw_map_pixel(cube, x + x_scaled, y + y_scaled, color);
 	}
 }
@@ -112,10 +107,10 @@ void	draw_window_map(t_cube *cube)
 	int color;
 
 	x = -1;
-	while (++x < 10*MINIMAP_SCALE)
+	while (++x < 10 * MINIMAP_SCALE)
 	{
 		y = -1;
-		while (++y < 10*MINIMAP_SCALE)
+		while (++y < 10 * MINIMAP_SCALE)
 		{
 			color = 0x4a4a4a;
 			if ((x + indexx < cube->map_h * MINIMAP_SCALE && y + indexy < cube->map_w * MINIMAP_SCALE) && (x + indexx > 0 && y + indexy > 0))

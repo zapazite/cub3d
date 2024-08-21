@@ -26,18 +26,19 @@
 #include <dirent.h>
 # include <X11/Xutil.h>
 
-# define BUFFERSIZE 8192
-# define WINDOW_H  1000
-# define WINDOW_W  1920
-# define PI 3.1415926535
-# define GREEN 0x00ff00
-# define FOV 90 * (PI / 180)
+# define 	BUFFERSIZE 8192
+# define	WINDOW_H  1000
+# define	WINDOW_W  1920
+# define	PI 3.1415926535
+# define	GREEN 0x00ff00
+# define	FOV 90 * (PI / 180)
 # define	MOUSE_SENS 0.001
 # define	CLOSE_DOOR 1001.
 # define	OPEN_DOOR 2000.
-# define	MINIMAP_SCALE 15
-# define	DOOR_SPEED 50
-# define   ANIM_FRAMES 20
+# define	MINIMAP_SCALE WINDOW_W / 80
+# define	DOOR_SPEED 100
+# define	ANIM_FRAMES 20
+# define	PLAYER_SPEED MINIMAP_SCALE / 150
 
 typedef enum
 {
