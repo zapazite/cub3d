@@ -143,7 +143,7 @@ void draw_minimap(t_cube *cube)
 			else if (cube->map[x][y] >= CLOSE_DOOR && cube->map[x][y] < OPEN_DOOR)
 				draw_square(cube, x * MINIMAP_SCALE, y * MINIMAP_SCALE, 0x520a00);
 			else if(cube->map[x][y] == OPEN_DOOR)
-				draw_square(cube, x * MINIMAP_SCALE, y * MINIMAP_SCALE, 0x7b7d79);
+				draw_square(cube, x * MINIMAP_SCALE, y * MINIMAP_SCALE, 0xdeeb34);
 		}
 	}
 	draw_player(cube);

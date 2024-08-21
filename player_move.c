@@ -48,7 +48,6 @@ void	move_player(t_cube *cube)
 	{
 		move_x += cube->player_dy/MINIMAP_SCALE;
 		move_y -= cube->player_dx/MINIMAP_SCALE;
-
 	}
 	else if(cube->keys->key_left)
 	{

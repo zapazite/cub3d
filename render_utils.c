@@ -34,17 +34,27 @@ void init_player(t_cube *cube)
 
 void	init_keyes(t_cube *cube)
 {
-
-
 	cube->keys->key_left = 0;
 	cube->keys->key_right = 0;
+	cube->keys->key_up = 0;
+	cube->keys->key_down = 0;
+	cube->keys->mouse_left = 0;
 }
 
 int close_window(t_cube *cube)
 {
+	int i;
+
+	i = -1;
 	ft_free_gc(cube->gc);
 	mlx_destroy_image(cube->mlx->mlx_ptr, cube->mlx->map_img);
+	mlx_destroy_image(cube->mlx->mlx_ptr, cube->mlx->mini_map_img);
 	mlx_destroy_image(cube->mlx->mlx_ptr, cube->mlx->main_img);
+	while(++i < ANIM_FRAMES)
+		mlx_destroy_image(cube->mlx->mlx_ptr, cube->anim->ptr[i]);
+	i = -1;
+	while(++i < 7)
+		mlx_destroy_image(cube->mlx->mlx_ptr, cube->textures->wall_ptr[i]);
 	mlx_destroy_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr);
 	mlx_destroy_display(cube->mlx->mlx_ptr);
 	free(cube->mlx->mlx_ptr);
@@ -62,7 +72,7 @@ int	door_check(t_cube *cube, float x, float y, char line)
 		line_percent = ((x - (int)x) / ((int)x + 1 - (int)x)) * 100;
 	if(cube->map[(int)x][(int)y] >= CLOSE_DOOR && cube->map[(int)x][(int)y] <= OPEN_DOOR)
 	{
-		door_percent = fabs(((cube->map[(int)x][(int)y] - OPEN_DOOR) / CLOSE_DOOR)) * 100;
+		door_percent = fabs(((cube->map[(int)x][(int)y] - OPEN_DOOR) / CLOSE_DOOR)) * 100; //xxxx
 		if(line_percent <= door_percent)
 		{
 			cube->ray->door_check_flag = door_percent;

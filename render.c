@@ -1,7 +1,4 @@
 #include "cub3d.h"
-#include <dirent.h>
-#include <stdio.h>
-#include <string.h>
 
 int	key_handler(int keycode, t_cube *cube)
 {
@@ -15,8 +12,6 @@ int	key_handler(int keycode, t_cube *cube)
 		cube->keys->key_left = 1;
 	if(keycode == XK_Right || keycode == XK_d)
 		cube->keys->key_right = 1;
-	if(keycode == XK_space)
-		cube->keys->key_space = 1;
 	if(keycode == XK_o)
 		open_door(cube);
 	if(keycode == XK_c)
@@ -142,19 +137,37 @@ int	mouse_click(int button, int x, int y, t_cube *cube)
 	return (1);
 }
 
+void draw_gun(t_cube *cube, int index)
+{
+	int x;
+	int y;
+	unsigned int color;
+
+	x = -1;
+	while(++x < cube->anim->h[index])
+	{
+		y = -1;
+		while(++y < cube->anim->w[index])
+		{
+			color = cube->anim->data[index][x * cube->anim->w[index] + y];
+			if(color != 0xff000000)
+				draw_main_pixel(cube, x + (WINDOW_H - cube->anim->h[index]), y + (WINDOW_W - cube->anim->w[index]) / 2, color);
+		}
+	}
+
+}
+
 void animation(t_cube *cube)
 {
-	// int index = cube->anim->counter;
-	// if(cube->keys->mouse_left)
-	// {
-		mlx_put_image_to_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr, cube->anim->ptr[2], 0, 0);
-		cube->anim->counter++;
-	// }
-	// if(cube->anim->counter == 64)
-	// {
-	// 	cube->keys->mouse_left = 0;
-	// 	cube->anim->counter = 0;
-	// }
+	if(cube->keys->mouse_left)
+		draw_gun(cube, cube->anim->counter++);
+	else
+		draw_gun(cube, 19);
+	if(cube->anim->counter == ANIM_FRAMES - 1)
+	{
+		cube->keys->mouse_left = 0;
+		cube->anim->counter = 0;
+	}
 }
 
 int put_image(t_cube *cube)
@@ -166,9 +179,9 @@ int put_image(t_cube *cube)
 	draw_floor(cube);
 	draw_walls(cube);
 	mlx_mouse_move(cube->mlx->mlx_ptr, cube->mlx->win_ptr, WINDOW_W / 2, WINDOW_H / 2);
+	animation(cube);
 	mlx_put_image_to_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr, cube->mlx->main_img, 0, 0);
 	mlx_put_image_to_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr, cube->mlx->mini_map_img, 0, 0);
-	animation(cube);
 	return 0;
 }
 
@@ -201,40 +214,23 @@ void load_textures(t_cube *cube)
 
 void load_anim(t_cube *cube)
 {
-	int i;
-	DIR *dir;
-	char *buff;
-	struct dirent *ent = NULL;
+    int i;
+    char path[64];
 
-	dir = opendir("anim");
-	i = -1;
-	while((ent = readdir(dir)) != NULL)
-	{
-		if(strcmp(ent->d_name, ".") && strcmp(ent->d_name, ".."))
-		{
-			buff = ent->d_name;
-			ft_strlcpy(cube->anim->paths[++i], "anim/ ", 6);
-			strcat(cube->anim->paths[i], buff);//reemmber to change
-		}
-	}
-	closedir(dir);
-	i = -1;
-	while(++i < 63)
-	{
-		cube->anim->ptr[i] = NULL;
-		cube->anim->h[i] = 0;
-		cube->anim->w[i] = 0;
-		cube->anim->p_bits[i] = 0;
-		cube->anim->size_line[i] = 0;
-		cube->anim->endian[i] = 0;
-		cube->anim->data[i] = NULL;
-	}
-	i = -1;
-	while(++i < 63)
-	{
-		cube->anim->ptr[i] = mlx_xpm_file_to_image(cube->mlx->mlx_ptr, cube->anim->paths[i], &cube->anim->w[i], &cube->anim->h[i]);
-		cube->anim->data[i] = mlx_get_data_addr(cube->anim->ptr[i], &cube->anim->p_bits[i], &cube->anim->size_line[i], &cube->anim->endian[i]);
-	}
+    i = -1;
+    while(++i < ANIM_FRAMES)
+    {
+        cube->anim->ptr[i] = NULL;
+        cube->anim->h[i] = 0;
+        cube->anim->w[i] = 0;
+        cube->anim->p_bits[i] = 0;
+        cube->anim->size_line[i] = 0;
+        cube->anim->endian[i] = 0;
+        cube->anim->data[i] = NULL;
+        sprintf(path, "anim/gun%d.xpm", i);
+        cube->anim->ptr[i] = mlx_xpm_file_to_image(cube->mlx->mlx_ptr, path, &cube->anim->w[i], &cube->anim->h[i]);
+        cube->anim->data[i] = (int *)mlx_get_data_addr(cube->anim->ptr[i], &cube->anim->p_bits[i], &cube->anim->size_line[i], &cube->anim->endian[i]);
+    }
 }
 
 void	render(t_cube *cube)
@@ -244,13 +240,10 @@ void	render(t_cube *cube)
 	init_keyes(cube);
 	cube->mlx->mlx_ptr = mlx_init();
 	cube->mlx->win_ptr = mlx_new_window(cube->mlx->mlx_ptr, WINDOW_W, WINDOW_H, "cub3d");
-
 	cube->mlx->map_img = mlx_new_image(cube->mlx->mlx_ptr, cube->map_w*MINIMAP_SCALE, cube->map_h*MINIMAP_SCALE);
 	cube->mlx->map_data = mlx_get_data_addr(cube->mlx->map_img, &cube->mlx->map_p_bits, &cube->mlx->map_size_line, &cube->mlx->map_endian);
-
 	cube->mlx->mini_map_img = mlx_new_image(cube->mlx->mlx_ptr, 10*MINIMAP_SCALE, 10*MINIMAP_SCALE);
 	cube->mlx->mini_map_data = mlx_get_data_addr(cube->mlx->mini_map_img, &cube->mlx->mini_p_bits, &cube->mlx->mini_size_line, &cube->mlx->mini_endian);
-
 	cube->mlx->main_img = mlx_new_image(cube->mlx->mlx_ptr, WINDOW_W, WINDOW_H);
 	cube->mlx->main_data = mlx_get_data_addr(cube->mlx->main_img, &cube->mlx->main_p_bits, &cube->mlx->main_size_line, &cube->mlx->main_endian);
 	load_anim(cube);
@@ -259,7 +252,7 @@ void	render(t_cube *cube)
 	mlx_hook(cube->mlx->win_ptr, MotionNotify, PointerMotionMask, mouse_move, cube);
 	mlx_hook(cube->mlx->win_ptr, KeyPress,KeyPressMask, key_handler, cube);
 	mlx_hook(cube->mlx->win_ptr, KeyRelease,KeyReleaseMask, key_release, cube);
-	mlx_mouse_hook(cube->mlx->mlx_ptr, mouse_click, cube);
+	mlx_mouse_hook(cube->mlx->win_ptr, mouse_click, cube);
 	mlx_loop_hook(cube->mlx->mlx_ptr, put_image, cube);
 	mlx_mouse_hide(cube->mlx->mlx_ptr, cube->mlx->win_ptr);
 	mlx_loop(cube->mlx->mlx_ptr);

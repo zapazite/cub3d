@@ -20,8 +20,10 @@
 # include <fcntl.h>
 #include <stdint.h>
 # include <unistd.h>
+# include <string.h> // IWYU pragma: keep
 # include <math.h> // IWYU pragma: keep
 # include <X11/X.h>
+#include <dirent.h>
 # include <X11/Xutil.h>
 
 # define BUFFERSIZE 8192
@@ -35,6 +37,7 @@
 # define	OPEN_DOOR 2000.
 # define	MINIMAP_SCALE 15
 # define	DOOR_SPEED 50
+# define   ANIM_FRAMES 20
 
 typedef enum
 {
@@ -101,7 +104,6 @@ typedef struct s_keys
 	Bool key_down;
 	Bool key_left;
 	Bool key_right;
-	Bool key_space;
 	Bool key_open;
 	Bool key_close;
 } t_keys;
@@ -141,14 +143,14 @@ typedef struct s_textures
 
 typedef struct s_anim
 {
-	char	paths[64][4096];
-	void	*ptr[64];
-	int 	w[64];
-	int		h[64];
-	char	*data[64];
-	int		p_bits[64];
-	int		size_line[64];
-	int		endian[64];
+	char	paths[ANIM_FRAMES][4096];
+	void	*ptr[ANIM_FRAMES];
+	int 	w[ANIM_FRAMES];
+	int		h[ANIM_FRAMES];
+	int		*data[ANIM_FRAMES];
+	int		p_bits[ANIM_FRAMES];
+	int		size_line[ANIM_FRAMES];
+	int		endian[ANIM_FRAMES];
 	int		counter;
 } t_anim;
 
