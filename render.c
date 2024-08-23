@@ -6,65 +6,39 @@
 /*   By: efaiz <efaiz@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/23 13:31:48 by efaiz             #+#    #+#             */
-/*   Updated: 2024/08/23 15:24:41 by efaiz            ###   ########.fr       */
+/*   Updated: 2024/08/23 16:28:07 by efaiz            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-// void draw_c_and_f(t_cube *cube)
-// {
-//     int x;
-//     int y;
-//     float floorX;
-//     float floorY;
-
-//     x = WINDOW_H / 2;
-//     while (++x < WINDOW_H)
-//     {
-//     	floorX = cube->player_x + ((x - WINDOW_H / 2.)) * ((cube->player_dx) - (cube->player_dy) * tan(FOV / 2)) * WINDOW_W / (4 * tan(FOV/2));
-//      	floorY = cube->player_y + ((x - WINDOW_H / 2.)) * ((cube->player_dy) + (cube->player_dx) * tan(FOV / 2)) * WINDOW_W / (4 * tan(FOV/2));
-//         y = -1;
-//         while (++y < WINDOW_W)
-//         {
-//             floorX += (0.5 / (x - WINDOW_H / 2.)) * cube->player_dy;
-//             floorY += (0.5 / (x - WINDOW_H / 2.)) * -cube->player_dx;
-//             draw_main_pixel(cube, x, y, cube->txt->data[5][64 * ((int)(64 * (floorY - (int)(floorY))) & (64 - 1)) + ((int)(64 * (floorX - (int)(floorX))) & (64 - 1))]);
-//             draw_main_pixel(cube, WINDOW_H - x - 1, y, cube->txt->data[6][64 * ((int)(64 * (floorY - (int)(floorY))) & (64 - 1)) + ((int)(64 * (floorX - (int)(floorX))) & (64 - 1))]);
-//         }
-//     }
-// }
-
-void draw_c_and_f(t_cube *cube)
+void	draw_c_and_f(t_cube *cube)
 {
-    int x;
-    int y;
-    int p;
+	int		x;
+	int		y;
+	int		idx;
+	float	floorx;
+	float	floory;
 
-    x = WINDOW_H / 2;
-    float ray_dirx = (cube->player_dx) - (cube->player_dy) * tan(FOV / 2);
-    float ray_diry = (cube->player_dy) - (-cube->player_dx) * tan(FOV / 2);
-    float ray_dirx1 = (cube->player_dx) + (cube->player_dy) * tan(FOV / 2);
-    float ray_diry1 = (cube->player_dy) + (-cube->player_dx) * tan(FOV / 2);
-    while (++x < WINDOW_H)
-    {
-        p = x - WINDOW_H / 2;
-        float rowDistance = 0.5 / p;
-        float floorStepX = rowDistance * (ray_dirx1 - ray_dirx) / (2 * tan(FOV/2));
-        float floorStepY = rowDistance * (ray_diry1 - ray_diry) / (2 * tan(FOV/2));
-        float floorX = cube->player_x + rowDistance * ray_dirx * WINDOW_W / (2 * tan(FOV/2));
-        float floorY = cube->player_y + rowDistance * ray_diry * WINDOW_W / (2 * tan(FOV/2));
-        y = -1;
-        while (++y < WINDOW_W)
-        {
-            int tx = (int)(64 * (floorX - (int)(floorX))) & (64 - 1);
-            int ty = (int)(64 * (floorY - (int)(floorY))) & (64 - 1);
-            floorX += floorStepX;
-            floorY += floorStepY;
-            draw_main_pixel(cube, x, y, cube->txt->data[5][64 * ty + tx]);
-            draw_main_pixel(cube, WINDOW_H - x - 1, y, cube->txt->data[6][64 * ty + tx]);
-        }
-    }
+	x = WINDOW_H / 2;
+	while (++x < WINDOW_H)
+	{
+		floorx = cube->player_x + 0.5 / (x - WINDOW_H / 2) * ((cube->player_dx)
+				- (cube->player_dy) * tan(FOV / 2)) * WINDOW_W / (2 * tan(FOV
+					/ 2));
+		floory = cube->player_y + 0.5 / (x - WINDOW_H / 2) * ((cube->player_dy)
+				+ (cube->player_dx) * tan(FOV / 2)) * WINDOW_W / (2 * tan(FOV
+					/ 2));
+		y = -1;
+		while (++y < WINDOW_W)
+		{
+			idx = 64 * ((int)(64 * floory) & 63) + ((int)(64 * floorx) & 63);
+			floorx += 0.5 / (x - WINDOW_H / 2) * cube->player_dy;
+			floory += 0.5 / (x - WINDOW_H / 2) * -cube->player_dx;
+			draw_main_pixel(cube, x, y, cube->txt->data[5][idx]);
+			draw_main_pixel(cube, WINDOW_H - x - 1, y, cube->txt->data[6][idx]);
+		}
+	}
 }
 
 int	put_image(t_cube *cube)
@@ -116,8 +90,8 @@ void	init_mlx(t_cube *cube)
 	cube->mlx->map_data = mlx_get_data_addr(cube->mlx->map_img,
 			&cube->mlx->map_p_bits, &cube->mlx->map_size_line,
 			&cube->mlx->map_endian);
-	cube->mlx->mini_map_img = mlx_new_image(cube->mlx->mlx_ptr, 10
-			* WINDOW_W / 80, 10 * WINDOW_W / 80);
+	cube->mlx->mini_map_img = mlx_new_image(cube->mlx->mlx_ptr, 10 * WINDOW_W
+			/ 80, 10 * WINDOW_W / 80);
 	cube->mlx->mini_map_data = mlx_get_data_addr(cube->mlx->mini_map_img,
 			&cube->mlx->mini_p_bits, &cube->mlx->mini_size_line,
 			&cube->mlx->mini_endian);

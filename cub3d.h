@@ -42,32 +42,32 @@
 # define ANIM_FRAMES 20
 # define PLAYER_SPEED 0.06
 
-typedef enum
+typedef enum s_errors
 {
 	ERR_MALLOC,
 	ERR_PARSING,
-}					Errors;
+}	t_errors;
 
-typedef enum
+typedef enum s_textureindex
 {
 	NO,
 	SO,
 	WE,
 	EA,
-}					TextureIndex;
+}	t_textureindex;
 
-typedef enum
+typedef enum s_colorindex
 {
 	FLOOR,
 	CIELLING,
-}					ColorIndex;
+}	t_colorindex;
 
 typedef struct s_lines
 {
 	char			*line;
 	struct s_lines	*next;
 
-}					t_lines;
+}	t_lines;
 
 typedef struct s_parse
 {
