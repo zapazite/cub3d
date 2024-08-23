@@ -6,43 +6,41 @@
 /*   By: efaiz <efaiz@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 10:42:46 by mde-prin          #+#    #+#             */
-/*   Updated: 2024/08/03 11:50:57 by efaiz            ###   ########.fr       */
+/*   Updated: 2024/08/23 15:31:39 by efaiz            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CUB3D_H
 # define CUB3D_H
 
-# include "gc/gc.h"
-# include <X11/Xlib.h>
-# include "minilibx-linux/mlx.h" // IWYU pragma: keep
-# include "get_next_line/get_next_line_bonus.h"
-# include <fcntl.h>
-# include <stdint.h>
-# include <unistd.h>
-# include <string.h> // IWYU pragma: keep
-# include <math.h> // IWYU pragma: keep
-# include <X11/X.h>
-# include <X11/Xutil.h>
-
-# define 	BUFFERSIZE 8192
-# define	WINDOW_H  800
-# define	WINDOW_W  800
-# define	PI 3.1415926535
-# define	GREEN 0x00ff00
-# define	FOV 90 * (PI / 180)
-# define	MOUSE_SENS 0.001
-# define	CLOSE_DOOR 1001.
-# define	OPEN_DOOR 2000.
-# define	MINIMAP_SCALE WINDOW_W / 80
-# define	DOOR_SPEED 100
-# define	ANIM_FRAMES 20
-# define	PLAYER_SPEED MINIMAP_SCALE / 150
-# define	FPS 30
-# define	FRAME_TARGET_TIME (1000 / FPS)
-# ifndef	BONUS
-#  define	BONUS 0
+# ifndef BONUS
+#  define BONUS 0
 # endif
+
+# include "gc/gc.h"
+# include "get_next_line/get_next_line_bonus.h"
+# include "minilibx-linux/mlx.h" // IWYU pragma: keep
+# include <X11/X.h>
+# include <X11/Xlib.h>
+# include <X11/Xutil.h>
+# include <fcntl.h>
+# include <math.h> // IWYU pragma: keep
+# include <stdint.h>
+# include <string.h> // IWYU pragma: keep
+# include <unistd.h>
+
+# define BUFFERSIZE 8192
+# define WINDOW_H 800
+# define WINDOW_W 800
+# define PI 3.1415926535
+# define GREEN 0x00ff00
+# define FOV 1.57079633
+# define MOUSE_SENS 0.001
+# define CLOSE_DOOR 1001.
+# define OPEN_DOOR 2000.
+# define DOOR_SPEED 100
+# define ANIM_FRAMES 20
+# define PLAYER_SPEED 0.06
 
 typedef enum
 {
@@ -79,7 +77,7 @@ typedef struct s_parse
 	int				max_y;
 	int				**prs_map;
 	char			*map_file;
-} t_parse;
+}					t_parse;
 
 typedef struct s_mlx
 {
@@ -100,18 +98,26 @@ typedef struct s_mlx
 	void			*map_img;
 	void			*main_img;
 	void			*mini_map_img;
-} t_mlx;
+}					t_mlx;
 
 typedef struct s_keys
 {
-	Bool mouse_left;
-	Bool key_up;
-	Bool key_down;
-	Bool key_left;
-	Bool key_right;
-	Bool key_open;
-	Bool key_close;
-} t_keys;
+	Bool			mouse_left;
+	Bool			key_up;
+	Bool			key_down;
+	Bool			key_left;
+	Bool			key_right;
+	Bool			key_open;
+	Bool			key_close;
+}					t_keys;
+
+typedef struct s_draw
+{
+	float			wall_idx;
+	float			wall_size;
+	float			wall_offset;
+	int				txt;
+}					t_draw;
 
 typedef struct s_ray
 {
@@ -132,32 +138,32 @@ typedef struct s_ray
 	float			hit_direction[WINDOW_W];
 	float			hit_coordn[WINDOW_W];
 	float			hit_dist[WINDOW_W];
-}t_ray;
+}					t_ray;
 
 typedef struct s_textures
 {
-	char	wall_paths[7][4096];
-	void	*wall_ptr[7];
-	int 	wall_w[7];
-	int		wall_h[7];
-	int		*wall_data[7];
-	int		wall_p_bits[7];
-	int		wall_size_line[7];
-	int		wall_endian[7];
-} t_textures;
+	char			paths[7][4096];
+	void			*ptr[7];
+	int				w[7];
+	int				h[7];
+	int				*data[7];
+	int				p_bits[7];
+	int				size_line[7];
+	int				endian[7];
+}					t_textures;
 
 typedef struct s_anim
 {
-	char	paths[ANIM_FRAMES][4096];
-	void	*ptr[ANIM_FRAMES];
-	int 	w[ANIM_FRAMES];
-	int		h[ANIM_FRAMES];
-	int		*data[ANIM_FRAMES];
-	int		p_bits[ANIM_FRAMES];
-	int		size_line[ANIM_FRAMES];
-	int		endian[ANIM_FRAMES];
-	int		counter;
-} t_anim;
+	char			paths[ANIM_FRAMES][4096];
+	void			*ptr[ANIM_FRAMES];
+	int				w[ANIM_FRAMES];
+	int				h[ANIM_FRAMES];
+	int				*data[ANIM_FRAMES];
+	int				p_bits[ANIM_FRAMES];
+	int				size_line[ANIM_FRAMES];
+	int				endian[ANIM_FRAMES];
+	int				counter;
+}					t_anim;
 
 typedef struct s_cube
 {
@@ -167,8 +173,9 @@ typedef struct s_cube
 	t_mlx			*mlx;
 	t_ray			*ray;
 	t_keys			*keys;
-	t_textures		*textures;
+	t_textures		*txt;
 	t_anim			*anim;
+	t_draw			*draw;
 	int				door_state;
 	float			radius;
 	float			pixel_player_dist;
@@ -203,12 +210,14 @@ size_t				ft_strlen(const char *s);
 int					ft_strncmp(const char *str1, const char *str2, size_t n);
 void				clean_exit(t_cube *cube, int error_type);
 int					ft_isdigit(int c);
-int					check_player_position(float player_x, float player_y, t_cube *cube);
+int					check_player_position(float player_x, float player_y,
+						t_cube *cube);
 void				rotate_player(t_cube *cube);
 void				move_player(t_cube *cube);
 void				draw_player(t_cube *cube);
 void				draw_line(float rayx, float rayy, t_cube *cube);
-void				draw_square(t_cube *cube, int x_scaled , int y_scaled, int color);
+void				draw_square(t_cube *cube, int x_scaled, int y_scaled,
+						int color);
 void				draw_minimap(t_cube *cube);
 void				cast_h(int rayx, float rayy, t_cube *cube);
 void				cast_w(float rayx, int rayy, t_cube *cube);
@@ -236,4 +245,10 @@ void				door_manager(t_cube *cube);
 void				draw_c_and_f(t_cube *cube);
 void				animation(t_cube *cube);
 void				world_manager(t_cube *cube);
+void				draw_mini_map_pixel(t_cube *cube, int x, int y, int color);
+void				draw_map_pixel(t_cube *cube, int x, int y, int color);
+int					mouse_move(int x, int y, t_cube *cube);
+int					key_release(int keycode, t_cube *cube);
+int					mouse_click(int button, int x, int y, t_cube *cube);
+void				load_textures(t_cube *cube);
 #endif

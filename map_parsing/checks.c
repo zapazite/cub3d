@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   checks.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mde-prin <mde-prin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: efaiz <efaiz@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 11:55:18 by efaiz             #+#    #+#             */
-/*   Updated: 2024/08/06 12:01:35 by mde-prin         ###   ########.fr       */
+/*   Updated: 2024/08/23 13:14:19 by efaiz            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,8 @@ int	check_path(t_cube *cube, char *line, int index)
 		close(fd);
 		i = -1;
 		while (line[++i])
-			cube->textures->wall_paths[index][i] = line[i];
-		cube->textures->wall_paths[index][i] = '\0';
+			cube->txt->paths[index][i] = line[i];
+		cube->txt->paths[index][i] = '\0';
 	}
 	return (1);
 }
@@ -101,7 +101,8 @@ void	check_line(t_cube *cube, int *i, char *line)
 			if (spwan_flag++)
 				clean_exit(cube, ERR_PARSING);
 		}
-		else if (line[(*i)] != '0' && line[(*i)] != '1' && line[(*i)] != ' ' && line[(*i)] != 'H')
+		else if (line[(*i)] != '0' && line[(*i)] != '1' && line[(*i)] != ' '
+			&& line[(*i)] != 'H')
 			clean_exit(cube, ERR_PARSING);
 	}
 }
@@ -111,19 +112,20 @@ void	check_map(t_cube *cube, int x, int y)
 	if (x >= cube->map_h || x < 0 || y < 0 || y >= cube->map_w
 		|| cube->prs->prs_map[x][y] == ' ')
 		clean_exit(cube, ERR_PARSING);
-	if(cube->prs->max_x < x)
+	if (cube->prs->max_x < x)
 		cube->prs->max_x = x;
-	if(cube->prs->min_x > x)
+	if (cube->prs->min_x > x)
 		cube->prs->min_x = x;
-	if(cube->prs->max_y < y)
+	if (cube->prs->max_y < y)
 		cube->prs->max_y = y;
-	if(cube->prs->min_y > y)
+	if (cube->prs->min_y > y)
 		cube->prs->min_y = y;
 	if (cube->prs->prs_map[x][y] == '1')
 		return (cube->prs->prs_map[x][y] = '#', (void)0);
-	if(cube->prs->prs_map[x][y] == '!' || cube->prs->prs_map[x][y] == '#' || cube->prs->prs_map[x][y] == CLOSE_DOOR)
+	if (cube->prs->prs_map[x][y] == '!' || cube->prs->prs_map[x][y] == '#'
+		|| cube->prs->prs_map[x][y] == CLOSE_DOOR)
 		return ;
-	if(cube->prs->prs_map[x][y] == 'H')
+	if (cube->prs->prs_map[x][y] == 'H')
 		cube->prs->prs_map[x][y] = CLOSE_DOOR;
 	else
 		cube->prs->prs_map[x][y] = '!';

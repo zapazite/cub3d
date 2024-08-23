@@ -1,28 +1,41 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   render_utils.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: efaiz <efaiz@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/08/23 13:30:33 by efaiz             #+#    #+#             */
+/*   Updated: 2024/08/23 13:30:50 by efaiz            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "cub3d.h"
 
-void copy_playable_map(t_cube *cube)
+void	copy_playable_map(t_cube *cube)
 {
-	int x;
+	int	x;
 	int	y;
 
 	cube->map_h = (cube->prs->max_x - cube->prs->min_x) + 1;
 	cube->map_w = (cube->prs->max_y - cube->prs->min_y) + 1;
-	cube->map = (int **)ft_malloc(cube, sizeof(int *) *cube->map_h);
+	cube->map = (int **)ft_malloc(cube, sizeof(int *) * cube->map_h);
 	x = -1;
-	while(++x < cube->map_h)
+	while (++x < cube->map_h)
 	{
 		cube->map[x] = (int *)ft_malloc(cube, sizeof(int) * cube->map_w);
 		y = -1;
-		while(++y < cube->map_w)
+		while (++y < cube->map_w)
 		{
-			cube->map[x][y] = cube->prs->prs_map[cube->prs->min_x + x][cube->prs->min_y + y];
-			if(cube->map[x][y] == '1')
+			cube->map[x][y] = cube->prs->prs_map[cube->prs->min_x
+				+ x][cube->prs->min_y + y];
+			if (cube->map[x][y] == '1')
 				cube->map[x][y] = '#';
 		}
 	}
 }
 
-void init_player(t_cube *cube)
+void	init_player(t_cube *cube)
 {
 	cube->player_x += 0.5;
 	cube->player_jump = 0;
@@ -41,20 +54,20 @@ void	init_keyes(t_cube *cube)
 	cube->keys->mouse_left = 0;
 }
 
-int close_window(t_cube *cube)
+int	close_window(t_cube *cube)
 {
-	int i;
+	int	i;
 
 	i = -1;
 	ft_free_gc(cube->gc);
 	mlx_destroy_image(cube->mlx->mlx_ptr, cube->mlx->map_img);
 	mlx_destroy_image(cube->mlx->mlx_ptr, cube->mlx->mini_map_img);
 	mlx_destroy_image(cube->mlx->mlx_ptr, cube->mlx->main_img);
-	while(++i < ANIM_FRAMES && BONUS)
+	while (++i < ANIM_FRAMES && BONUS)
 		mlx_destroy_image(cube->mlx->mlx_ptr, cube->anim->ptr[i]);
 	i = -1;
-	while(++i < 7)
-		mlx_destroy_image(cube->mlx->mlx_ptr, cube->textures->wall_ptr[i]);
+	while (++i < 7)
+		mlx_destroy_image(cube->mlx->mlx_ptr, cube->txt->ptr[i]);
 	mlx_destroy_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr);
 	mlx_destroy_display(cube->mlx->mlx_ptr);
 	free(cube->mlx->mlx_ptr);
@@ -66,14 +79,16 @@ int	door_check(t_cube *cube, float x, float y, char line)
 	float	line_percent;
 	float	door_percent;
 
-	if(line == 'h')
+	if (line == 'h')
 		line_percent = ((y - (int)y) / ((int)y + 1 - (int)y)) * 100;
 	else
 		line_percent = ((x - (int)x) / ((int)x + 1 - (int)x)) * 100;
-	if(cube->map[(int)x][(int)y] >= CLOSE_DOOR && cube->map[(int)x][(int)y] <= OPEN_DOOR)
+	if (cube->map[(int)x][(int)y] >= CLOSE_DOOR
+		&& cube->map[(int)x][(int)y] <= OPEN_DOOR)
 	{
-		door_percent = fabs(((cube->map[(int)x][(int)y] - OPEN_DOOR) / CLOSE_DOOR)) * 100; //xxxx
-		if(line_percent <= door_percent)
+		door_percent = fabs(((cube->map[(int)x][(int)y] - OPEN_DOOR)
+					/ CLOSE_DOOR)) * 100;
+		if (line_percent <= door_percent)
 		{
 			cube->ray->door_check_flag = door_percent;
 			return (1);

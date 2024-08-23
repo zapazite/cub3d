@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mde-prin <mde-prin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: efaiz <efaiz@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 11:55:21 by efaiz             #+#    #+#             */
-/*   Updated: 2024/08/06 11:53:22 by mde-prin         ###   ########.fr       */
+/*   Updated: 2024/08/23 13:14:23 by efaiz            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,31 +41,31 @@ void	parse_map(t_cube *cube, int fd)
 	cube->player_y -= cube->prs->min_y;
 }
 
-void    check_spawn(t_cube *cube, int x, int y)
+void	check_spawn(t_cube *cube, int x, int y)
 {
-    if (cube->prs->prs_map[x][y] == 'S')
-    {
-        cube->player_x = x;
-        cube->player_y = y;
-    }
-    else if (cube->prs->prs_map[x][y] == 'E')
-    {
-        cube->player_x = x;
-        cube->player_y = y;
-        cube->player_angle = PI / 2;
-    }
-    else if (cube->prs->prs_map[x][y] == 'N')
-    {
-        cube->player_x = x;
-        cube->player_y = y;
-        cube->player_angle = PI;
-    }
-    else if (cube->prs->prs_map[x][y] == 'W')
-    {
-        cube->player_x = x;
-        cube->player_y = y;
-        cube->player_angle = 3 * PI / 2;
-    }
+	if (cube->prs->prs_map[x][y] == 'S')
+	{
+		cube->player_x = x;
+		cube->player_y = y;
+	}
+	else if (cube->prs->prs_map[x][y] == 'E')
+	{
+		cube->player_x = x;
+		cube->player_y = y;
+		cube->player_angle = PI / 2;
+	}
+	else if (cube->prs->prs_map[x][y] == 'N')
+	{
+		cube->player_x = x;
+		cube->player_y = y;
+		cube->player_angle = PI;
+	}
+	else if (cube->prs->prs_map[x][y] == 'W')
+	{
+		cube->player_x = x;
+		cube->player_y = y;
+		cube->player_angle = 3 * PI / 2;
+	}
 }
 
 void	fill_map(t_cube *cube)
@@ -78,11 +78,12 @@ void	fill_map(t_cube *cube)
 	while (x--)
 	{
 		y = -1;
-		cube->prs->prs_map[x] = (int *)ft_malloc(cube, sizeof(int) * cube->map_w);
+		cube->prs->prs_map[x] = (int *)ft_malloc(cube, sizeof(int)
+				* cube->map_w);
 		while (++y < (int)ft_strlen(cube->lines->line))
 		{
 			cube->prs->prs_map[x][y] = cube->lines->line[y];
-		    check_spawn(cube, x, y);
+			check_spawn(cube, x, y);
 		}
 		while (y < cube->map_w)
 			cube->prs->prs_map[x][y++] = ' ';

@@ -1,27 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   world_manager_bonus.c                              :+:      :+:    :+:   */
+/*   utils2.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: efaiz <efaiz@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/23 13:41:16 by efaiz             #+#    #+#             */
-/*   Updated: 2024/08/23 13:42:26 by efaiz            ###   ########.fr       */
+/*   Created: 2024/08/23 13:16:15 by efaiz             #+#    #+#             */
+/*   Updated: 2024/08/23 13:17:00 by efaiz            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../cub3d.h"
 
-void	world_manager(t_cube *cube)
+int	rgb_atoi(const char *nptr)
 {
-	if (BONUS)
+	int	n;
+
+	n = 0;
+	if (!ft_isdigit(*nptr))
+		return (-1);
+	while (ft_isdigit(*nptr))
 	{
-		draw_minimap(cube);
-		door_manager(cube);
-		draw_c_and_f(cube);
-		draw_world(cube);
-		animation(cube);
+		n = n * 10 + (*nptr++ - '0');
+		if (n > 255)
+			return (-1);
 	}
-	else
-		draw_basic_world(cube);
+	return (n);
+}
+
+void	add_line(t_cube *cube, char *line)
+{
+	t_lines	*new_node;
+
+	new_node = ft_malloc(cube, sizeof(t_lines));
+	new_node->line = line;
+	new_node->next = cube->lines;
+	cube->lines = new_node;
 }

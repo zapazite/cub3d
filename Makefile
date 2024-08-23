@@ -15,11 +15,18 @@ SRCS = main.c\
        map_parsing/checks.c\
        map_parsing/parse.c\
        map_parsing/utils.c\
+       map_parsing/utils2.c\
        render.c\
        player_move.c\
        draw.c\
+       draw2.c\
+       draw3.c\
        raycast.c\
+       raycast_utils.c\
        render_utils.c\
+       render_utils2.c\
+       render_utils3.c\
+       render_utils4.c\
        world_manager_bonus.c
 
 OBJDIR = objs
@@ -31,7 +38,6 @@ $(OBJDIR):
 	mkdir -p $(OBJDIR)
 
 $(NAME): $(OBJDIR) $(OBJS)
-	@echo "BONUS = $(BONUS)"
 	$(CC) $(CFLAGS) -DBONUS=$(BONUS) $(OBJS) $(LIBS) -o $(NAME)
 
 $(OBJDIR)/%.o: %.c | $(OBJDIR)
