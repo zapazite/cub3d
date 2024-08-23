@@ -14,21 +14,20 @@
 # define CUB3D_H
 
 # include "gc/gc.h"
-#include <X11/Xlib.h>
+# include <X11/Xlib.h>
 # include "minilibx-linux/mlx.h" // IWYU pragma: keep
 # include "get_next_line/get_next_line_bonus.h"
 # include <fcntl.h>
-#include <stdint.h>
+# include <stdint.h>
 # include <unistd.h>
 # include <string.h> // IWYU pragma: keep
 # include <math.h> // IWYU pragma: keep
 # include <X11/X.h>
-#include <dirent.h>
 # include <X11/Xutil.h>
 
 # define 	BUFFERSIZE 8192
-# define	WINDOW_H  1000
-# define	WINDOW_W  1920
+# define	WINDOW_H  800
+# define	WINDOW_W  800
 # define	PI 3.1415926535
 # define	GREEN 0x00ff00
 # define	FOV 90 * (PI / 180)
@@ -39,6 +38,11 @@
 # define	DOOR_SPEED 100
 # define	ANIM_FRAMES 20
 # define	PLAYER_SPEED MINIMAP_SCALE / 150
+# define	FPS 30
+# define	FRAME_TARGET_TIME (1000 / FPS)
+# ifndef	BONUS
+#  define	BONUS 0
+# endif
 
 typedef enum
 {
@@ -220,11 +224,16 @@ void				init_player(t_cube *cube);
 void				ray_init(t_cube *cube);
 void				render(t_cube *cube);
 void				draw_main_pixel(t_cube *cube, int x, int y, int color);
-void				draw_walls(t_cube *cube);
+void				draw_world(t_cube *cube);
 void				init_keyes(t_cube *cube);
 size_t				ft_strlcpy(char *dst, const char *src, size_t size);
 int					door_check(t_cube *cube, float x, float y, char line);
 void				open_door(t_cube *cube);
 void				close_door(t_cube *cube);
 int					is_door(t_cube *cube);
+void				draw_basic_world(t_cube *cube);
+void				door_manager(t_cube *cube);
+void				draw_c_and_f(t_cube *cube);
+void				animation(t_cube *cube);
+void				world_manager(t_cube *cube);
 #endif

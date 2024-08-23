@@ -53,7 +53,7 @@ int key_release(int keycode, t_cube *cube)
 	return (0);
 }
 
-void draw_floor(t_cube *cube)
+void draw_c_and_f(t_cube *cube)
 {
     int x;
     int y;
@@ -81,8 +81,8 @@ void draw_floor(t_cube *cube)
             int ty = (int)(64 * (floorY - (int)(floorY))) & (64 - 1);
             floorX += floorStepX;
             floorY += floorStepY;
-            draw_main_pixel(cube, x, y, cube->textures->wall_data[6][64 * ty + tx]);
-            draw_main_pixel(cube, WINDOW_H - x - 1, y, cube->textures->wall_data[5][64 * ty + tx]);
+            draw_main_pixel(cube, x, y, cube->textures->wall_data[5][64 * ty + tx]);
+            draw_main_pixel(cube, WINDOW_H - x - 1, y, cube->textures->wall_data[6][64 * ty + tx]);
         }
     }
 }
@@ -170,18 +170,17 @@ void animation(t_cube *cube)
 	}
 }
 
+
+
 int put_image(t_cube *cube)
 {
 	move_player(cube);
-	draw_minimap(cube);
 	ray_cast(cube);
-	door_manager(cube);
-	draw_floor(cube);
-	draw_walls(cube);
+	world_manager(cube);
 	mlx_mouse_move(cube->mlx->mlx_ptr, cube->mlx->win_ptr, WINDOW_W / 2, WINDOW_H / 2);
-	animation(cube);
 	mlx_put_image_to_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr, cube->mlx->main_img, 0, 0);
-	mlx_put_image_to_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr, cube->mlx->mini_map_img, 0, 0);
+	if (BONUS)
+		mlx_put_image_to_window(cube->mlx->mlx_ptr, cube->mlx->win_ptr, cube->mlx->mini_map_img, 0, 0);
 	return 0;
 }
 
@@ -202,7 +201,7 @@ void load_textures(t_cube *cube)
 		cube->textures->wall_data[i] = NULL;
 	}
 	ft_strlcpy(cube->textures->wall_paths[4], "./textures/door.xpm", ft_strlen("./textures/door.xpm") + 1);
-	ft_strlcpy(cube->textures->wall_paths[5], "./textures/floor.xpm", ft_strlen("./textures/floor.xpm") + 1);
+	ft_strlcpy(cube->textures->wall_paths[5], "./textures/lava.xpm", ft_strlen("./textures/lava.xpm") + 1);
 	ft_strlcpy(cube->textures->wall_paths[6], "./textures/cealing.xpm", ft_strlen("./textures/cealing.xpm") + 1);
 	i = -1;
 	while(++i < 7)
@@ -246,7 +245,8 @@ void	render(t_cube *cube)
 	cube->mlx->mini_map_data = mlx_get_data_addr(cube->mlx->mini_map_img, &cube->mlx->mini_p_bits, &cube->mlx->mini_size_line, &cube->mlx->mini_endian);
 	cube->mlx->main_img = mlx_new_image(cube->mlx->mlx_ptr, WINDOW_W, WINDOW_H);
 	cube->mlx->main_data = mlx_get_data_addr(cube->mlx->main_img, &cube->mlx->main_p_bits, &cube->mlx->main_size_line, &cube->mlx->main_endian);
-	load_anim(cube);
+	if(BONUS)
+		load_anim(cube);
 	load_textures(cube);
 	mlx_hook(cube->mlx->win_ptr, 17, 0, close_window, cube);
 	mlx_hook(cube->mlx->win_ptr, MotionNotify, PointerMotionMask, mouse_move, cube);

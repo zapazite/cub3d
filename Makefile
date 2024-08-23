@@ -4,7 +4,9 @@ CC = clang
 
 LIBS = -L./minilibx-linux -lXext -lXfixes -lX11 -lm -lmlx_Linux
 
-CFLAGS = -Wall -Wextra -Werror -o3
+CFLAGS = -Wall -Wextra -Werror -o3 -g
+
+BONUS = 0
 
 SRCS = main.c\
        gc/gc.c\
@@ -17,7 +19,8 @@ SRCS = main.c\
        player_move.c\
        draw.c\
        raycast.c\
-       render_utils.c
+       render_utils.c\
+       world_manager_bonus.c
 
 OBJDIR = objs
 OBJS = $(patsubst %.c, $(OBJDIR)/%.o, $(notdir $(SRCS)))
@@ -28,12 +31,16 @@ $(OBJDIR):
 	mkdir -p $(OBJDIR)
 
 $(NAME): $(OBJDIR) $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $(NAME)
+	@echo "BONUS = $(BONUS)"
+	$(CC) $(CFLAGS) -DBONUS=$(BONUS) $(OBJS) $(LIBS) -o $(NAME)
 
 $(OBJDIR)/%.o: %.c | $(OBJDIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -DBONUS=$(BONUS) -c $< -o $@
 
 vpath %.c . gc get_next_line map_parsing
+
+bonus:
+	$(MAKE) BONUS=1 all
 
 clean:
 	rm -rf $(OBJDIR)

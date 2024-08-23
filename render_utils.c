@@ -50,7 +50,7 @@ int close_window(t_cube *cube)
 	mlx_destroy_image(cube->mlx->mlx_ptr, cube->mlx->map_img);
 	mlx_destroy_image(cube->mlx->mlx_ptr, cube->mlx->mini_map_img);
 	mlx_destroy_image(cube->mlx->mlx_ptr, cube->mlx->main_img);
-	while(++i < ANIM_FRAMES)
+	while(++i < ANIM_FRAMES && BONUS)
 		mlx_destroy_image(cube->mlx->mlx_ptr, cube->anim->ptr[i]);
 	i = -1;
 	while(++i < 7)

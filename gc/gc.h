@@ -13,8 +13,6 @@
 #ifndef GC_H
 
 # define GC_H
-# include <stdio.h>
-# include <stdlib.h>
 
 typedef struct s_cube	t_cube;
 
