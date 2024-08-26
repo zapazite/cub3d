@@ -101,9 +101,13 @@ void	check_line(t_cube *cube, int *i, char *line)
 			if (spwan_flag++)
 				clean_exit(cube, ERR_PARSING);
 		}
-		else if (line[(*i)] != '0' && line[(*i)] != '1' && line[(*i)] != ' '
-			&& line[(*i)] != 'H')
-			clean_exit(cube, ERR_PARSING);
+		else if (line[(*i)] != '0' && line[(*i)] != '1' && line[(*i)] != ' ')
+			{
+				if (BONUS && line[(*i)] != 'H')
+					clean_exit(cube, ERR_PARSING);
+				else if (!BONUS)
+					clean_exit(cube, ERR_PARSING);
+			}
 	}
 }
 
