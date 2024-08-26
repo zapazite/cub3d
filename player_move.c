@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "cub3d.h"
+#include <stdio.h>
 
 int	door_state(int x, int y, t_cube *cube)
 {
@@ -47,6 +48,19 @@ int	check_player_position(float player_x, float player_y, t_cube *cube)
 	return (1);
 }
 
+void	rot_player(t_cube *cube)
+{
+	if (cube->keys->key_rot_right)
+		cube->player_angle -= PI / 90.;
+	else if (cube->keys->key_rot_left)
+		cube->player_angle += PI / 90.;
+	if (cube->keys->key_rot_left || cube->keys->key_rot_right)
+	{
+		cube->player_dx = cos(cube->player_angle);
+		cube->player_dy = sin(cube->player_angle);
+	}
+}
+
 void	key_check(t_cube *cube, float *move_x, float *move_y)
 {
 	if (cube->keys->key_up)
@@ -69,6 +83,7 @@ void	key_check(t_cube *cube, float *move_x, float *move_y)
 		*move_x -= cube->player_dy * PLAYER_SPEED;
 		*move_y += cube->player_dx * PLAYER_SPEED;
 	}
+	rot_player(cube);
 }
 
 void	move_player(t_cube *cube)

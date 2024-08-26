@@ -15,10 +15,10 @@
 void	clean_exit(t_cube *cube, int error_type)
 {
 	if (error_type == ERR_PARSING)
-		{
-			printf("Error\n");
-			printf("Invalid Map!\n");
-		}
+	{
+		printf("Error\n");
+		printf("Invalid Map!\n");
+	}
 	else if (error_type == ERR_MALLOC)
 		printf("Malloc error!\n");
 	ft_free_gc(cube->gc);
@@ -46,7 +46,7 @@ void	cube_init(t_cube *cube, t_parse *prs, char *map_file)
 		cube->colors[i] = -1;
 	i = -1;
 	while (++i < 4)
-		cube->paths[i][0] = '\0';
+		cube->txt->paths[i][0] = '\0';
 	cube->draw->wall_idx = 0;
 	cube->draw->wall_size = 0;
 	cube->draw->wall_offset = 0;

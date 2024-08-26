@@ -19,14 +19,14 @@
 
 # include "gc/gc.h"
 # include "get_next_line/get_next_line_bonus.h"
-# include "minilibx-linux/mlx.h" // IWYU pragma: keep
+# include "minilibx-linux/mlx.h"
 # include <X11/X.h>
 # include <X11/Xlib.h>
 # include <X11/Xutil.h>
 # include <fcntl.h>
-# include <math.h> // IWYU pragma: keep
+# include <math.h>
 # include <stdint.h>
-# include <string.h> // IWYU pragma: keep
+# include <string.h>
 # include <unistd.h>
 
 # define BUFFERSIZE 8192
@@ -109,6 +109,8 @@ typedef struct s_keys
 	Bool			key_right;
 	Bool			key_open;
 	Bool			key_close;
+	Bool			key_rot_left;
+	Bool			key_rot_right;
 }					t_keys;
 
 typedef struct s_draw
@@ -189,7 +191,6 @@ typedef struct s_cube
 	int				map_h;
 	int				map_w;
 	int				**map;
-	char			paths[4][4096];
 	int				colors[2];
 }					t_cube;
 

@@ -49,6 +49,8 @@ void	init_keyes(t_cube *cube)
 {
 	cube->keys->key_left = 0;
 	cube->keys->key_right = 0;
+	cube->keys->key_rot_left = 0;
+	cube->keys->key_rot_right = 0;
 	cube->keys->key_up = 0;
 	cube->keys->key_down = 0;
 	cube->keys->mouse_left = 0;

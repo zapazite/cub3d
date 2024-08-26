@@ -75,7 +75,7 @@ int	check_param(t_cube *cube, char *line)
 	success = 0;
 	while (++j < 4)
 		if (!ft_strncmp(line, param_array[j], ft_strlen(param_array[j]))
-			&& cube->paths[j][0] == '\0')
+			&& cube->txt->paths[j][0] == '\0')
 			success = check_path(cube, line + 3, j);
 	j = -1;
 	while (++j < 2 && !success)
@@ -102,12 +102,12 @@ void	check_line(t_cube *cube, int *i, char *line)
 				clean_exit(cube, ERR_PARSING);
 		}
 		else if (line[(*i)] != '0' && line[(*i)] != '1' && line[(*i)] != ' ')
-			{
-				if (BONUS && line[(*i)] != 'H')
-					clean_exit(cube, ERR_PARSING);
-				else if (!BONUS)
-					clean_exit(cube, ERR_PARSING);
-			}
+		{
+			if (BONUS && line[(*i)] != 'H')
+				clean_exit(cube, ERR_PARSING);
+			else if (!BONUS)
+				clean_exit(cube, ERR_PARSING);
+		}
 	}
 }
 

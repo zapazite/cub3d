@@ -20,10 +20,14 @@ int	key_handler(int keycode, t_cube *cube)
 		cube->keys->key_up = 1;
 	if (keycode == XK_Down || keycode == XK_s)
 		cube->keys->key_down = 1;
-	if (keycode == XK_Left || keycode == XK_a)
+	if (keycode == XK_a)
 		cube->keys->key_left = 1;
-	if (keycode == XK_Right || keycode == XK_d)
+	if (keycode == XK_d)
 		cube->keys->key_right = 1;
+	if (keycode == XK_Right)
+		cube->keys->key_rot_right = 1;
+	if (keycode == XK_Left)
+		cube->keys->key_rot_left = 1;
 	if (keycode == XK_o)
 		open_door(cube);
 	if (keycode == XK_c)
@@ -64,9 +68,13 @@ int	key_release(int keycode, t_cube *cube)
 		cube->keys->key_up = 0;
 	if (keycode == XK_Down || keycode == XK_s)
 		cube->keys->key_down = 0;
-	if (keycode == XK_Left || keycode == XK_a)
+	if (keycode == XK_a)
 		cube->keys->key_left = 0;
-	if (keycode == XK_Right || keycode == XK_d)
+	if (keycode == XK_d)
 		cube->keys->key_right = 0;
+	if (keycode == XK_Left)
+		cube->keys->key_rot_left = 0;
+	if (keycode == XK_Right)
+		cube->keys->key_rot_right = 0;
 	return (0);
 }

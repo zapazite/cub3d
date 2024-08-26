@@ -87,6 +87,8 @@ void	door_manager(t_cube *cube)
 
 int	mouse_move(int x, int y, t_cube *cube)
 {
+	if (!BONUS)
+		return (0);
 	(void)x;
 	(void)y;
 	cube->player_angle += (WINDOW_W / 2. - x) * MOUSE_SENS;

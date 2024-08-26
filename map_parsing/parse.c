@@ -105,7 +105,8 @@ void	parse_parameter(t_cube *cube, int fd)
 	{
 		if (line[0] != '\n')
 			param_counter += check_param(cube, line);
-		line = get_next_line(cube, fd);
+		if (param_counter < 6)
+			line = get_next_line(cube, fd);
 	}
 }
 
